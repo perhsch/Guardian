@@ -1,5 +1,16 @@
 require('dotenv').config();
 
+// Polyfill for Node < 20: discord-html-transcripts/undici expects global File
+if (typeof globalThis.File === 'undefined' && typeof globalThis.Blob !== 'undefined') {
+    globalThis.File = class File extends Blob {
+        constructor(bits, name, options) {
+            super(bits, options || {});
+            this.name = name || '';
+            this.lastModified = (options && options.lastModified) || Date.now();
+        }
+    };
+}
+
 const Discord = require('discord.js');
 const Mongoose = require('mongoose');
 const Moment = require('moment');
@@ -173,7 +184,7 @@ module.exports.client = client;
 module.exports.server = server;
 
 client.on('guildCreate', async (guild) => {
-    const DevGuilds = ['1442949703342887034']; // replace with your dev guild of server IDs
+    const DevGuilds = ['1460113401631211664']; // replace with your dev guild of server IDs
     if (!DevGuilds.includes(guild.id)) {
         await guild.leave();
     }
@@ -181,7 +192,34 @@ client.on('guildCreate', async (guild) => {
 
 client.on('messageCreate', (message) => {
     if (message.mentions.has(client.user)) {
-        message.reply('Hello! My prefix is `/`');
+        // Build an informative embed
+        const embed = new Discord.EmbedBuilder()
+            .setColor(0x5865F2)
+            .setTitle("Hello! I'm Guardian 🤖")
+            .setDescription('Thanks for mentioning me!\n\n**My default prefix is:** `/` (I use [slash commands](https://discord.com/developers/docs/interactions/application-commands))\n\nUse `/help` to get a list of commands or explore the resources below!')
+            .addFields(
+                { name: 'Quick Start', value: 'Type `/help` for a full command list.' },
+                { name: 'Support Server', value: '[Click here](https://discord.gg/)' },
+            )
+            .setFooter({ text: `Guardian Bot • Made for your server!`, iconURL: client.user.displayAvatarURL() });
+
+        // Buttons for more actions/resources
+        const row = new Discord.ActionRowBuilder().addComponents(
+            new Discord.ButtonBuilder()
+                .setLabel('Invite Me')
+                .setStyle(Discord.ButtonStyle.Link)
+                .setURL('https://discord.com/oauth2/authorize?client_id=' + client.user.id + '&permissions=8&scope=bot%20applications.commands'),
+            new Discord.ButtonBuilder()
+                .setLabel('Support Server')
+                .setStyle(Discord.ButtonStyle.Link)
+                .setURL('https://discord.gg/'),
+            new Discord.ButtonBuilder()
+                .setLabel('Website')
+                .setStyle(Discord.ButtonStyle.Link)
+                .setURL('https://google.com')
+        );
+
+        message.reply({ embeds: [embed], components: [row] });
     }
 });
 

@@ -25,13 +25,16 @@ module.exports = {
 
         await interaction.editReply({ embeds: [generateEmbed(1, [0])] });
 
-        if (
-            interaction.guild.roles.botRoleFor(client.user).position !==
-            interaction.guild.roles.highest.position
-        ) {
+        // Check that the bot's role is not at the bottom (since some permissions may not work if it's lower than managed/user roles),
+        // but don't enforce that it must be highest
+        const botRole = interaction.guild.roles.botRoleFor(client.user);
+        const rolesAboveBot = interaction.guild.roles.cache.filter(
+            role => role.position > botRole.position && !role.managed && role.editable
+        );
+        if (rolesAboveBot.size > 0) {
             const embed = generateEmbed(1, [0]);
             return embed.setDescription(
-                `${embed.data.description}\n\n❌ Bot role is not the highest role in the server!`
+                `${embed.data.description}\n\n⚠️ The bot role is not the highest role in the server. This is fine for most situations, but be aware some role-based actions might fail if higher roles exist above the bot.`
             );
         }
 
@@ -67,8 +70,8 @@ function generateEmbed(count, completed) {
                 : '',
             count >= 1
                 ? `${
-                      count > 1 ? (completed.includes(1) ? '✅ ' : '❌') : ''
-                  }Checking Guardian\'s role position...`
+                      count > 1 ? (completed.includes(1) ? '✅ ' : '⚠️') : ''
+                  }Checking Guardian's role position (should be above the roles it needs to manage)...`
                 : '',
             count >= 2
                 ? `${

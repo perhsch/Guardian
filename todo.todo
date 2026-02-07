@@ -5,7 +5,6 @@
 
         - Anti-Zalgo sys & Anti-Badwords sys
         - Anti-Nuke sys
-        - Initinalizing command, like wickbot.
         - Configurable modmail sys
         - Economy commands
 
@@ -14,5 +13,7 @@
 
         - Add a prefix, so any non-moderation command will only be available via prefix astead of slashs.
         - Rewrite some of the code, and upgrade the discordjs version (last of my priortity as im only one guy)
+        - Fix discord html transcripts since the package version doesn't work, need to revert
+        - Make the /setup command more better, easy to use, and just overall better and more effient. 
     --/
 --/

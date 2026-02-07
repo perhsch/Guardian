@@ -5,7 +5,7 @@ const { loadCommands } = require('../../Handlers/commandHandler');
 const { fetchAllMembers } = require('../../Functions/memberTracking.js');
 
 module.exports = {
-    name: 'ready',
+    name: 'clientReady',
     once: true,
     /**
      * @param {Discord.Client} client
