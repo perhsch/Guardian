@@ -20,9 +20,14 @@ module.exports = {
                 content: 'This command is outdated.',
                 ephemeral: true,
             });
+        if (command.enabled === false)
+            return interaction.reply({
+                content: 'The bot is currently under maintenance. Please try again later.',
+                ephemeral: true,
+            });
         executeFunction = command.execute;
 
-        if (command.developer && interaction.user.id !== '446706651026948096') {
+        if (command.developer && interaction.user.id !== '1447738202600505407') {
             return interaction.reply({
                 content: 'This command is only available to the developer.',
                 ephemeral: true,

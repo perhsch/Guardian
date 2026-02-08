@@ -3,6 +3,7 @@ const { Discord, ActivityType } = require('discord.js');
 const index = require('../../index.js');
 const { loadCommands } = require('../../Handlers/commandHandler');
 const { fetchAllMembers } = require('../../Functions/memberTracking.js');
+const { getMaintenanceEnabled } = require('../../Functions/maintenance');
 
 module.exports = {
     name: 'clientReady',
@@ -25,19 +26,15 @@ module.exports = {
 
         index.server.listen(2053, () => console.log('The client is now ready.'));
 
-        // Check if maintenance mode is enabled
-        const maintenanceMode = false; // Replace with your own check for maintenance mode
+        const maintenanceMode = getMaintenanceEnabled();
         if (maintenanceMode) {
-            // Set bot status to "Maintenance Mode"
             client.user.setPresence({
-                activities: [{ name: 'Maintenance Mode', type: ActivityType.Watching }],
+                activities: [{ name: 'In Maintenance', type: ActivityType.Watching }],
                 status: 'dnd',
             });
-            // Disable all commands
             client.commands.forEach((command) => {
-                command.enabled = false;
+                if (command.data.name !== 'maintenance') command.enabled = false;
             });
-            // Return to prevent further execution
             return;
         }
 
