@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const Guilds = require('../../../Schemas/Guilds');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -30,7 +31,20 @@ module.exports = {
 
         dbGuild.logs.enabled = true;
         dbGuild.logs.basic = logChannel.id;
-        dbGuild.logs.moderator = modLogChannel?.id;
+        dbGuild.logs.moderator = modLogChannel?.id ?? null;
+
+        await Guilds.updateOne(
+            { guild: interaction.guildId },
+            {
+                $set: {
+                    logs: {
+                        enabled: true,
+                        basic: logChannel.id,
+                        moderator: modLogChannel?.id ?? null,
+                    },
+                },
+            }
+        );
 
         return EmbedGenerator.basicEmbed(
             [

@@ -19,8 +19,9 @@ module.exports = {
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild) {
         const user = interaction.options.getUser('user', true);
         const member = await interaction.guild.members.fetch({ user: user.id }).catch(() => null);
         const reason = interaction.options.getString('reason') || 'Unspecified reason.';
@@ -50,6 +51,29 @@ module.exports = {
             active: false,
         });
 
-        return infractionEmbed;
+        const modEmbed = new Discord.EmbedBuilder()
+            .setColor('Blue')
+            .setTitle('Member warned')
+            .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
+            .setDescription(
+                [
+                    `**Warned user**: ${member.user} (\`${member.user.tag}\` | ${member.id})`,
+                    `**Warned by**: ${interaction.user} (\`${interaction.user.tag}\`)`,
+                    `**Reason**: ${reason}`,
+                ].join('\n')
+            )
+            .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
+            .setTimestamp();
+
+        if (dbGuild.logs.enabled && dbGuild.logs.moderator) {
+            const modLogChannel = await interaction.guild.channels
+                .fetch(dbGuild.logs.moderator)
+                .catch(() => null);
+            if (modLogChannel && modLogChannel instanceof Discord.TextChannel) {
+                await modLogChannel.send({ embeds: [modEmbed] }).catch(() => null);
+            }
+        }
+
+        return { embeds: [modEmbed] };
     },
 };

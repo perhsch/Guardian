@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const Guilds = require('../../../Schemas/Guilds');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -15,9 +16,14 @@ module.exports = {
         if (!dbGuild.logs.enabled)
             return EmbedGenerator.errorEmbed('The logging system is not enabled!');
 
-        dbGuild.logs.enabled = true;
+        dbGuild.logs.enabled = false;
         dbGuild.logs.basic = null;
         dbGuild.logs.moderator = null;
+
+        await Guilds.updateOne(
+            { guild: interaction.guildId },
+            { $set: { logs: { enabled: false, basic: null, moderator: null } } }
+        );
 
         return EmbedGenerator.basicEmbed('🔓 | The logging system has been disabled!');
     },
