@@ -1,5 +1,6 @@
 const Discord = require(`discord.js`);
 const backupSchema = require(`../../Schemas/Backup`);
+const mongoose = require('mongoose');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -19,17 +20,20 @@ module.exports = {
             interaction.reply(`A backup for this server already exists.`);
             return;
         }
+        const backupId = mongoose.Types.ObjectId().toString();
+
         const backup = {
             guildId,
             date: new Date().toLocaleString(),
             name: `backup-${guildId}-${new Date().getTime()}`,
-            backupId: newBackup._id, // Added backupId to the backup object
+            backupId,
             roles: interaction.guild.roles.cache.map((role) => role),
             channels: interaction.guild.channels.cache.map((channel) => channel),
             permissions: interaction.guild.roles.cache.map((role) => role.permissions),
         };
+
         const newBackup = await new backupSchema(backup).save();
-        interaction.user.send(`Backup created with name ${backup.name} and ID ${newBackup._id}`);
+        interaction.user.send(`Backup created with name ${backup.name} and ID ${newBackup.backupId}`);
         //interaction.reply(`Backup created with name ${backup.name}`);
     },
 };

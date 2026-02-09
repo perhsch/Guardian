@@ -75,7 +75,7 @@ async function pagesEmbed(interaction, embeds, ephemeral = false) {
         });
 
     let page = 0;
-    const sent = await interaction.reply({
+    const replyPayload = {
         embeds: [embeds[page].setFooter({ text: `Page ${page + 1}/${embeds.length}` })],
         components: [
             new Discord.ActionRowBuilder().addComponents([
@@ -91,7 +91,27 @@ async function pagesEmbed(interaction, embeds, ephemeral = false) {
         ],
         ephemeral: ephemeral,
         fetchReply: true,
-    });
+    };
+
+    let sent;
+    try {
+        sent = await interaction.reply(replyPayload);
+    } catch (err) {
+        // If interaction.reply fails (e.g., already replied), try followUp
+        try {
+            sent = await interaction.followUp({ ...replyPayload, fetchReply: true });
+        } catch (err2) {
+            // As a last resort, try sending directly to the channel (non-ephemeral)
+            if (interaction.channel && interaction.channel.send) {
+                const nonEphemeralPayload = { ...replyPayload };
+                delete nonEphemeralPayload.ephemeral;
+                delete nonEphemeralPayload.fetchReply;
+                sent = await interaction.channel.send(nonEphemeralPayload).catch(() => null);
+            }
+        }
+    }
+
+    if (!sent) return;
     const filter = (/** @type {Discord.MessageComponentInteraction} */ i) =>
         ['previous', 'next'].includes(i.customId) &&
         i.message.id === sent.id &&
