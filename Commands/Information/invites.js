@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js');
-const emojis = require("../../Config/emojis.json")
+const emojis = require('../../Config/emojis.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -41,9 +41,6 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor('Purple')
             .setFooter({ text: `${inviter.username}'s Invites` })
-            .setThumbnail(
-                'https://cdn.discordapp.com/attachments/1080219392337522718/1081227919256457246/largepurple.png'
-            )
             .setTimestamp()
             .setTitle(`> Fetched ${inviter.tag}'s Invites`)
             .setAuthor({ name: `🔗 Invites Tool` })

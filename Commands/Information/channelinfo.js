@@ -14,7 +14,7 @@ module.exports = {
         const channel = interaction.channel;
 
         const replyEmbed = new EmbedBuilder()
-            .setColor('blue')
+            .setColor(0x5865f2)
             .setAuthor({
                 name: `${channel.name}`,
                 iconURL: interaction.guild.iconURL(),
