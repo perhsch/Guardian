@@ -38,15 +38,26 @@ module.exports = {
             return;
         }
 
+        const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
+        const statuses = [
+            { name: `${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
+            { name: `${totalMembers} members!`, type: ActivityType.Watching },
+            { name: `beep bop boop`, type: ActivityType.Playing },
+        ];
+
+        let statusIndex = 0;
         client.user.setPresence({
-            activities: [
-                {
-                    name: `${client.guilds.cache.size} servers!`,
-                    type: ActivityType.Watching,
-                },
-            ],
+            activities: [statuses[statusIndex]],
             status: 'online',
         });
+
+        setInterval(() => {
+            statusIndex = (statusIndex + 1) % statuses.length;
+            client.user.setPresence({
+                activities: [statuses[statusIndex]],
+                status: 'online',
+            });
+        }, 15000); // Rotate every 15 seconds
 
         await fetchAllMembers(client);
     },
