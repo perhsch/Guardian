@@ -1,6 +1,6 @@
 const Discord = require(`discord.js`);
 
-const afkUsers = new Map();
+const AFK = require('../../Schemas/AFK');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -13,35 +13,21 @@ module.exports = {
         const user = interaction.user;
         const reason = interaction.options.getString('reason') || 'No reason provided';
 
-        afkUsers.set(user.id, reason);
+        // Check if user is already AFK
+        const existingAFK = await AFK.findOne({ user: user.id });
+        if (existingAFK) {
+            // Remove from AFK
+            await AFK.deleteOne({ user: user.id });
+            return await interaction.reply(`You have been removed from the AFK list.`);
+        }
+
+        // Add user to AFK
+        await AFK.create({
+            user: user.id,
+            guild: interaction.guild.id,
+            reason: reason,
+        });
 
         await interaction.reply(`You have been set as AFK. Reason: ${reason}`);
-
-        client.on('messageCreate', async (message) => {
-            if (message.author.bot) return;
-
-            const mentionedUser = message.mentions.users.first();
-            if (!mentionedUser) return;
-
-            const mentionedUserId = mentionedUser.id;
-            if (mentionedUserId !== user.id) return;
-
-            const mentionedUserMember = message.mentions.members.first();
-            if (!mentionedUserMember) return;
-
-            await message.delete();
-            await message.channel.send(`${user} is currently AFK. Reason: ${reason}`);
-        });
-
-        client.on('typingStart', async (channel, user) => {
-            if (user.bot) return;
-
-            if (user.id === interaction.user.id) {
-                afkUsers.delete(user.id);
-                await interaction.reply(
-                    `Welcome back ${user}! You have been removed from the AFK list.`
-                );
-            }
-        });
     },
 };
