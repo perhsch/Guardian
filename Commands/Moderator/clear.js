@@ -34,7 +34,7 @@ module.exports = {
         const reason = interaction.options.getString('reason', true);
         const target = interaction.options.getUser('target');
 
-        /** @type {Discord.Collection<string, Discord.Message>} */ const messages =
+        /** @type {Discord.Collection<string, Discord.Message>} */ let messages =
             await interaction.channel.messages.fetch({ limit: amount });
         if (target) messages = messages.filter((message) => message.author.id === target.id);
         if (messages.size === 0)
@@ -55,26 +55,38 @@ module.exports = {
                 });
 
                 if (dbGuild.logs.enabled) {
-                    const channel = await interaction.guild.channels.fetch(dbGuild.logs.moderator);
+                    const channel = await interaction.guild.channels
+                        .fetch(dbGuild.logs.moderator)
+                        .catch(() => null);
                     if (channel && channel instanceof Discord.TextChannel) {
-                        const transcript = await Transcripts.generateFromMessages(
-                            messages,
-                            interaction.channel
-                        );
+                        try {
+                            const transcript = await Transcripts.generateFromMessages(
+                                messages,
+                                interaction.channel
+                            );
 
-                        channel.send({
-                            embeds: [
-                                EmbedGenerator.basicEmbed(
-                                    [
-                                        `- Moderator: ${interaction.member}`,
-                                        `- Target: ${target || 'None'}`,
-                                        `- Channel: ${interaction.channel}`,
-                                        `- Reason: ${reason}`,
-                                    ].join('\n')
-                                ).setTitle('`/clear` command used'),
-                            ],
-                            files: [transcript],
-                        });
+                            const moderatorText =
+                                interaction.member && interaction.member.user
+                                    ? interaction.member.user.tag
+                                    : interaction.member
+                                      ? String(interaction.member)
+                                      : 'Unknown';
+
+                            const targetText = target ? target.tag || `<@${target.id}>` : 'None';
+
+                            const logEmbed = EmbedGenerator.basicEmbed(
+                                [
+                                    `- Moderator: ${moderatorText}`,
+                                    `- Target: ${targetText}`,
+                                    `- Channel: <#${interaction.channel.id}>`,
+                                    `- Reason: ${reason}`,
+                                ].join('\n')
+                            ).setTitle('/clear command used');
+
+                            await channel.send({ embeds: [logEmbed], files: [transcript] });
+                        } catch (err) {
+                            console.error('Error creating/sending clear transcript/log:', err);
+                        }
                     }
                 }
             })
