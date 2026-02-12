@@ -43,16 +43,23 @@ module.exports = {
             };
         }
 
+        const announcementEmbed = new Discord.EmbedBuilder()
+            .setColor(0xf1c40f) // Amber/gold for announcements
+            .setTitle('📢 Server Announcement')
+            .setDescription(message)
+            .setAuthor({
+                name: interaction.user.displayName,
+                iconURL: interaction.user.displayAvatarURL({ size: 256 }),
+            })
+            .setFooter({
+                text: `${interaction.guild.name} • Announcement`,
+                iconURL: interaction.guild.iconURL({ size: 64 }),
+            })
+            .setTimestamp();
+
         channel
             .send({
-                embeds: [
-                    EmbedGenerator.basicEmbed(message)
-                        .setAuthor({
-                            name: `${interaction.user.tag} | Announcement`,
-                            iconURL: interaction.user.displayAvatarURL(),
-                        })
-                        .setTimestamp(),
-                ],
+                embeds: [announcementEmbed],
             })
             .then(() => {
                 interaction.reply({
