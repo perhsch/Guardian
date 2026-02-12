@@ -1,5 +1,8 @@
 const Discord = require(`discord.js`);
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
+
 module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('giveroleall')
@@ -17,6 +20,14 @@ module.exports = {
         members.forEach((member) => {
             member.roles.add(role);
         });
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Role: ${role.name} (${role.id})`,
+                `- Members affected: ${members.size}`,
+            ].join('\n')
+        ).setTitle('/giveroleall command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
         await interaction.reply(`Successfully gave the ${role.name} role to all members.`);
     },
 };

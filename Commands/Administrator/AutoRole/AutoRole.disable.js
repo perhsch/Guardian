@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -15,7 +16,12 @@ module.exports = {
         if (!dbGuild.autorole.enabled)
             return EmbedGenerator.errorEmbed('The Auto-Role system is not enabled!');
 
-        dbGuild.autorole.enabled = true;
+        const logEmbed = EmbedGenerator.basicEmbed(
+            `- Moderator: ${interaction.user.tag}`
+        ).setTitle('/autorole disable command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
+
+        dbGuild.autorole.enabled = false;
         dbGuild.autorole.member = null;
         dbGuild.autorole.bot = null;
 

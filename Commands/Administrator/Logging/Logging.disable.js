@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 const Guilds = require('../../../Schemas/Guilds');
 
 module.exports = {
@@ -15,6 +16,11 @@ module.exports = {
     async execute(interaction, client, dbGuild) {
         if (!dbGuild.logs.enabled)
             return EmbedGenerator.errorEmbed('The logging system is not enabled!');
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            `- Moderator: ${interaction.user.tag}`
+        ).setTitle('/logging disable command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         dbGuild.logs.enabled = false;
         dbGuild.logs.basic = null;

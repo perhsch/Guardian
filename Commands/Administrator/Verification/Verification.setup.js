@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -137,6 +138,16 @@ module.exports = {
         dbGuild.verification.version = type;
         dbGuild.verification.channel = channel.id;
         dbGuild.verification.role = role.id;
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Type: ${type}`,
+                `- Channel: <#${channel.id}>`,
+                `- Role: ${role}`,
+            ].join('\n')
+        ).setTitle('/verification setup command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return EmbedGenerator.basicEmbed('🔒 | Member verification has been enabled.');
     },

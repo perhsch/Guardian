@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -27,6 +28,15 @@ module.exports = {
         dbGuild.autorole.enabled = true;
         dbGuild.autorole.member = memberRole.id;
         dbGuild.autorole.bot = botRole?.id;
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Member role: ${memberRole}`,
+                `- Bot role: ${botRole || 'Not specified'}`,
+            ].join('\n')
+        ).setTitle('/autorole setup command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return EmbedGenerator.basicEmbed(
             [

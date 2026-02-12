@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 const Guilds = require('../../../Schemas/Guilds');
 
 module.exports = {
@@ -45,6 +46,15 @@ module.exports = {
                 },
             }
         );
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Basic log channel: <#${logChannel.id}>`,
+                `- Mod log channel: ${modLogChannel ? `<#${modLogChannel.id}>` : 'Not specified'}`,
+            ].join('\n')
+        ).setTitle('/logging setup command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return EmbedGenerator.basicEmbed(
             [

@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const ms = require('ms');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -158,6 +159,16 @@ module.exports = {
         dbGuild.tickets.category = category.id;
         dbGuild.tickets.channel = channel.id;
         dbGuild.tickets.role = role.id;
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Category: ${category.name}`,
+                `- Channel: <#${channel.id}>`,
+                `- Support role: ${role}`,
+            ].join('\n')
+        ).setTitle('/ticketadmin setup command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return EmbedGenerator.basicEmbed('🔒 | Ticket system has been enabled!').setFooter({
             text: '(W.I.P) Please manually add access for Support Staff to use /ticket',

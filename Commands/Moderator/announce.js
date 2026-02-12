@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -20,8 +21,10 @@ module.exports = {
         ),
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
+     * @param {Discord.Client} client
+     * @param {import('../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction) {
+    async execute(interaction, client, dbGuild) {
         /** @type {Discord.TextChannel} */ const channel = interaction.options.getChannel(
             'channel',
             true
@@ -61,7 +64,15 @@ module.exports = {
             .send({
                 embeds: [announcementEmbed],
             })
-            .then(() => {
+            .then(async () => {
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Channel: <#${channel.id}>`,
+                        `- Message: ${message.substring(0, 500)}${message.length > 500 ? '...' : ''}`,
+                    ].join('\n')
+                ).setTitle('/announce command used');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
                 interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed(':mega: | Announced message successfully!')],
                     ephemeral: true,

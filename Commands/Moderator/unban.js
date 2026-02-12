@@ -1,6 +1,7 @@
 const Discord = require(`discord.js`);
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
 
 const Infractions = require('../../Schemas/Infractions');
 
@@ -19,8 +20,9 @@ module.exports = {
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild) {
         const user = interaction.options.getUser('user', true);
         const reason = interaction.options.getString('reason') || 'Unspecified reason.';
 
@@ -34,6 +36,15 @@ module.exports = {
             .unban(user, reason)
             .then(async () => {
                 await Infractions.updateMany({ type: 'ban' }, { $set: { active: false } });
+
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Target: ${user.tag} (${user.id})`,
+                        `- Reason: ${reason}`,
+                    ].join('\n')
+                ).setTitle('/unban command used');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
 
                 interaction.reply({
                     embeds: [

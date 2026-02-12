@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const ms = require('ms');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -64,6 +65,18 @@ module.exports = {
         dbGuild.antiraid.lockdown.enabled = lockdown;
         dbGuild.antiraid.channel = channel.id;
         dbGuild.antiraid.action = action;
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Join within: ${joinWithin}s`,
+                `- Join amount: ${joinAmount}`,
+                `- Lockdown: ${lockdown}`,
+                `- Channel: <#${channel.id}>`,
+                `- Action: ${action || 'None'}`,
+            ].join('\n')
+        ).setTitle('/antiraid setup command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return EmbedGenerator.basicEmbed('🔒 | Anti-raid protection has been enabled!');
     },

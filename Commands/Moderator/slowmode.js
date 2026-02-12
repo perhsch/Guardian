@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const ms = require('ms');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -19,11 +20,11 @@ module.exports = {
             option.setName('reason').setDescription('Reason for setting the slowmode.')
         ),
     /**
-     *
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild) {
         const duration = interaction.options.getString('duration', true);
         const durationSeconds = Math.floor(ms(duration) / 1000);
         const reason = interaction.options.getString('reason') || 'Unspecified reason.';
@@ -44,9 +45,18 @@ module.exports = {
 
         channel
             .setRateLimitPerUser(durationSeconds, reason)
-            .then(() => {
+            .then(async () => {
                 const durationString =
                     durationSeconds === 0 ? 'disabled' : ms(ms(duration), { long: true });
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Channel: <#${channel.id}>`,
+                        `- Slowmode: ${durationString}`,
+                        `- Reason: ${reason}`,
+                    ].join('\n')
+                ).setTitle('/slowmode command used');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
                 interaction.reply({
                     embeds: [
                         EmbedGenerator.basicEmbed(

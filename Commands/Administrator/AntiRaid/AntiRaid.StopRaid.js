@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -21,6 +22,11 @@ module.exports = {
 
             // un-execute lockdown
         }
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            `- Moderator: ${interaction.user.tag}`
+        ).setTitle('/antiraid stop_raid command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return EmbedGenerator.basicEmbed(
             `🔓 | Raid mode has been disabled!${

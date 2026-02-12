@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -14,6 +15,11 @@ module.exports = {
     async execute(interaction, client, dbGuild) {
         if (!dbGuild.verification.enabled)
             return EmbedGenerator.errorEmbed('The verification system is not enabled!');
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            `- Moderator: ${interaction.user.tag}`
+        ).setTitle('/verification disable command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         dbGuild.verification.enabled = false;
         dbGuild.verification.version = null;

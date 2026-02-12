@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
 
 const Infractions = require('../../Schemas/Infractions');
 
@@ -65,14 +66,7 @@ module.exports = {
             .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
             .setTimestamp();
 
-        if (dbGuild.logs.enabled && dbGuild.logs.moderator) {
-            const modLogChannel = await interaction.guild.channels
-                .fetch(dbGuild.logs.moderator)
-                .catch(() => null);
-            if (modLogChannel && modLogChannel instanceof Discord.TextChannel) {
-                await modLogChannel.send({ embeds: [modEmbed] }).catch(() => null);
-            }
-        }
+        await sendModLog(interaction.guild, dbGuild, modEmbed);
 
         return { embeds: [modEmbed] };
     },

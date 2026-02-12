@@ -3,6 +3,7 @@ const { generateTranscript } = require('../../Functions/transcriptGenerator');
 
 const { GuildsManager } = require('../../Classes/GuildsManager');
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -54,40 +55,33 @@ module.exports = {
                     ephemeral: true,
                 });
 
-                if (dbGuild.logs.enabled) {
-                    const channel = await interaction.guild.channels
-                        .fetch(dbGuild.logs.moderator)
-                        .catch(() => null);
-                    if (channel && channel instanceof Discord.TextChannel) {
-                        try {
-                            const transcript = await generateTranscript(
-                                messages,
-                                interaction.channel
-                            );
+                try {
+                    const transcript = await generateTranscript(
+                        messages,
+                        interaction.channel
+                    );
 
-                            const moderatorText =
-                                interaction.member && interaction.member.user
-                                    ? interaction.member.user.tag
-                                    : interaction.member
-                                      ? String(interaction.member)
-                                      : 'Unknown';
+                    const moderatorText =
+                        interaction.member && interaction.member.user
+                            ? interaction.member.user.tag
+                            : interaction.member
+                              ? String(interaction.member)
+                              : 'Unknown';
 
-                            const targetText = target ? target.tag || `<@${target.id}>` : 'None';
+                    const targetText = target ? target.tag || `<@${target.id}>` : 'None';
 
-                            const logEmbed = EmbedGenerator.basicEmbed(
-                                [
-                                    `- Moderator: ${moderatorText}`,
-                                    `- Target: ${targetText}`,
-                                    `- Channel: <#${interaction.channel.id}>`,
-                                    `- Reason: ${reason}`,
-                                ].join('\n')
-                            ).setTitle('/clear command used');
+                    const logEmbed = EmbedGenerator.basicEmbed(
+                        [
+                            `- Moderator: ${moderatorText}`,
+                            `- Target: ${targetText}`,
+                            `- Channel: <#${interaction.channel.id}>`,
+                            `- Reason: ${reason}`,
+                        ].join('\n')
+                    ).setTitle('/clear command used');
 
-                            await channel.send({ embeds: [logEmbed], files: [transcript] });
-                        } catch (err) {
-                            console.error('Error creating/sending clear transcript/log:', err);
-                        }
-                    }
+                    await sendModLog(interaction.guild, dbGuild, logEmbed, [transcript]);
+                } catch (err) {
+                    console.error('Error creating/sending clear transcript/log:', err);
                 }
             })
             .catch(() => {

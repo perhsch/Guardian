@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const ms = require('ms');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
 
 const Infractions = require('../../Schemas/Infractions');
 
@@ -29,8 +30,9 @@ module.exports = {
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild) {
         const user = interaction.options.getUser('user', true);
         const member = await interaction.guild.members.fetch({ user: user.id }).catch(() => null);
         const reason = interaction.options.getString('reason') || 'Unspecified reason.';
@@ -81,6 +83,16 @@ module.exports = {
                         duration: durationMs,
                     })
                 );
+
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Target: ${member.user.tag} (${member.id})`,
+                        `- Duration: ${duration}`,
+                        `- Reason: ${reason}`,
+                    ].join('\n')
+                ).setTitle('/timeout command used');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
 
                 interaction.reply({ embeds: [infractionEmbed] });
             })

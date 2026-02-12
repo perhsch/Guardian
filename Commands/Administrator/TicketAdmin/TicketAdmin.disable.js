@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -12,6 +13,11 @@ module.exports = {
      * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
      */
     async execute(interaction, client, dbGuild) {
+        const logEmbed = EmbedGenerator.basicEmbed(
+            `- Moderator: ${interaction.user.tag}`
+        ).setTitle('/ticketadmin disable command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
+
         dbGuild.tickets.enabled = false;
         dbGuild.tickets.category = null;
         dbGuild.tickets.channel = null;

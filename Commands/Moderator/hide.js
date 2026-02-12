@@ -1,6 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
+
 module.exports = {
 
   data: new SlashCommandBuilder()
@@ -13,7 +16,7 @@ module.exports = {
         .addChannelTypes(ChannelType.GuildText)
     ),
 
-  async execute(interaction, client) {
+  async execute(interaction, client, dbGuild) {
 
     if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply({
       embeds: [
@@ -28,6 +31,14 @@ module.exports = {
         { type: 'role', id: interaction.guild.roles.everyone, deny: ['ViewChannel'] },
       ],
     });
+
+    const logEmbed = EmbedGenerator.basicEmbed(
+      [
+        `- Moderator: ${interaction.user.tag}`,
+        `- Channel: ${channel.name} (<#${channel.id}>)`,
+      ].join('\n')
+    ).setTitle('/hide command used');
+    await sendModLog(interaction.guild, dbGuild, logEmbed);
 
     const embed = new EmbedBuilder()
       .setDescription(`The Channel ${channel.name} Has Been Hidden Successfully`);

@@ -7,6 +7,9 @@ const {
     ButtonStyle,
 } = require('discord.js');
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
+
 const numberEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
 
 module.exports = {
@@ -93,7 +96,7 @@ module.exports = {
                 .setMaxValue(10080)
         ),
     cooldownTime: 20 * 1000,
-    async execute(interaction) {
+    async execute(interaction, client, dbGuild) {
         const question = interaction.options.getString('question');
         const duration = interaction.options.getInteger('duration');
 
@@ -194,6 +197,17 @@ module.exports = {
             embeds: [buildPollEmbed()],
             fetchReply: true,
         });
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Channel: <#${interaction.channel.id}>`,
+                `- Question: ${question}`,
+                `- Options: ${allOptions.length}`,
+                `- Duration: ${duration ? duration + ' minutes' : 'Unlimited'}`,
+            ].join('\n')
+        ).setTitle('/poll command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         // Add reactions
         for (let i = 0; i < allOptions.length; i++) {

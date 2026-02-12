@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -33,6 +34,15 @@ module.exports = {
         dbGuild.suggestion.enabled = true;
         dbGuild.suggestion.channel = channel.id;
         dbGuild.suggestion.reactions = reactions;
+
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Channel: <#${channel.id}>`,
+                `- Add reactions: ${reactions}`,
+            ].join('\n')
+        ).setTitle('/suggestion setup command used');
+        await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return EmbedGenerator.basicEmbed('The Suggestion system has enabled.');
     },

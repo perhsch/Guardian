@@ -1,6 +1,7 @@
 const Discord = require(`discord.js`);
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
 
 const ReactionRoles = require('../../Schemas/ReactionRoles');
 
@@ -65,6 +66,16 @@ module.exports = {
                     message: sent.id,
                     roles: roles.map((role) => role.id),
                 });
+
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Channel: <#${interaction.channel.id}>`,
+                        `- Title: ${title}`,
+                        `- Roles: ${roles.map((r) => r.name).join(', ')}`,
+                    ].join('\n')
+                ).setTitle('/reactionrole command used');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
 
                 interaction.editReply({
                     embeds: [EmbedGenerator.basicEmbed('Reaction Role message created.')],

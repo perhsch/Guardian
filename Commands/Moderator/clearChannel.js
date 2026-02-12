@@ -1,12 +1,15 @@
 const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
+const { sendModLog } = require('../../Functions/modLog');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("clearchannel")
     .setDescription("Clear all messages in the channel")
     .setDMPermission(false),
 
-  async execute(interaction) {
+  async execute(interaction, client, dbGuild) {
     // check if user has permission to use the command
     if (
       !interaction.member.permissions.has(PermissionsBitField.ManageMessages)
@@ -34,6 +37,15 @@ module.exports = {
 
       deletedSize += deletedMessages.size;
     }
+
+    const logEmbed = EmbedGenerator.basicEmbed(
+      [
+        `- Moderator: ${interaction.user.tag}`,
+        `- Channel: <#${channel.id}>`,
+        `- Messages deleted: ${deletedSize}`,
+      ].join('\n')
+    ).setTitle('/clearchannel command used');
+    await sendModLog(interaction.guild, dbGuild, logEmbed);
 
     return interaction.followUp({
       content: `successfully deleted **${deletedSize}** messages in this channel.`,
