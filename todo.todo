@@ -11,7 +11,7 @@
     -- What needs to be changed
         : Core Features
 
-        - Use another package astead of discord-html-transcripts since it no longer works (URGENT)
+        - Add admin command apon logging to set announcement channels & giveaway channels and than update the corresponding commands.
 
         - Add a prefix, so any non-moderation command will only be available via prefix astead of slashs.
         - Rewrite some of the code, and upgrade the discordjs version (last of my priortity as im only one guy)
