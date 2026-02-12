@@ -14,7 +14,6 @@ Guardian offers a wide range of features including:
 
 - **🔨 Moderation Tools** - Ban, kick, warn, timeout, message management, and comprehensive logging
 - **⚙️ Administrator Features** - Anti-raid protection, verification systems, auto-roles, ticket system, and more
-- **🎮 Fun Commands** - Interactive games, entertainment commands, and community engagement tools
 - **📊 Information Commands** - Server, user, and bot information utilities
 - **🔧 Utility Features** - Reminders, AFK status, calculator, and various helpful tools
 - **🔄 Backup System** - Create and manage server backups
