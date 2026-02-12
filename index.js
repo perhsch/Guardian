@@ -180,45 +180,46 @@ client.on('guildCreate', async (guild) => {
 });
 
 client.on('messageCreate', (message) => {
-    if (message.mentions.has(client.user)) {
-        // Build an informative embed
-        const embed = new Discord.EmbedBuilder()
-            .setColor(0x5865f2)
-            .setTitle("Hello! I'm Guardian 🤖")
-            .setDescription(
-                'Thanks for mentioning me!\n\n**My default prefix is:** `/` (I use [slash commands](https://discord.com/developers/docs/interactions/application-commands))\n\nUse `/help` to get a list of commands or explore the resources below!'
-            )
-            .addFields(
-                { name: 'Quick Start', value: 'Type `/help` for a full command list.' },
-                { name: 'Support Server', value: '[Click here](https://discord.gg/)' } // your discord support server
-            )
-            .setFooter({
-                text: `Guardian Bot • Made for your server!`,
-                iconURL: client.user.displayAvatarURL(),
-            });
+    if (!message.mentions.has(client.user)) return;
+    if (message.reference) return;
+    const contentWithoutBotMention = message.content.replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '').trim();
+    if (contentWithoutBotMention.length > 0) return;
 
-        // Buttons for more actions/resources
-        const row = new Discord.ActionRowBuilder().addComponents(
-            new Discord.ButtonBuilder()
-                .setLabel('Invite Me')
-                .setStyle(Discord.ButtonStyle.Link)
-                .setURL(
-                    'https://discord.com/oauth2/authorize?client_id=' +
-                        client.user.id +
-                        '&permissions=8&scope=bot%20applications.commands'
-                ),
-            new Discord.ButtonBuilder()
-                .setLabel('Support Server')
-                .setStyle(Discord.ButtonStyle.Link)
-                .setURL('https://discord.gg/'),
-            new Discord.ButtonBuilder()
-                .setLabel('Website')
-                .setStyle(Discord.ButtonStyle.Link)
-                .setURL('https://google.com')
-        );
+    const embed = new Discord.EmbedBuilder()
+        .setColor(0x5865f2)
+        .setTitle("Hello! I'm Guardian 🤖")
+        .setDescription(
+            'Thanks for mentioning me!\n\n**My default prefix is:** `/` (I use [slash commands](https://discord.com/developers/docs/interactions/application-commands))\n\nUse `/help` to get a list of commands or explore the resources below!'
+        )
+        .addFields(
+            { name: 'Quick Start', value: 'Type `/help` for a full command list.' },
+            { name: 'Support Server', value: '[Click here](https://discord.gg/)' } // your discord support server
+        )
+        .setFooter({
+            text: `Guardian Bot • Made for your server!`,
+            iconURL: client.user.displayAvatarURL(),
+        });
 
-        message.reply({ embeds: [embed], components: [row] });
-    }
+    const row = new Discord.ActionRowBuilder().addComponents(
+        new Discord.ButtonBuilder()
+            .setLabel('Invite Me')
+            .setStyle(Discord.ButtonStyle.Link)
+            .setURL(
+                'https://discord.com/oauth2/authorize?client_id=' +
+                    client.user.id +
+                    '&permissions=8&scope=bot%20applications.commands'
+            ),
+        new Discord.ButtonBuilder()
+            .setLabel('Support Server')
+            .setStyle(Discord.ButtonStyle.Link)
+            .setURL('https://discord.gg/'),
+        new Discord.ButtonBuilder()
+            .setLabel('Website')
+            .setStyle(Discord.ButtonStyle.Link)
+            .setURL('https://google.com')
+    );
+
+    message.reply({ embeds: [embed], components: [row] });
 });
 
 Mongoose.connect(process.env.MONGODB_URL).then(async () => {
