@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const Transcripts = require('discord-html-transcripts');
+const { generateTranscript } = require('../../Functions/transcriptGenerator');
 
 const { GuildsManager } = require('../../Classes/GuildsManager');
 const EmbedGenerator = require('../../Functions/embedGenerator');
@@ -60,7 +60,7 @@ module.exports = {
                         .catch(() => null);
                     if (channel && channel instanceof Discord.TextChannel) {
                         try {
-                            const transcript = await Transcripts.generateFromMessages(
+                            const transcript = await generateTranscript(
                                 messages,
                                 interaction.channel
                             );
