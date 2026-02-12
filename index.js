@@ -1,16 +1,5 @@
 require('dotenv').config();
 
-// Polyfill for Node < 20: discord-html-transcripts/undici expects global File
-if (typeof globalThis.File === 'undefined' && typeof globalThis.Blob !== 'undefined') {
-    globalThis.File = class File extends Blob {
-        constructor(bits, name, options) {
-            super(bits, options || {});
-            this.name = name || '';
-            this.lastModified = (options && options.lastModified) || Date.now();
-        }
-    };
-}
-
 const Discord = require('discord.js');
 const Mongoose = require('mongoose');
 const Moment = require('moment');

@@ -17,7 +17,6 @@
         "canvacord": "^6.0.4",
         "captcha-generator-alphanumeric": "^1.10.0",
         "discord-gamecord": "^4.4.0",
-        "discord-html-transcripts": "^3.1.2",
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",
         "express": "^4.18.2",
