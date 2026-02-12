@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { setLockdown } = require('../../../Functions/antiRaidLockdown');
 const { sendModLog } = require('../../../Functions/modLog');
 
 module.exports = {
@@ -19,14 +20,35 @@ module.exports = {
         dbGuild.antiraid.raid = false;
         if (dbGuild.antiraid.lockdown.enabled) {
             dbGuild.antiraid.lockdown.active = false;
-
-            // un-execute lockdown
+            await setLockdown(interaction.guild, false);
         }
 
         const logEmbed = EmbedGenerator.basicEmbed(
             `- Moderator: ${interaction.user.tag}`
         ).setTitle('/antiraid stop_raid command used');
         await sendModLog(interaction.guild, dbGuild, logEmbed);
+
+        // Announce in the configured anti-raid channel, if any
+        if (dbGuild.antiraid.channel) {
+            const announceChannel = await interaction.guild.channels
+                .fetch(dbGuild.antiraid.channel)
+                .catch(() => null);
+            if (announceChannel && announceChannel.isTextBased()) {
+                announceChannel
+                    .send({
+                        embeds: [
+                            EmbedGenerator.basicEmbed(
+                                `🔓 | Raid mode has been disabled by ${interaction.user.tag}!${
+                                    dbGuild.antiraid.lockdown.enabled
+                                        ? '\n🔓 | This server has left lockdown mode!'
+                                        : ''
+                                }`
+                            ),
+                        ],
+                    })
+                    .catch(() => null);
+            }
+        }
 
         return EmbedGenerator.basicEmbed(
             `🔓 | Raid mode has been disabled!${

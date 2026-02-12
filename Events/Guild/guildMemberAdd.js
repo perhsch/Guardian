@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const moment = require('moment');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const { setLockdown } = require('../../Functions/antiRaidLockdown');
+const Guilds = require('../../Schemas/Guilds');
 const { GuildsManager } = require('../../Classes/GuildsManager');
 
 /** @type {Record<string, Set<String>>} */ const antiRaidTracking = {};
@@ -35,17 +37,17 @@ module.exports = {
                                 'antiraid.lockdown.active': guild.antiraid.lockdown.active,
                             },
                         }
-                    ).then(async (guild) => {
-                        if (!guild.antiraid.raid) {
-                            if (guild.antiraid.channel) {
+                    ).then(async (updatedGuild) => {
+                        if (updatedGuild.antiraid.raid) {
+                            if (updatedGuild.antiraid.channel) {
                                 /** @type {Discord.TextChannel} */ const channel =
-                                    await member.guild.channels.fetch(guild.antiraid.channel);
+                                    await member.guild.channels.fetch(updatedGuild.antiraid.channel);
                                 if (channel)
                                     channel.send({
                                         embeds: [
                                             EmbedGenerator.basicEmbed(
                                                 `🔒 | Raid mode has been enabled!${
-                                                    guild.antiraid.lockdown.enabled
+                                                    updatedGuild.antiraid.lockdown.enabled
                                                         ? '\n🔒 | This server has entered lockdown mode!'
                                                         : ''
                                                 }`
@@ -54,11 +56,12 @@ module.exports = {
                                     });
                             }
 
-                            if (guild.antiraid.lockdown.enabled) {
+                            if (updatedGuild.antiraid.lockdown.enabled) {
                                 // execute lockdown
+                                await setLockdown(member.guild, true);
                             }
 
-                            if (guild.antiraid.action === 'kick') {
+                            if (updatedGuild.antiraid.action === 'kick') {
                                 for (const id of antiRaidTracking[member.guild.id]) {
                                     member.guild.members
                                         .fetch(id)
@@ -77,7 +80,7 @@ module.exports = {
                                         })
                                         .catch((err) => null);
                                 }
-                            } else if (guild.antiraid.action === 'ban') {
+                            } else if (updatedGuild.antiraid.action === 'ban') {
                                 for (const id of antiRaidTracking[member.guild.id]) {
                                     member.guild.members
                                         .fetch(id)
