@@ -126,7 +126,7 @@ module.exports = {
 
         // Build the initial embed with live voting display
         const buildPollEmbed = (votes = null) => {
-            const embed = new EmbedBuilder()
+            const embed = EmbedGenerator.basicEmbed()
                 .setColor(0x5865f2)
                 .setTitle(`📊 ${question}`)
                 .setAuthor({
@@ -289,7 +289,7 @@ module.exports = {
                     }
 
                     const totalVotes = Object.values(votes).reduce((a, b) => a + b, 0);
-                    const resultsEmbed = new EmbedBuilder()
+                    const resultsEmbed = EmbedGenerator.basicEmbed()
                         .setColor(0x2ecc71)
                         .setTitle(`✅ Poll Results: ${question}`)
                         .setAuthor({

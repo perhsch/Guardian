@@ -52,7 +52,7 @@ module.exports = {
             active: false,
         });
 
-        const modEmbed = new Discord.EmbedBuilder()
+        const modEmbed = EmbedGenerator.basicEmbed()
             .setColor('Blue')
             .setTitle('Member warned')
             .setThumbnail(member.user.displayAvatarURL({ size: 256 }))

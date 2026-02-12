@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder } = require('discord.js')
 const math = require("mathjs")
+
+const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,12 +16,12 @@ module.exports = {
         try{
             result = math.evaluate(expression);
         } catch (e) {
-            const fail = new EmbedBuilder()
+            const fail = EmbedGenerator.basicEmbed()
             .setColor('#2f3136')
             .setDescription(`🔢 **Write your expression**\n\n> \`/calc 5*2+9\``)
             return interaction.reply({ embeds : [ fail ], ephemeral:true });;
         };
-        const calc = new EmbedBuilder()
+        const calc = EmbedGenerator.basicEmbed()
             .setColor('#2f3136')
             .setDescription(`<:blurple_bot:1115465243649380452> **${expression}**\n\n> ${result}`)
         return interaction.reply({embeds:[calc]});

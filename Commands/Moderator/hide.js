@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
+const { PermissionFlagsBits, ChannelType } = require('discord.js');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
 const { sendModLog } = require('../../Functions/modLog');
@@ -18,12 +18,14 @@ module.exports = {
 
   async execute(interaction, client, dbGuild) {
 
-    if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setDescription("You don't have `ManageChannels` permission.")
-      ], ephemeral: true
-    });
+    if (!interaction.member.permissions.has(PermissionFlagsBits.ManageChannels)) {
+      const noPermsEmbed = EmbedGenerator.basicEmbed()
+        .setDescription("You don't have `ManageChannels` permission.");
+      return interaction.reply({
+        embeds: [noPermsEmbed],
+        ephemeral: true,
+      });
+    }
 
     const channel = interaction.options.getChannel('channel');
     channel.edit({
@@ -40,7 +42,7 @@ module.exports = {
     ).setTitle('/hide command used');
     await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-    const embed = new EmbedBuilder()
+    const embed = EmbedGenerator.basicEmbed()
       .setDescription(`The Channel ${channel.name} Has Been Hidden Successfully`);
 
     await interaction.reply({

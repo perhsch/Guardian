@@ -46,7 +46,7 @@ module.exports = {
             };
         }
 
-        const announcementEmbed = new Discord.EmbedBuilder()
+        const announcementEmbed = EmbedGenerator.basicEmbed()
             .setColor(0xf1c40f) // Amber/gold for announcements
             .setTitle('📢 Server Announcement')
             .setDescription(message)

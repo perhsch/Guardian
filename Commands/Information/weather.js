@@ -1,6 +1,8 @@
 const Discord = require(`discord.js`);
 const weather = require(`weather-js`);
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
+
 module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('weather')
@@ -54,7 +56,7 @@ module.exports = {
                 else color = 0xff6b6b; // hot
             }
 
-            const embed = new Discord.EmbedBuilder()
+            const embed = EmbedGenerator.basicEmbed()
                 .setTitle(`Weather — ${locationName}`)
                 .setDescription(description)
                 .setColor(color)

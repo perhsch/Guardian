@@ -1,10 +1,11 @@
 const {
-    EmbedBuilder,
     ChannelType,
     PermissionFlagsBits,
     time,
     SlashCommandBuilder,
 } = require('discord.js');
+
+const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,7 +14,7 @@ module.exports = {
     async execute(interaction) {
         const channel = interaction.channel;
 
-        const replyEmbed = new EmbedBuilder()
+        const replyEmbed = EmbedGenerator.basicEmbed()
             .setColor(0x5865f2)
             .setAuthor({
                 name: `${channel.name}`,

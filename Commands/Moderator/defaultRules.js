@@ -1,4 +1,6 @@
-const { Discord, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require(`discord.js`);
+const { Discord, PermissionFlagsBits, SlashCommandBuilder } = require(`discord.js`);
+
+const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,7 +10,7 @@ module.exports = {
         .setDMPermission(false),
 
     async execute(interaction, client, dbGuild) {
-        const rulesEmbed = new EmbedBuilder()
+        const rulesEmbed = EmbedGenerator.basicEmbed()
             .setColor('#0099ff')
             .setTitle('Server Rules')
             .setDescription('These are the rules for the server.')

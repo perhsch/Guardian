@@ -1,5 +1,7 @@
 const Discord = require(`discord.js`);
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
+
 module.exports = {
     developer: true,
     data: new Discord.SlashCommandBuilder()
@@ -12,7 +14,7 @@ module.exports = {
      */
     async execute(interaction, client, dbGuild) {
         const guilds = client.guilds.cache.map((guild) => guild.name).join('\n');
-        const embed = new Discord.EmbedBuilder()
+        const embed = EmbedGenerator.basicEmbed()
             .setTitle('List of Servers')
             .setDescription(guilds)
             .setColor('#0099ff');

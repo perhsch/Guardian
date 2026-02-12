@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder } = require('discord.js');
 const emojis = require('../../Config/emojis.json');
+
+const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -38,7 +39,7 @@ module.exports = {
             }
         });
 
-        const embed = new EmbedBuilder()
+        const embed = EmbedGenerator.basicEmbed()
             .setColor('Purple')
             .setFooter({ text: `${inviter.username}'s Invites` })
             .setTimestamp()

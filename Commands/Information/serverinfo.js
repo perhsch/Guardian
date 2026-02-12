@@ -1,4 +1,6 @@
-const { EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+
+const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -20,7 +22,7 @@ module.exports = {
 
         const fetchedOwner = await Promise.resolve(interaction.guild.fetchOwner());
 
-        const replyEmbed = new EmbedBuilder()
+        const replyEmbed = EmbedGenerator.basicEmbed()
             .setColor('blue')
             .setAuthor({ name: `${interaction.guild.name}`, iconURL: serverIcon })
             .setThumbnail(serverIcon)

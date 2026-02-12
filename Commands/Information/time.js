@@ -1,10 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
+
+const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('time').setDescription('the current time and date'),
 
     async execute(interaction) {
-        const embed = new EmbedBuilder()
+        const embed = EmbedGenerator.basicEmbed()
             .setTimestamp()
             .setThumbnail(
                 'https://cdn.discordapp.com/attachments/1080219392337522718/1081227919256457246/largepurple.png'

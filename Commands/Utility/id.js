@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder } = require('discord.js')
+
+const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,7 +12,7 @@ module.exports = {
     async execute(interaction, client) {
         let person = interaction.options.getUser('user');
         if (!person) person = interaction.user;
-        const id = new EmbedBuilder()
+        const id = EmbedGenerator.basicEmbed()
             .setColor('#2f3136')
             .setDescription(`${person} <:blurple_line:1115975887939182612> **${person.id}**`)
             .setFooter({text:`The ID of the user pinged.`})

@@ -1,5 +1,7 @@
 const Discord = require(`discord.js`);
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
+
 module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('docs')
@@ -13,7 +15,7 @@ module.exports = {
             query
         )}`;
 
-        const embed = new Discord.EmbedBuilder()
+        const embed = EmbedGenerator.basicEmbed()
             .setColor(0x5865f2)
             .setTitle(`Discord.js Documentation Search`)
             .addFields({

@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const Mongoose = require('mongoose');
 
+const EmbedGenerator = require('../../Functions/embedGenerator');
 const Guilds = require('../../Schemas/Guilds');
 const { emojis: e } = require('../../Config/emojis.json');
 
@@ -19,7 +20,7 @@ module.exports = {
         const minutes = Math.floor(uptime / 60) % 60;
         const seconds = Math.floor(uptime % 60);
 
-        const replyEmbed = new Discord.EmbedBuilder()
+        const replyEmbed = EmbedGenerator.basicEmbed()
             .addFields(
                 {
                     name: `${e.blurple_discord_at} Name`,
