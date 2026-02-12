@@ -1,8 +1,15 @@
 {
     "emojis": {
-        "github": "<:github:1448032418786443397>",
-        "bot": "<:bot:1448031919563608280>",
-        "developer": "<:developer:1448031949934297140>",
-        "tools": "<:ttools:1448031980603048100>"
+        "github": "<:github:1471350834632593520>",
+        "blurple_discord_at": "<:peekwumpus:1471350868237488232>",
+        "blurple_bot": "<:blurplebot:1471351367397412986>",
+        "blurple_invite": "<:inviteppl:1471350934608154888>",
+        "blurple_employee": "<:blurplestaff:1471350991570862231>",
+        "blurple_members": "<:blurplemembers:1471350990392397867>",
+        "blurple_chat": "<:blurplechat:1471350992888004711>",
+        "nodejs": "<:nodejs:1471350804224020663>",
+        "discord_js": "<:discordjs:1471350726835044468>",
+        "blurple_lock": "<:mongodb:1471350770602479863>",
+        "blurple_link": "<:blurplelink:1471352149299433482>"
     }
 }

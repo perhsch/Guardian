@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const Mongoose = require('mongoose');
 
 const Guilds = require('../../Schemas/Guilds');
+const { emojis: e } = require('../../Config/emojis.json');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -21,27 +22,27 @@ module.exports = {
         const replyEmbed = new Discord.EmbedBuilder()
             .addFields(
                 {
-                    name: `<:blurple_discord_at:1115466237263237230> Name`,
+                    name: `${e.blurple_discord_at} Name`,
                     value: `Guardian`,
                     inline: true,
                 },
                 {
-                    name: `<:blurple_invite:1115466603325313034> ID`,
+                    name: `${e.blurple_invite} ID`,
                     value: `1053736067129421884`,
                     inline: true,
                 },
                 {
-                    name: `<:blurple_employee:1115467009791115285> Developers`,
-                    value: `Maxxie`,
+                    name: `${e.blurple_employee} Developers`,
+                    value: `Brennan (@rockyrocksrock)`,
                     inline: true,
                 },
                 {
-                    name: '<:blurple_bot:1115465243649380452> Total Guilds',
+                    name: `${e.blurple_bot} Total Guilds`,
                     value: `\`${interaction.client.guilds.cache.size}\``,
                     inline: true,
                 },
                 {
-                    name: '<:blurple_members:1115465488227635272> Total Users',
+                    name: `${e.blurple_members} Total Users`,
                     value: `\`${
                         (
                             await Guilds.aggregate([
@@ -53,18 +54,18 @@ module.exports = {
                     inline: true,
                 },
                 {
-                    name: '<:blurple_chat:1115465656549265509> Uptime',
+                    name: `${e.blurple_chat} Uptime`,
                     value: `\`${days}d:${hours}h:${minutes}m:${seconds}s\``,
                     inline: true,
                 },
                 {
                     name: `Dependency versions`,
-                    value: `<:nodejs:1115464281165668362> NodeJS: \`${process.version}\`\n<:discord_js:1115464430646468628> Discord.JS: \`${Discord.version}\`\n<:blurple_lock:1115464901377392671> Mongoose: \`${Mongoose.version}\``,
+                    value: `${e.nodejs} NodeJS: \`${process.version}\`\n${e.discord_js} Discord.JS: \`${Discord.version}\`\n${e.blurple_lock} Mongoose: \`${Mongoose.version}\``,
                     inline: true,
                 },
                 {
                     name: `Links`,
-                    value: '<:github:1109625282752688189> [**Github**](https://github.com/Guardians-Stuff/Guardian)\n<:blurple_link:1115463946565079040> [**Invite**](https://discord.com/oauth2/authorize?client_id=1130480504097996832&scope=bot)',
+                    value: `${e.github} [**Github**](https://github.com/Guardians-Stuff/Guardian)\n${e.blurple_link} [**Invite**](https://discord.com/oauth2/authorize?client_id=1130480504097996832&scope=bot)`,
                     inline: true,
                 }
             )
