@@ -12,7 +12,6 @@ function escapeHtml(unsafe) {
 }
 
 /**
- * Generate a simple HTML transcript from a collection/array of messages.
  * @param {Discord.Collection<string, Discord.Message>|Array<Discord.Message>} messages
  * @param {Discord.TextChannel|import('discord.js').BaseChannel} channel
  * @returns {Discord.AttachmentBuilder}
