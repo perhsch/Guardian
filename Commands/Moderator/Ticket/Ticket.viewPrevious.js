@@ -12,8 +12,10 @@ module.exports = {
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
+     * @param {import('../../../Classes/UsersManager').UsersManager} dbUser
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild, dbUser) {
         /** @type {Discord.TextChannel} */ let user = interaction.options.getUser('user');
 
         if (!user) {
@@ -57,6 +59,6 @@ module.exports = {
             embeds.push(embed);
         }
 
-        await EmbedGenerator.pagesEmbed(interaction, embeds);
+        await EmbedGenerator.pagesEmbed(interaction, embeds, false, dbUser?.language);
     },
 };

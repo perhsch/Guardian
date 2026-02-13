@@ -13,8 +13,9 @@ module.exports = {
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
      * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
+     * @param {import('../../../Classes/UsersManager').UsersManager} dbUser
      */
-    async execute(interaction, client, dbGuild) {
+    async execute(interaction, client, dbGuild, dbUser) {
         const reminders = await Reminders.find({ user: interaction.user.id }).sort({ expires: 1 });
         if (reminders.length === 0)
             return { embeds: [EmbedGenerator.errorEmbed('No reminders found.')], ephemeral: true };
@@ -41,6 +42,6 @@ module.exports = {
             embeds.push(embed);
         }
 
-        await EmbedGenerator.pagesEmbed(interaction, embeds, true);
+        await EmbedGenerator.pagesEmbed(interaction, embeds, true, dbUser?.language);
     },
 };

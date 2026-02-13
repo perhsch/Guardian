@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const Moment = require('moment');
 const ms = require('ms');
+const { translateResponse } = require('./translate');
 
 /**
  * @param {String} [description]
@@ -64,15 +65,24 @@ function infractionEmbed(guild, issuer, type, duration, expires, reason = 'Unspe
  * @param {Discord.ChatInputCommandInteraction} interaction
  * @param {Array<Discord.MessageEmbed>} embeds
  * @param {Boolean} ephemeral
+ * @param {String} [targetLang] - User's language for translation (e.g. from dbUser.language)
  */
-async function pagesEmbed(interaction, embeds, ephemeral = false) {
+async function pagesEmbed(interaction, embeds, ephemeral = false, targetLang = null) {
     if (embeds.length === 0)
         return interaction.reply({ content: 'There was an error.', ephemeral: true });
-    if (embeds.length === 1)
+    if (embeds.length === 1) {
+        if (targetLang && targetLang.toLowerCase() !== 'en') {
+            await translateResponse({ content: null, embeds, ephemeral }, targetLang);
+        }
         return interaction.reply({
             embeds: [embeds[0].setFooter({ text: 'Page 1/1' })],
             ephemeral: ephemeral,
         });
+    }
+
+    if (targetLang && targetLang.toLowerCase() !== 'en') {
+        await translateResponse({ content: null, embeds, ephemeral }, targetLang);
+    }
 
     let page = 0;
     const replyPayload = {

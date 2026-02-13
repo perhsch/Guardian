@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 const { GuildsManager } = require('../../Classes/GuildsManager');
 const { UsersManager } = require('../../Classes/UsersManager');
-const { translateResponse } = require('../../Functions/translate');
+const { translateResponse, translateText } = require('../../Functions/translate');
 
 module.exports = {
     name: 'interactionCreate',
@@ -13,24 +13,35 @@ module.exports = {
     async execute(interaction, client) {
         if (!interaction.isChatInputCommand()) return;
 
+        const guildId = interaction.guild?.id || 'dm';
+        const dbUser = await UsersManager.fetch(interaction.user.id, guildId);
+        const userLang = dbUser.language;
+
+        const translateContent = async (text) =>
+            userLang && userLang.toLowerCase() !== 'en' ? await translateText(text, userLang) : text;
+
         let executeFunction;
 
         const command = client.commands.get(interaction.commandName);
         if (!command)
             return interaction.reply({
-                content: 'This command is outdated.',
+                content: await translateContent('This command is outdated.'),
                 ephemeral: true,
             });
         if (command.enabled === false)
             return interaction.reply({
-                content: 'The bot is currently under maintenance. Please try again later.',
+                content: await translateContent(
+                    'The bot is currently under maintenance. Please try again later.'
+                ),
                 ephemeral: true,
             });
         executeFunction = command.execute;
 
         if (command.developer && interaction.user.id !== '1447738202600505407') {
             return interaction.reply({
-                content: 'This command is only available to the developer.',
+                content: await translateContent(
+                    'This command is only available to the developer.'
+                ),
                 ephemeral: true,
             });
         }
@@ -42,15 +53,16 @@ module.exports = {
             );
             if (!subCommandFile)
                 return interaction.reply({
-                    content: 'This sub command is outdated.',
+                    content: await translateContent('This sub command is outdated.'),
                     ephemeral: true,
                 });
 
             executeFunction = subCommandFile.execute;
         }
 
-        const dbGuild = await GuildsManager.fetch(interaction.guild.id);
-        const dbUser = await UsersManager.fetch(interaction.user.id, interaction.guild.id);
+        const dbGuild = interaction.guild
+            ? await GuildsManager.fetch(interaction.guild.id)
+            : null;
         const response = await executeFunction(interaction, client, dbGuild, dbUser);
 
         if (response) {
