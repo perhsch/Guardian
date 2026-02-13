@@ -7,7 +7,7 @@
         - Anti-Nuke sys
         - Configurable modmail sys
 
-    -- What needs to be changed
+    -- Changes & Bugs
         : Core Features
 
         - Add admin command apon logging to set announcement channels & giveaway channels and than update the corresponding commands.
