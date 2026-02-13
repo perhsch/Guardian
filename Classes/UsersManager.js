@@ -44,6 +44,24 @@ class UsersManager {
             () => null
         );
     }
+
+    /**
+     * @type {String}
+     */
+    get language() {
+        return this.document.language || 'en';
+    }
+
+    /**
+     * @param {String} language
+     */
+    set language(language) {
+        this.document.language = language;
+        Users.updateOne(
+            { user: this.id, guild: this.guild },
+            { $set: { language: language } }
+        ).then(() => null);
+    }
 }
 
 module.exports = { UsersManager };

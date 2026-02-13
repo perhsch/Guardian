@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 
 const { GuildsManager } = require('../../Classes/GuildsManager');
 const { UsersManager } = require('../../Classes/UsersManager');
+const { translateResponse } = require('../../Functions/translate');
 
 module.exports = {
     name: 'interactionCreate',
@@ -53,7 +54,7 @@ module.exports = {
         const response = await executeFunction(interaction, client, dbGuild, dbUser);
 
         if (response) {
-            const parsedResponse = {
+            let parsedResponse = {
                 content: response.content || null,
                 embeds: response.embeds || [],
                 ephemeral: response.ephemeral || false,
@@ -61,6 +62,11 @@ module.exports = {
 
             if (response instanceof Discord.EmbedBuilder) parsedResponse.embeds.push(response);
             if (typeof response === 'string') parsedResponse.content = response;
+
+            const userLang = dbUser.language;
+            if (userLang && userLang.toLowerCase() !== 'en') {
+                parsedResponse = await translateResponse(parsedResponse, userLang);
+            }
 
             if (interaction.replied || interaction.deferred) {
                 interaction.editReply(parsedResponse);
