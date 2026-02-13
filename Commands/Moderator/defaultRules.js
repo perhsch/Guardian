@@ -1,37 +1,78 @@
-const { Discord, PermissionFlagsBits, SlashCommandBuilder } = require(`discord.js`);
-
-const EmbedGenerator = require('../../Functions/embedGenerator');
+const Discord = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rules')
-        .setDescription('Gives the server basic rules.')
-        //.setDefaultMemberPermissions(Discord.PermissionFlagsBits.ADMINISTRATOR)
+        .setDescription('Posts default server rules to the current channel..')
         .setDMPermission(false),
 
     async execute(interaction, client, dbGuild) {
-        const rulesEmbed = EmbedGenerator.basicEmbed()
-            .setColor('#0099ff')
-            .setTitle('Server Rules')
-            .setDescription('These are the rules for the server.')
+        const guild = interaction.guild;
+
+        const rulesEmbed = new Discord.EmbedBuilder()
+            .setColor(0x5865f2)
+            .setAuthor({
+                name: `${guild.name} — Server Rules`,
+                iconURL: guild.iconURL({ size: 64 }),
+            })
+            .setThumbnail(guild.iconURL({ size: 256 }))
+            .setDescription(
+                [
+                    '**Welcome.** By participating here you agree to follow these rules.',
+                    'Breaking them may result in warnings, timeouts, or a ban.',
+                    '',
+                    '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬',
+                ].join('\n')
+            )
             .addFields(
-                { name: 'Rule 1', value: 'Be respectful to others.' },
-                { name: 'Rule 2', value: 'No spamming or flooding the chat with messages.' },
-                { name: 'Rule 3', value: 'No adult content or NSFW content.' },
-                { name: 'Rule 4', value: 'No hate speech or discriminatory remarks.' },
-                { name: 'Rule 5', value: 'No hacking, exploiting, or cheating.' },
-                { name: 'Rule 6', value: 'No sharing of personal information.' },
-                { name: 'Rule 7', value: 'No advertising or self-promotion.' },
-                { name: 'Rule 8', value: 'No sharing of pirated or illegal content.' },
-                { name: 'Rule 9', value: 'No excessive swearing or offensive language.' },
                 {
-                    name: 'Rule 10',
-                    value: "Follow Discord's Terms of Service and Community Guidelines.",
+                    name: '🤝 Respect & conduct',
+                    value: [
+                        '**1.** Be respectful to everyone. No harassment, bullying, or personal attacks.',
+                        '**2.** No hate speech, slurs, or discriminatory remarks.',
+                        '**3.** No excessive swearing or deliberately offensive language.',
+                    ].join('\n'),
+                    inline: false,
+                },
+                {
+                    name: '💬 Chat & behavior',
+                    value: [
+                        '**4.** No spamming, flooding, or repetitive messages.',
+                        '**5.** No advertising, self-promotion, or unsolicited DMs without permission.',
+                        '**6.** Use the correct channels and follow staff directions.',
+                    ].join('\n'),
+                    inline: false,
+                },
+                {
+                    name: '🛡️ Safety & content',
+                    value: [
+                        '**7.** No NSFW or adult content.',
+                        '**8.** No sharing of personal information (doxxing) — yours or others.',
+                        '**9.** No pirated, illegal, or malicious content (links, files, etc.).',
+                    ].join('\n'),
+                    inline: false,
+                },
+                {
+                    name: '⚖️ Integrity',
+                    value: [
+                        '**10.** No hacking, exploiting, cheating, or impersonation.',
+                        "**11.** Follow Discord's [Terms of Service](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).",
+                    ].join('\n'),
+                    inline: false,
                 }
             )
+            .setFooter({
+                text: `Rules • ${guild.name}`,
+                iconURL: guild.iconURL({ size: 32 }),
+            })
             .setTimestamp();
-        //.setFooter('Server Rules');
 
-        await interaction.reply({ embeds: [rulesEmbed] });
+        await interaction.reply({
+            content: 'Rules posted.',
+            ephemeral: true,
+        });
+
+        await interaction.channel.send({ embeds: [rulesEmbed] });
     },
 };

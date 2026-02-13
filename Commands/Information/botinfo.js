@@ -34,7 +34,7 @@ module.exports = {
                 },
                 {
                     name: `${e.blurple_employee} Developers`,
-                    value: `Brennan (@rockyrocksrock)`,
+                    value: `Brennan's Development`,
                     inline: true,
                 },
                 {
