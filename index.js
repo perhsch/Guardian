@@ -193,7 +193,7 @@ client.on('messageCreate', (message) => {
         )
         .addFields(
             { name: 'Quick Start', value: 'Type `/help` for a full command list.' },
-            { name: 'Support Server', value: '[Click here](https://discord.gg/)' } // your discord support server
+            { name: 'Support Server', value: '[Click here](https://discord.gg/5nWZ8BJae4)' } // your discord support server
         )
         .setFooter({
             text: `Guardian Bot • Made for your server!`,
