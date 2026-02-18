@@ -1,8 +1,25 @@
 const Discord = require('discord.js');
-
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const Guilds = require('../../Schemas/Guilds');
 
-function buildAutomodEmbed(dbGuild) {
+const AUTOMOD_PATHS = {
+    antiraid: 'antiraid',
+    antiZalgo: 'automod.antiZalgo',
+    antiBadwords: 'automod.antiBadwords',
+    antiNuke: 'automod.antiNuke',
+    antiAdvertisement: 'automod.antiAdvertisement',
+};
+
+function isAutomodEnabled(doc, feature) {
+    const path = AUTOMOD_PATHS[feature];
+    if (!path) return false;
+    const val = path.split('.').reduce((o, k) => o?.[k], doc || {});
+    const schemaPath = Guilds.schema.path(path + '.enabled');
+    const defaultEnabled = schemaPath?.defaultValue ?? false;
+    return (val?.enabled ?? defaultEnabled) === true;
+}
+
+function buildAutomodEmbed(dbGuild, interaction = null) {
     const doc = dbGuild?.document || {};
     const antiraid = doc.antiraid || {};
     const automod = doc.automod || {};
@@ -11,69 +28,153 @@ function buildAutomodEmbed(dbGuild) {
     const antiNuke = automod.antiNuke || {};
     const antiAd = automod.antiAdvertisement || {};
 
-    const status = (enabled) => (enabled ? '✅ Enabled' : '❌ Disabled');
+    const status = (enabled) => enabled
+        ? '`🟢 ENABLED`'
+        : '`🔴 DISABLED`';
 
-    const fields = [
-        {
-            name: '🛡️ Anti Raid',
-            value: [
-                status(antiraid.enabled),
-                antiraid.enabled
-                    ? `Threshold: \`${antiraid.joinAmount || '?'} joins / ${antiraid.joinWithin || '?'}s\`\nAction: \`${antiraid.action || 'none'}\` | Lockdown: ${antiraid.lockdown?.enabled ? 'Yes' : 'No'}`
-                    : 'Prevents mass joins during raids.',
+    function prettyAntiraid() {
+        if (!isAutomodEnabled(doc, 'antiraid')) {
+            return [
+                '**Status:** ' + status(false),
+                '> Prevents mass joins during raids.',
+                '',
+                '`Configure this to secure your community from join attacks.`'
+            ].join('\n');
+        }
+
+        return [
+            '**Status:** ' + status(true),
+            `**Threshold:** \`${antiraid.joinAmount || '?'}\` users in \`${antiraid.joinWithin || '?'}\`s`,
+            `**Action:** \`${antiraid.action || 'none'}\` | **Lockdown:** ${antiraid.lockdown?.enabled ? '`ACTIVE`' : '`INACTIVE`'}`,
+            '',
+            `${antiraid.notice ? `> Notice: ${antiraid.notice}` : ''}`
+        ].join('\n');
+    }
+    function prettyAntiZalgo() {
+        if (!isAutomodEnabled(doc, 'antiZalgo')) {
+            return [
+                '**Status:** ' + status(false),
+                '> Blocks corrupted or glitchy text (Zalgo).'
+            ].join('\n');
+        }
+        return [
+            '**Status:** ' + status(true),
+            `**Action:** \`${antiZalgo.action || 'delete'}\``,
+            ''
+        ].join('\n');
+    }
+    function prettyAntiBadwords() {
+        if (!isAutomodEnabled(doc, 'antiBadwords')) {
+            return [
+                '**Status:** ' + status(false),
+                '> Filters and blocks configured bad words.'
+            ].join('\n');
+        }
+        return [
+            '**Status:** ' + status(true),
+            `**Words Blocked:** \`${(antiBadwords.words || []).length}\``,
+            `**Action:** \`${antiBadwords.action || 'delete'}\``
+        ].join('\n');
+    }
+    function prettyAntiNuke() {
+        if (!isAutomodEnabled(doc, 'antiNuke')) {
+            return [
+                '**Status:** ' + status(false),
+                '> Prevents mass deletion of channels/roles.'
+            ].join('\n');
+        }
+        return [
+            '**Status:** ' + status(true),
+            `**Max/Min:** \`${antiNuke.maxChannelsPerMinute || 3}\` channels / \`${antiNuke.maxRolesPerMinute || 3}\` roles/min`,
+            `**Action:** \`${antiNuke.action || 'ban'}\``
+        ].join('\n');
+    }
+    function prettyAntiAd() {
+        if (!isAutomodEnabled(doc, 'antiAdvertisement')) {
+            return [
+                '**Status:** ' + status(false),
+                '> Blocks Discord invite links/advertising.'
+            ].join('\n');
+        }
+        const wl = antiAd.whitelistChannels || [];
+        return [
+            '**Status:** ' + status(true),
+            `**Action:** \`${antiAd.action || 'delete'}\``,
+            `**Whitelisted Channels:** \`${wl.length}\``
+        ].join('\n');
+    }
+
+    const overview = [
+        '```ansi',
+        '\u001b[1;36mGuardian Automod Overview\u001b[0m',
+        '```',
+        '',
+        '**🛡️  Automod is your Discord server\'s automatic guardian!**',
+        '— Protects your community 24/7 against common threats and spam.',
+        '',
+        '**Systems Enabled:**',
+        `> 🛡️ Anti Raid      —   ${status(isAutomodEnabled(doc, 'antiraid'))}`,
+        `> 🔤 Anti Zalgo     —   ${status(isAutomodEnabled(doc, 'antiZalgo'))}`,
+        `> 🚫 Anti Badwords  —   ${status(isAutomodEnabled(doc, 'antiBadwords'))}`,
+        `> 💣 Anti Nuke      —   ${status(isAutomodEnabled(doc, 'antiNuke'))}`,
+        `> 📢 Anti Ad        —   ${status(isAutomodEnabled(doc, 'antiAdvertisement'))}`,
+        ''
+    ].join('\n');
+
+    const embed = EmbedGenerator.basicEmbed(null)
+        .setAuthor({
+            name: interaction?.guild?.name
+                ? `Automod Configuration for ${interaction.guild.name}`
+                : "Automod Configuration",
+            iconURL: interaction?.guild?.iconURL?.() || undefined
+        })
+        .setTitle('🛡️ AUTOMOD CONTROL DASHBOARD')
+        .setColor(0x14b089)
+        .setDescription(overview)
+        .addFields([
+            {
+                name: '🛡️ Anti Raid',
+                value: prettyAntiraid(),
+                inline: false,
+            },
+            {
+                name: '🔤 Anti Zalgo',
+                value: prettyAntiZalgo(),
+                inline: true,
+            },
+            {
+                name: '🚫 Anti Badwords',
+                value: prettyAntiBadwords(),
+                inline: true,
+            },
+            {
+                name: '💣 Anti Nuke',
+                value: prettyAntiNuke(),
+                inline: true,
+            },
+            {
+                name: '📢 Anti Advertisement',
+                value: prettyAntiAd(),
+                inline: true,
+            },
+        ])
+        .setFooter({
+            text: '⚙️  Click "Configure Automod" below to change settings and keep your server secure!'
+        })
+        .setTimestamp();
+
+    embed.addFields([{
+        name: 'ℹ️  Quick Legend',
+        value: [
+            '`🟢 Enabled` = Feature Active   |   `🔴 Disabled` = Feature Off',
+            'Update settings anytime with `/automod` or click “Configure Automod” below.'
         ].join('\n'),
-            inline: true,
-        },
-        {
-            name: '🔤 Anti Zalgo',
-            value: [
-                status(antiZalgo.enabled),
-                antiZalgo.enabled ? `Action: \`${antiZalgo.action || 'delete'}\`` : 'Blocks corrupted/glitchy text.',
-            ].join('\n'),
-            inline: true,
-        },
-        {
-            name: '🚫 Anti Badwords',
-            value: [
-                status(antiBadwords.enabled),
-                antiBadwords.enabled
-                    ? `Words: \`${(antiBadwords.words || []).length}\` | Action: \`${antiBadwords.action || 'delete'}\``
-                    : 'Filters configured bad words.',
-            ].join('\n'),
-            inline: true,
-        },
-        {
-            name: '💣 Anti Nuke',
-            value: [
-                status(antiNuke.enabled),
-                antiNuke.enabled
-                    ? `Max: \`${antiNuke.maxChannelsPerMinute || 3} channels / ${antiNuke.maxRolesPerMinute || 3} roles\` per min\nAction: \`${antiNuke.action || 'ban'}\``
-                    : 'Prevents mass channel/role deletion.',
-            ].join('\n'),
-            inline: true,
-        },
-        {
-            name: '📢 Anti Advertisement',
-            value: [
-                status(antiAd.enabled),
-                antiAd.enabled
-                    ? `Action: \`${antiAd.action || 'delete'}\` | Whitelist: \`${(antiAd.whitelistChannels || []).length} channels\``
-                    : 'Blocks Discord invite links.',
-            ].join('\n'),
-            inline: true,
-        },
-    ];
-
-    return EmbedGenerator.basicEmbed(null)
-        .setTitle('🛡️ Automod Configuration')
-        .setDescription(
-            'Configure your server\'s automatic moderation systems. Click **Configure** to change settings.'
-        )
-        .addFields(fields)
-        .setFooter({ text: 'Use the Configure button below to change settings' });
+        inline: false
+    }]);
+    return embed;
 }
 
-function getAutomodComponents(dbGuild) {
+function getAutomodComponents() {
     return [
         new Discord.ActionRowBuilder().addComponents(
             new Discord.ButtonBuilder()
@@ -95,8 +196,8 @@ module.exports = {
     buildAutomodEmbed,
     getAutomodComponents,
     async execute(interaction, client, dbGuild) {
-        const embed = buildAutomodEmbed(dbGuild);
-        const components = getAutomodComponents(dbGuild);
+        const embed = buildAutomodEmbed(dbGuild, interaction);
+        const components = getAutomodComponents();
         return {
             embeds: [embed],
             components,
