@@ -140,6 +140,60 @@ class GuildsManagerLogs {
             () => null
         );
     }
+
+    /**
+     * @type {String | null}
+     */
+    get suggestionsChannel() {
+        return this.parent.document.logs.suggestionsChannel ?? null;
+    }
+
+    /**
+     * @param {String | null} channel
+     */
+    set suggestionsChannel(channel) {
+        this.parent.document.logs.suggestionsChannel = channel;
+        Guilds.updateOne(
+            { guild: this.parent.id },
+            { $set: { 'logs.suggestionsChannel': channel } }
+        ).then(() => null);
+    }
+
+    /**
+     * @type {String | null}
+     */
+    get announcementChannel() {
+        return this.parent.document.logs.announcementChannel ?? null;
+    }
+
+    /**
+     * @param {String | null} channel
+     */
+    set announcementChannel(channel) {
+        this.parent.document.logs.announcementChannel = channel;
+        Guilds.updateOne(
+            { guild: this.parent.id },
+            { $set: { 'logs.announcementChannel': channel } }
+        ).then(() => null);
+    }
+
+    /**
+     * @type {String | null}
+     */
+    get giveawayChannel() {
+        return this.parent.document.logs.giveawayChannel ?? null;
+    }
+
+    /**
+     * @param {String | null} channel
+     */
+    set giveawayChannel(channel) {
+        this.parent.document.logs.giveawayChannel = channel;
+        Guilds.updateOne(
+            { guild: this.parent.id },
+            { $set: { 'logs.giveawayChannel': channel } }
+        ).then(() => null);
+    }
 }
 
 class GuildsManagerAutoRole {

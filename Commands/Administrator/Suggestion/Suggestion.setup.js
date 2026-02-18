@@ -6,14 +6,7 @@ const { sendModLog } = require('../../../Functions/modLog');
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('setup')
-        .setDescription('Setup the suggestion system.')
-        .addChannelOption((option) =>
-            option
-                .setName('channel')
-                .setDescription('Channel to send suggestion to.')
-                .addChannelTypes(Discord.ChannelType.GuildText)
-                .setRequired(true)
-        )
+        .setDescription('Enable and configure the suggestion system.')
         .addBooleanOption((option) =>
             option
                 .setName('add_reactions')
@@ -25,25 +18,26 @@ module.exports = {
      * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
      */
     async execute(interaction, client, dbGuild) {
-        /** @type {Discord.TextChannel} */ const channel = interaction.options.getChannel(
-            'channel',
-            true
-        );
         const reactions = interaction.options.getBoolean('add_reactions') || false;
 
+        if (!dbGuild.suggestion.channel) {
+            return EmbedGenerator.errorEmbed(
+                'Suggestion channel is not set. Please set the suggestion channel in the main admin setup command first.'
+            );
+        }
+
         dbGuild.suggestion.enabled = true;
-        dbGuild.suggestion.channel = channel.id;
         dbGuild.suggestion.reactions = reactions;
 
         const logEmbed = EmbedGenerator.basicEmbed(
             [
                 `- Moderator: ${interaction.user.tag}`,
-                `- Channel: <#${channel.id}>`,
+                `- Channel: <#${dbGuild.suggestion.channel}>`,
                 `- Add reactions: ${reactions}`,
             ].join('\n')
         ).setTitle('/suggestion setup command used');
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-        return EmbedGenerator.basicEmbed('The Suggestion system has enabled.');
+        return EmbedGenerator.basicEmbed('The Suggestion system has been enabled.');
     },
 };

@@ -9,15 +9,17 @@ module.exports = {
         .setDescription('Announce a message to the server')
         .setDMPermission(false)
         .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .addStringOption((option) =>
+            option.setName('message').setDescription('Message to announce').setRequired(true)
+        )
         .addChannelOption((option) =>
             option
                 .setName('channel')
-                .setDescription('Channel to announce the message in')
-                .setRequired(true)
+                .setDescription(
+                    'Channel to announce in (optional if default set via /logging setup)'
+                )
+                .setRequired(false)
                 .addChannelTypes(Discord.ChannelType.GuildText)
-        )
-        .addStringOption((option) =>
-            option.setName('message').setDescription('Message to announce').setRequired(true)
         ),
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
@@ -25,10 +27,24 @@ module.exports = {
      * @param {import('../../Classes/GuildsManager').GuildsManager} dbGuild
      */
     async execute(interaction, client, dbGuild) {
-        /** @type {Discord.TextChannel} */ const channel = interaction.options.getChannel(
-            'channel',
-            true
+        let /** @type {Discord.TextChannel | null} */ channel = interaction.options.getChannel(
+            'channel'
         );
+        if (!channel && dbGuild.logs.announcementChannel) {
+            channel = await interaction.guild.channels
+                .fetch(dbGuild.logs.announcementChannel)
+                .catch(() => null);
+        }
+        if (!channel || !(channel instanceof Discord.TextChannel)) {
+            return {
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'No channel specified. Provide a channel option or set a default announcement channel via `/logging setup`.'
+                    ),
+                ],
+                ephemeral: true,
+            };
+        }
         const message = interaction.options.getString('message', true);
 
         if (
