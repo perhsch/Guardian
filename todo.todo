@@ -10,11 +10,11 @@
         - Config command to configure everything with one click
         - Automod cases command 
         - Starboard (perhaps, not sure yet)
-        - 
 
     -- Changes & Bugs
         : Core Features
 
+        - Fix language system to actually translate everything if a language is set
         - Better suggestions to show percentage, corresponding with reactions.
         - Make logs more detailed & better formatted
         - Add admin command apon logging to set announcement channels & giveaway channels and than update the corresponding commands.
