@@ -38,17 +38,18 @@ module.exports = {
                 ephemeral: true,
             };
 
-        channel
-            .send({
-                embeds: [
-                    EmbedGenerator.basicEmbed(suggestion)
-                        .setAuthor({
-                            name: interaction.user.tag,
-                            iconURL: interaction.user.displayAvatarURL(),
-                        })
-                        .setTimestamp(),
-                ],
+        const embed = EmbedGenerator.basicEmbed(suggestion)
+            .setAuthor({
+                name: interaction.user.tag,
+                iconURL: interaction.user.displayAvatarURL(),
             })
+            .setTimestamp();
+        if (dbGuild.suggestion.reactions) {
+            embed.setFooter({ text: '✅ 0% | ❌ 0%' });
+        }
+
+        channel
+            .send({ embeds: [embed] })
             .then(async (sent) => {
                 if (dbGuild.suggestion.reactions) {
                     await sent.react('✅');
