@@ -126,10 +126,17 @@ module.exports = {
                     EmbedGenerator.basicEmbed(
                         [
                             "This server uses Guardian's Verification System.",
-                            'To start verification please use the `/verify` command.',
-                            'To complete verification please use the `/verify [captcha]` command with the captcha.',
+                            'To complete verification please press the verify button.',
                         ].join('\n')
                     ).setAuthor({ name: client.user.tag, iconURL: client.user.displayAvatarURL() }),
+                ],
+                components: [
+                    new Discord.ActionRowBuilder().addComponents([
+                        new Discord.ButtonBuilder()
+                            .setCustomId('verification')
+                            .setLabel('Verify')
+                            .setStyle(Discord.ButtonStyle.Success),
+                    ]),
                 ],
             });
         }

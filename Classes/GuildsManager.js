@@ -555,6 +555,24 @@ class GuildsManagerTickets {
             () => null
         );
     }
+
+    /**
+     * @type {String}
+     */
+    get logChannel() {
+        return this.parent.document.tickets.logChannel;
+    }
+
+    /**
+     * @param {String} channelId
+     */
+    set logChannel(channelId) {
+        this.parent.document.tickets.logChannel = channelId;
+        Guilds.updateOne(
+            { guild: this.parent.id },
+            { $set: { 'tickets.logChannel': channelId } }
+        ).then(() => null);
+    }
 }
 
 class GuildsManager {

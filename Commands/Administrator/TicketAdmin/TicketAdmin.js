@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 
 const TicketAdminSetup = require('./TicketAdmin.setup');
 const TicketAdminDisable = require('./TicketAdmin.disable');
+const TicketAdminResendPanel = require('./TicketAdmin.resendPanel');
 
 module.exports = {
     data: new Discord.SlashCommandBuilder()
@@ -10,6 +11,7 @@ module.exports = {
         .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
         .setDMPermission(false)
         .addSubcommand(TicketAdminSetup.data)
-        .addSubcommand(TicketAdminDisable.data),
-    subCommands: [TicketAdminSetup, TicketAdminDisable],
+        .addSubcommand(TicketAdminDisable.data)
+        .addSubcommand(TicketAdminResendPanel.data),
+    subCommands: [TicketAdminSetup, TicketAdminDisable, TicketAdminResendPanel],
 };

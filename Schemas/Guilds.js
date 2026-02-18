@@ -68,6 +68,7 @@ module.exports = Mongoose.model(
             category: { type: String, default: null },
             channel: { type: String, default: null },
             role: { type: String, default: null },
+            logChannel: { type: String, default: null },
         },
     })
 );

@@ -4,6 +4,11 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 
 const Tickets = require('../../../Schemas/Tickets');
 
+function hasTicketStaff(interaction, dbGuild) {
+    if (!dbGuild?.tickets?.role) return true;
+    return interaction.member?.roles?.cache?.has(dbGuild.tickets.role);
+}
+
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('view_previous')
@@ -16,7 +21,10 @@ module.exports = {
      * @param {import('../../../Classes/UsersManager').UsersManager} dbUser
      */
     async execute(interaction, client, dbGuild, dbUser) {
-        /** @type {Discord.TextChannel} */ let user = interaction.options.getUser('user');
+        if (!hasTicketStaff(interaction, dbGuild))
+            return EmbedGenerator.errorEmbed('You need the ticket staff role to use this command.');
+
+        /** @type {Discord.User|null} */ let user = interaction.options.getUser('user');
 
         if (!user) {
             const ticket = await Tickets.findOne({

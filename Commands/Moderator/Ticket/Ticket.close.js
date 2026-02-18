@@ -1,8 +1,14 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../../Functions/embedGenerator');
+const { closeTicketChannel } = require('../../../Functions/ticketClose');
 
 const Tickets = require('../../../Schemas/Tickets');
+
+function hasTicketStaff(interaction, dbGuild) {
+    if (!dbGuild?.tickets?.role) return true;
+    return interaction.member?.roles?.cache?.has(dbGuild.tickets.role);
+}
 
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
@@ -17,8 +23,9 @@ module.exports = {
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild) {
         /** @type {Discord.TextChannel} */ const channel =
             interaction.options.getChannel('channel') || interaction.channel;
         const ticket = await Tickets.findOne({ guild: interaction.guild.id, channel: channel.id });
@@ -26,55 +33,26 @@ module.exports = {
         if (!ticket) return EmbedGenerator.errorEmbed('Ticket not found.');
         if (!ticket.active) return EmbedGenerator.errorEmbed('That ticket is not active.');
 
+        const isInTicketChannel = interaction.channel.id === channel.id;
+        const isCreator = ticket.user === interaction.user.id;
+        if (!isInTicketChannel && !hasTicketStaff(interaction, dbGuild))
+            return EmbedGenerator.errorEmbed('You need the ticket staff role to close tickets from another channel.');
+        if (isInTicketChannel && !isCreator && !hasTicketStaff(interaction, dbGuild))
+            return EmbedGenerator.errorEmbed('Only ticket staff or the ticket creator can close this ticket.');
+
         await interaction.deferReply();
 
-        const promises = [
-            ...new Set([
-                interaction.user.id,
-                ticket.user,
-                ...ticket.messages.map((message) => message.user),
-            ]),
-        ].map((id) => {
-            return new Promise(async (resolve) => {
-                const user = await client.users.fetch(id).catch(() => null);
-                if (user && !user.bot)
-                    await user
-                        .send({
-                            embeds: [
-                                EmbedGenerator.basicEmbed(
-                                    `A ticket you were involved in has been closed.\nYou can view an export of the ticket [here](${
-                                        process.env.LIVE === 'true'
-                                            ? 'https://guardianbot.space'
-                                            : 'http://localhost:3001'
-                                    }/guilds/${ticket.guild}/tickets/${ticket._id.toString()}).`
-                                ).setTitle(`${channel.name} | Closed`),
-                            ],
-                        })
-                        .catch(() => null);
-
-                resolve();
-            });
-        });
-        await Promise.all(promises);
-
-        await Tickets.updateOne(
-            { guild: interaction.guild.id, channel: channel.id },
-            {
-                $set: { active: false },
-                $push: {
-                    messages: {
-                        user: interaction.user.id,
-                        message: 'This ticket has been closed.',
-                    },
-                },
-            }
+        await closeTicketChannel(
+            client,
+            interaction.guild,
+            channel,
+            ticket,
+            interaction.user.id,
+            dbGuild?.tickets?.logChannel
         );
 
         await interaction.editReply({
             embeds: [EmbedGenerator.basicEmbed('This ticket has been closed.')],
         });
-        await interaction.channel
-            .delete(`Ticket closed by ${interaction.user.id}`)
-            .catch(() => null);
     },
 };

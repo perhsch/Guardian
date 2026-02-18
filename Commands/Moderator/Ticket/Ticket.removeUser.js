@@ -4,6 +4,11 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 
 const Tickets = require('../../../Schemas/Tickets');
 
+function hasTicketStaff(interaction, dbGuild) {
+    if (!dbGuild?.tickets?.role) return true;
+    return interaction.member?.roles?.cache?.has(dbGuild.tickets.role);
+}
+
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('remove_user')
@@ -17,8 +22,12 @@ module.exports = {
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild) {
+        if (!hasTicketStaff(interaction, dbGuild))
+            return EmbedGenerator.errorEmbed('You need the ticket staff role to use this command.');
+
         const user = await interaction.options.getUser('user', true);
         const member = await interaction.guild.members.fetch({ user: user.id }).catch(() => null);
         /** @type {Discord.TextChannel} */ const channel =
@@ -32,15 +41,14 @@ module.exports = {
 
         if (!member) return EmbedGenerator.errorEmbed('Member not found.');
 
-        channel.permissionOverwrites
-            .edit(member.id, { ViewChannel: false, SendMessages: false })
-            .then(() => {
-                interaction.reply({
-                    embeds: [EmbedGenerator.basicEmbed('Member removed from ticket.')],
-                });
-            })
-            .catch(() => {
-                interaction.reply({ embeds: [EmbedGenerator.errorEmbed()] });
+        try {
+            await channel.permissionOverwrites.edit(member.id, {
+                ViewChannel: false,
+                SendMessages: false,
             });
+            return EmbedGenerator.basicEmbed('Member removed from ticket.');
+        } catch {
+            return EmbedGenerator.errorEmbed();
+        }
     },
 };

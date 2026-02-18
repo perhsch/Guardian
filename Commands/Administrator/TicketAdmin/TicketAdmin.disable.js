@@ -22,6 +22,7 @@ module.exports = {
         dbGuild.tickets.category = null;
         dbGuild.tickets.channel = null;
         dbGuild.tickets.role = null;
+        dbGuild.tickets.logChannel = null;
 
         return EmbedGenerator.basicEmbed('🔓 | Ticket system has been disabled!');
     },

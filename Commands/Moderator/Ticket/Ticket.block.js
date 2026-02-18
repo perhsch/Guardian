@@ -5,6 +5,11 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 const Tickets = require('../../../Schemas/Tickets');
 const Infractions = require('../../../Schemas/Infractions');
 
+function hasTicketStaff(interaction, dbGuild) {
+    if (!dbGuild?.tickets?.role) return true;
+    return interaction.member?.roles?.cache?.has(dbGuild.tickets.role);
+}
+
 module.exports = {
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('block')
@@ -14,8 +19,11 @@ module.exports = {
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
      * @param {Discord.Client} client
+     * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
      */
-    async execute(interaction, client) {
+    async execute(interaction, client, dbGuild) {
+        if (!hasTicketStaff(interaction, dbGuild))
+            return EmbedGenerator.errorEmbed('You need the ticket staff role to use this command.');
         /** @type {Discord.TextChannel} */ let user = interaction.options.getUser('user');
         const reason = interaction.options.getString('reason') || 'Unspecified reason.';
 
@@ -32,7 +40,7 @@ module.exports = {
 
         const blocked = await Infractions.findOne({
             guild: interaction.guild.id,
-            user: interaction.user.id,
+            user: user.id,
             type: 'block',
             active: true,
         });

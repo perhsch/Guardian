@@ -28,6 +28,12 @@ module.exports = {
         )
         .addRoleOption((option) =>
             option.setName('role').setDescription("Staff role which can access ticket's")
+        )
+        .addChannelOption((option) =>
+            option
+                .setName('log_channel')
+                .setDescription('Channel to post ticket transcripts when closed (optional)')
+                .addChannelTypes(Discord.ChannelType.GuildText)
         ),
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
@@ -41,6 +47,8 @@ module.exports = {
         /** @type {Discord.TextChannel} */ let staffChannel =
             interaction.options.getChannel('staff_channel');
         /** @type {Discord.Role} */ let role = interaction.options.getRole('role');
+        /** @type {Discord.TextChannel|null} */ const logChannel =
+            interaction.options.getChannel('log_channel');
 
         if (!role) {
             role = await interaction.guild.roles
@@ -159,6 +167,7 @@ module.exports = {
         dbGuild.tickets.category = category.id;
         dbGuild.tickets.channel = channel.id;
         dbGuild.tickets.role = role.id;
+        dbGuild.tickets.logChannel = logChannel?.id ?? null;
 
         const logEmbed = EmbedGenerator.basicEmbed(
             [
@@ -170,8 +179,8 @@ module.exports = {
         ).setTitle('/ticketadmin setup command used');
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-        return EmbedGenerator.basicEmbed('🔒 | Ticket system has been enabled!').setFooter({
-            text: '(W.I.P) Please manually add access for Support Staff to use /ticket',
-        });
+        return EmbedGenerator.basicEmbed(
+            `🔒 | Ticket system has been enabled!\n\n• Category: ${category.name}\n• Panel: <#${channel.id}>\n• Staff role: ${role}\n${logChannel ? `• Transcript log: <#${logChannel.id}>` : ''}`
+        );
     },
 };

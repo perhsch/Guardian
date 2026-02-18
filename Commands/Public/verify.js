@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const Captcha = require('captcha-generator-alphanumeric').default;
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
@@ -42,6 +41,15 @@ module.exports = {
                 embeds: [EmbedGenerator.errorEmbed('This guild uses a button for verification.')],
                 ephemeral: true,
             };
+        if (dbGuild.verification.version === 'captcha')
+            return {
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'This guild uses a button for captcha verification. Please use the verify button in the verification channel.'
+                    ),
+                ],
+                ephemeral: true,
+            };
 
         const captcha = interaction.options.getString('captcha');
 
@@ -57,68 +65,6 @@ module.exports = {
                         ephemeral: true,
                     });
                 });
-        } else if (dbGuild.verification.version === 'captcha') {
-            if (!dbUser.captcha || !captcha) {
-                const generatedCaptcha = new Captcha();
-                dbUser.captcha = generatedCaptcha.value;
-
-                interaction.user
-                    .send({
-                        embeds: [
-                            EmbedGenerator.basicEmbed(
-                                'Use the below captcha with the `/verify [captcha]` command in the guild.'
-                            )
-                                .setTitle(`Captcha Verification | ${interaction.guild.name}`)
-                                .setImage('attachment://captcha.jpg')
-                                .setFooter({
-                                    text: 'You may use /verify again to get a new image.',
-                                }),
-                        ],
-                        files: [
-                            new Discord.AttachmentBuilder(generatedCaptcha.JPEGStream).setName(
-                                'captcha.jpg'
-                            ),
-                        ],
-                    })
-                    .catch(() => {
-                        interaction.reply({
-                            embeds: [EmbedGenerator.errorEmbed('Failed to send you a DM.')],
-                            ephemeral: true,
-                        });
-                    })
-                    .then(() => {
-                        interaction.reply({
-                            embeds: [
-                                EmbedGenerator.basicEmbed('Captcha image sent, check your DMs.'),
-                            ],
-                            ephemeral: true,
-                        });
-                    });
-            } else {
-                if (captcha.toUpperCase() === dbUser.captcha) {
-                    interaction.member.roles
-                        .remove(dbGuild.verification.role, 'Verification completed')
-                        .catch(() => {
-                            interaction.reply({
-                                embeds: [EmbedGenerator.errorEmbed()],
-                                ephemeral: true,
-                            });
-                        })
-                        .then(() => {
-                            interaction.reply({
-                                embeds: [EmbedGenerator.basicEmbed('Verification completed.')],
-                                ephemeral: true,
-                            });
-                        });
-                } else {
-                    return {
-                        embeds: [
-                            EmbedGenerator.errorEmbed('The captcha you provided is incorrect.'),
-                        ],
-                        ephemeral: true,
-                    };
-                }
-            }
         }
     },
 };
