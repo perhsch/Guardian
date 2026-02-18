@@ -3,7 +3,6 @@
     -- New Features
         : Next Update???
 
-        - Configurable anti zalgo, badwords, anti nuke, anti advertise
         - Configurable welcome & goodbye systems
         - Add more logging options
         - Config command to configure everything with one click
@@ -15,7 +14,6 @@
 
         - Make logs more detailed & better formatted
         - Fix ticket systems to actually work & make more settings with it
-        - Better /setup command
     --/
 --/
 ```

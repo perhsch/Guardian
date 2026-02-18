@@ -163,6 +163,7 @@ module.exports = {
             let parsedResponse = {
                 content: response.content || null,
                 embeds: response.embeds || [],
+                components: response.components || [],
                 ephemeral: response.ephemeral || false,
             };
 

@@ -36,6 +36,28 @@ module.exports = Mongoose.model(
             },
             channel: { type: String, default: null },
         },
+        automod: {
+            antiZalgo: {
+                enabled: { type: Boolean, default: false },
+                action: { type: String, enum: ['delete', 'warn', 'timeout'], default: 'delete' },
+            },
+            antiBadwords: {
+                enabled: { type: Boolean, default: false },
+                words: { type: [String], default: [] },
+                action: { type: String, enum: ['delete', 'warn', 'timeout'], default: 'delete' },
+            },
+            antiNuke: {
+                enabled: { type: Boolean, default: false },
+                maxChannelsPerMinute: { type: Number, default: 3 },
+                maxRolesPerMinute: { type: Number, default: 3 },
+                action: { type: String, enum: ['kick', 'ban'], default: 'ban' },
+            },
+            antiAdvertisement: {
+                enabled: { type: Boolean, default: false },
+                action: { type: String, enum: ['delete', 'warn', 'timeout'], default: 'delete' },
+                whitelistChannels: { type: [String], default: [] },
+            },
+        },
         suggestion: {
             enabled: { type: Boolean, default: false },
             channel: { type: String, default: null },
