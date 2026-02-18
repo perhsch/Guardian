@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
-const { translateResponse } = require('../../Functions/translate');
+const { translateResponse, translateText } = require('../../Functions/translate');
 
 const CATEGORY_INFO = {
     administrator: { emoji: '⚙️', description: 'Server configuration & management' },
@@ -133,13 +133,6 @@ module.exports = {
         }
 
         const userLang = dbUser?.language;
-        if (userLang && userLang.toLowerCase() !== 'en') {
-            const translated = await translateResponse(
-                { content: null, embeds, ephemeral: false },
-                userLang
-            );
-            embeds = translated.embeds;
-        }
 
         const categoryChoice = interaction.options.getString('category');
         let startPage = 0;
@@ -200,7 +193,16 @@ module.exports = {
             else if (i.customId === 'help_next') page = Math.min(embeds.length - 1, page + 1);
             else if (i.customId === 'help_home') page = 0;
 
-            await i.update(updatePayload(page));
+            const payload = updatePayload(page);
+            const footerText = `Page ${page + 1}/${embeds.length}`;
+            const translatedFooter =
+                userLang && userLang.toLowerCase() !== 'en'
+                    ? await translateText(footerText, userLang)
+                    : footerText;
+            await i.update({
+                ...payload,
+                embeds: [embeds[page].setFooter({ text: translatedFooter })],
+            });
         });
 
         collector.on('end', async () => {

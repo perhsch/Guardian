@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const Moment = require('moment');
 const ms = require('ms');
-const { translateResponse } = require('./translate');
+const { translateResponse, translateText } = require('./translate');
 
 /**
  * @param {String} [description]
@@ -128,18 +128,22 @@ async function pagesEmbed(interaction, embeds, ephemeral = false, targetLang = n
         interaction.member.id === i.user.id;
     const collector = sent.createMessageComponentCollector({ filter, time: 120000 });
 
+    const getFooterText = (p) => `Page ${p + 1}/${embeds.length}`;
+    const maybeTranslateFooter = async (text) =>
+        targetLang && targetLang.toLowerCase() !== 'en'
+            ? await translateText(text, targetLang)
+            : text;
+
     collector.on('collect', async (i) => {
         if (i.customId === 'previous') {
             page = Math.max(0, page - 1);
-            i.update({
-                embeds: [embeds[page].setFooter({ text: `Page ${page + 1}/${embeds.length}` })],
-            });
         } else if (i.customId === 'next') {
             page = Math.min(embeds.length - 1, page + 1);
-            i.update({
-                embeds: [embeds[page].setFooter({ text: `Page ${page + 1}/${embeds.length}` })],
-            });
         }
+        const footerText = await maybeTranslateFooter(getFooterText(page));
+        await i.update({
+            embeds: [embeds[page].setFooter({ text: footerText })],
+        });
     });
 }
 
