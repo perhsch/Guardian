@@ -6,7 +6,6 @@
         - Configurable anti zalgo, badwords, anti nuke, anti advertise
         - Configurable welcome & goodbye systems
         - Add more logging options
-        - Notes command (For admins & mods)
         - Config command to configure everything with one click
         - Automod cases command 
         - Starboard (perhaps, not sure yet)
@@ -14,10 +13,7 @@
     -- Changes & Bugs
         : Core Features
 
-        - Fix language system to actually translate everything if a language is set
-        - Better suggestions to show percentage, corresponding with reactions.
         - Make logs more detailed & better formatted
-        - Add admin command apon logging to set announcement channels & giveaway channels and than update the corresponding commands.
         - Fix ticket systems to actually work & make more settings with it
         - Better /setup command
     --/
