@@ -82,14 +82,19 @@ module.exports = {
                         try {
                             const targetMember = await member.guild.members.fetch(userId).catch(() => null);
                             if (!targetMember || targetMember.id === client.user.id) continue;
-                            
-                            if (targetMember.permissions.has(Discord.PermissionFlagsBits.Administrator)) {
-                                continue;
-                            }
 
                             const dmMessage = EmbedGenerator.basicEmbed(
-                                `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}**\nThis server is currently in raid mode, please try again later!`
-                            );
+                                `**Automod Action: Anti-Raid**\n\n` +
+                                `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}** by the automoderation system.\n\n` +
+                                `**Reason:** Mass join detected during raid protection\n` +
+                                `**System:** Anti Raid Protection\n` +
+                                `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
+                                `This server is currently in raid mode. Please try again later!`
+                            )
+                                .setColor('Red')
+                                .setTitle(`Automod: ${action === 'ban' ? 'Banned' : 'Kicked'}`)
+                                .setFooter({ text: `${member.guild.name}`, iconURL: member.guild.iconURL() })
+                                .setTimestamp();
 
                             if (action === 'kick') {
                                 await targetMember.send({ embeds: [dmMessage] }).catch(() => null);
@@ -120,13 +125,18 @@ module.exports = {
             } else {
                 const action = guild.antiraid.action;
                 try {
-                    if (member.permissions.has(Discord.PermissionFlagsBits.Administrator)) {
-                        return;
-                    }
-
                     const dmMessage = EmbedGenerator.basicEmbed(
-                        `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}**\nThis server is currently in raid mode, please try again later!`
-                    );
+                        `**Automod Action: Anti-Raid**\n\n` +
+                        `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}** by the automoderation system.\n\n` +
+                        `**Reason:** Server is currently in raid mode\n` +
+                        `**System:** Anti Raid Protection\n` +
+                        `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
+                        `This server is currently in raid mode. Please try again later!`
+                    )
+                        .setColor('Red')
+                        .setTitle(`Automod: ${action === 'ban' ? 'Banned' : 'Kicked'}`)
+                        .setFooter({ text: `${member.guild.name}`, iconURL: member.guild.iconURL() })
+                        .setTimestamp();
 
                     if (action === 'kick') {
                         await member.send({ embeds: [dmMessage] }).catch(() => null);

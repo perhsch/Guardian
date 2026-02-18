@@ -27,7 +27,7 @@ module.exports = {
             const entry = logs.entries.find(
                 (e) => (e.target?.id ?? e.targetId) === channel.id
             );
-            if (entry && entry.executor && !entry.executor.bot) {
+            if (entry && entry.executor) {
                 executorId = entry.executor.id;
             }
         } catch (err) {
@@ -40,13 +40,27 @@ module.exports = {
         const executor = await channel.guild.members.fetch(executorId).catch(() => null);
         if (!executor) return;
         
-        if (executor.id === client.user.id || executor.permissions.has(Discord.PermissionFlagsBits.Administrator)) {
+        if (executor.id === client.user.id) {
             return;
         }
 
         const count = recordDeletion(channel.guild.id, executorId, 'channel');
         if (count >= maxChannels) {
             const reason = `Anti-Nuke: Deleted ${count} channels in 1 minute`;
+            const actionText = action === 'ban' ? 'banned' : 'kicked';
+            const dmEmbed = EmbedGenerator.basicEmbed(
+                `**Automod Action: Anti-Nuke**\n\n` +
+                `You have been ${actionText} from **${channel.guild.name}** by the automoderation system.\n\n` +
+                `**Reason:** ${reason}\n` +
+                `**System:** Anti Nuke Protection\n` +
+                `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
+                `Mass deletion of channels is not allowed and triggers automatic protection measures.`
+            )
+                .setColor('Red')
+                .setTitle(`Automod: ${action === 'ban' ? 'Banned' : 'Kicked'}`)
+                .setFooter({ text: `${channel.guild.name}`, iconURL: channel.guild.iconURL() })
+                .setTimestamp();
+            await executor.send({ embeds: [dmEmbed] }).catch(() => null);
             try {
                 if (action === 'ban') {
                     await executor.ban({ reason, deleteMessageSeconds: 0 });

@@ -69,10 +69,22 @@ function escapeRegex(str) {
 
 async function executeAutomodAction(message, client, dbGuild, action, reason, system) {
     const member = message.member;
-    if (!member || !member.moderatable) return;
+    if (!member) return;
 
     if (action === 'delete') {
         await message.delete().catch(() => null);
+        const dmEmbed = EmbedGenerator.basicEmbed(
+            `**Automod Action: Message Deleted**\n\n` +
+            `Your message in **${message.guild.name}** was automatically deleted.\n\n` +
+            `**Reason:** ${reason}\n` +
+            `**System:** ${system}\n\n` +
+            `Please review the server rules to avoid further actions.`
+        )
+            .setColor('Orange')
+            .setTitle('Automod: Message Deleted')
+            .setFooter({ text: `${message.guild.name}`, iconURL: message.guild.iconURL() })
+            .setTimestamp();
+        await member.send({ embeds: [dmEmbed] }).catch(() => null);
         const logEmbed = EmbedGenerator.basicEmbed(
             `**${system}**\nMessage by ${message.author} was deleted.\n**Reason:** ${reason}\n**Content:** ${message.content?.slice(0, 200) || '(empty)'}`
         )
@@ -84,23 +96,28 @@ async function executeAutomodAction(message, client, dbGuild, action, reason, sy
 
     if (action === 'warn') {
         await message.delete().catch(() => null);
-        const infractionEmbed = EmbedGenerator.infractionEmbed(
-            message.guild,
-            client.user.id,
-            'Warning',
-            null,
-            null,
-            reason
-        );
-        await member.send({ embeds: [infractionEmbed] }).catch(() => null);
-        await Infractions.create({
-            guild: message.guild.id,
-            user: member.id,
-            issuer: client.user.id,
-            type: 'warning',
-            reason: reason,
-            active: false,
-        });
+        const dmEmbed = EmbedGenerator.basicEmbed(
+            `**Automod Action: Warning**\n\n` +
+            `You have been warned in **${message.guild.name}** by the automoderation system.\n\n` +
+            `**Reason:** ${reason}\n` +
+            `**System:** ${system}\n\n` +
+            `Please review the server rules to avoid further actions.`
+        )
+            .setColor('Orange')
+            .setTitle('Automod: Warning')
+            .setFooter({ text: `${message.guild.name}`, iconURL: message.guild.iconURL() })
+            .setTimestamp();
+        await member.send({ embeds: [dmEmbed] }).catch(() => null);
+        if (member.moderatable) {
+            await Infractions.create({
+                guild: message.guild.id,
+                user: member.id,
+                issuer: client.user.id,
+                type: 'warning',
+                reason: reason,
+                active: false,
+            });
+        }
         const logEmbed = EmbedGenerator.basicEmbed(
             `**${system}**\n${member} was warned.\n**Reason:** ${reason}\n**Content:** ${message.content?.slice(0, 200) || '(empty)'}`
         )
@@ -113,25 +130,31 @@ async function executeAutomodAction(message, client, dbGuild, action, reason, sy
     if (action === 'timeout') {
         await message.delete().catch(() => null);
         const durationMs = 60 * 60 * 1000;
-        const infractionEmbed = EmbedGenerator.infractionEmbed(
-            message.guild,
-            client.user.id,
-            'Timeout',
-            durationMs,
-            Date.now() + durationMs,
-            reason
-        );
-        await member.send({ embeds: [infractionEmbed] }).catch(() => null);
-        await member.timeout(durationMs, reason).catch(() => null);
-        const inf = await Infractions.create({
-            guild: message.guild.id,
-            user: member.id,
-            issuer: client.user.id,
-            type: 'timeout',
-            reason: reason,
-            duration: durationMs,
-        });
-        await client.expiringDocumentsManager.infractions.addNewDocument(inf);
+        const dmEmbed = EmbedGenerator.basicEmbed(
+            `**Automod Action: Timeout**\n\n` +
+            `You have been timed out in **${message.guild.name}** by the automoderation system.\n\n` +
+            `**Duration:** 1 hour\n` +
+            `**Reason:** ${reason}\n` +
+            `**System:** ${system}\n\n` +
+            `Please review the server rules to avoid further actions.`
+        )
+            .setColor('Orange')
+            .setTitle('Automod: Timeout')
+            .setFooter({ text: `${message.guild.name}`, iconURL: message.guild.iconURL() })
+            .setTimestamp();
+        await member.send({ embeds: [dmEmbed] }).catch(() => null);
+        if (member.moderatable) {
+            await member.timeout(durationMs, reason).catch(() => null);
+            const inf = await Infractions.create({
+                guild: message.guild.id,
+                user: member.id,
+                issuer: client.user.id,
+                type: 'timeout',
+                reason: reason,
+                duration: durationMs,
+            });
+            await client.expiringDocumentsManager.infractions.addNewDocument(inf);
+        }
         const logEmbed = EmbedGenerator.basicEmbed(
             `**${system}**\n${member} was timed out for 1h.\n**Reason:** ${reason}\n**Content:** ${message.content?.slice(0, 200) || '(empty)'}`
         )
