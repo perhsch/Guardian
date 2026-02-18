@@ -182,7 +182,9 @@ client.on('guildCreate', async (guild) => {
 client.on('messageCreate', (message) => {
     if (!message.mentions.has(client.user)) return;
     if (message.reference) return;
-    const contentWithoutBotMention = message.content.replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '').trim();
+    const contentWithoutBotMention = message.content
+        .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
+        .trim();
     if (contentWithoutBotMention.length > 0) return;
 
     const embed = new Discord.EmbedBuilder()
@@ -212,11 +214,11 @@ client.on('messageCreate', (message) => {
         new Discord.ButtonBuilder()
             .setLabel('Support Server')
             .setStyle(Discord.ButtonStyle.Link)
-            .setURL('https://discord.gg/'),
+            .setURL('https://discord.gg/5nWZ8BJae4'), // Your discord support server
         new Discord.ButtonBuilder()
             .setLabel('Website')
             .setStyle(Discord.ButtonStyle.Link)
-            .setURL('https://google.com')
+            .setURL('https://localhost:3000') // Discord bot web dashboard
     );
 
     message.reply({ embeds: [embed], components: [row] });
