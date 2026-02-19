@@ -1,10 +1,10 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const Discord = require('discord.js');
 const emojis = require('../../Config/emojis.json');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
-    data: new SlashCommandBuilder()
+    data: new Discord.SlashCommandBuilder()
         .setName('invites')
         .setDMPermission(false)
         .setDescription('Displays the number of invites of specified user.')
@@ -39,18 +39,60 @@ module.exports = {
             }
         });
 
-        const embed = EmbedGenerator.basicEmbed()
-            .setColor('Purple')
-            .setFooter({ text: `${inviter.username}'s Invites` })
-            .setTimestamp()
-            .setTitle(`> Fetched ${inviter.tag}'s Invites`)
-            .setAuthor({ name: `🔗 Invites Tool` })
+        const embed = new Discord.EmbedBuilder()
+            .setColor('#9B59B6')
+            .setAuthor({
+                name: '🔗 Invite Statistics',
+                iconURL: inviter.displayAvatarURL({ dynamic: true, size: 256 }),
+            })
+            .setTitle(`📊 ${inviter.username}'s Invite Analytics`)
+            .setDescription(
+                `Here's a comprehensive breakdown of **${inviter.tag}**'s invite performance on **${interaction.guild.name}**`
+            )
+            .setThumbnail(inviter.displayAvatarURL({ dynamic: true, size: 256 }))
             .addFields(
-                { name: '• Total Invites', value: `> ${userInvites.size}` },
-                { name: '• Remaining Invites', value: `> ${remainingInvites}` },
-                { name: '• Fake Invites', value: `> ${fakeInvites}` },
-                { name: '• Bonus Invites', value: `> ${bonusInvites}` }
+                {
+                    name: '🎯 Total Invites',
+                    value: `\`\`\`${userInvites.size}\`\`\``,
+                    inline: true,
+                },
+                {
+                    name: '⏳ Remaining Invites',
+                    value: `\`\`\`${remainingInvites}\`\`\``,
+                    inline: true,
+                },
+                {
+                    name: '✅ Successful Invites',
+                    value: `\`\`\`${userInvites.size - remainingInvites - fakeInvites}\`\`\``,
+                    inline: true,
+                },
+                {
+                    name: '❌ Fake/Left Invites',
+                    value: `\`\`\`${fakeInvites}\`\`\``,
+                    inline: true,
+                },
+                {
+                    name: '🎁 Bonus Potential',
+                    value: `\`\`\`${bonusInvites}\`\`\``,
+                    inline: true,
+                },
+                {
+                    name: '📈 Success Rate',
+                    value: `\`\`\`${userInvites.size > 0 ? Math.round(((userInvites.size - remainingInvites - fakeInvites) / userInvites.size) * 100) : 0}%\`\`\``,
+                    inline: true,
+                }
+            )
+            .setFooter({
+                text: `Requested by ${interaction.user.tag} • ${new Date().toLocaleDateString()}`,
+                iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+            })
+            .setTimestamp();
+
+        if (userInvites.size === 0) {
+            embed.setDescription(
+                `**${inviter.tag}** hasn't created any invites for **${interaction.guild.name}** yet.\n\n💡 *Tip: Create an invite link in the server settings or use \`/createinvite\` to start inviting people!*`
             );
+        }
 
         return interaction.editReply({ embeds: [embed] });
     },
