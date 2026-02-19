@@ -13,7 +13,7 @@ module.exports = {
      */
     execute(interaction, client) {
         return EmbedGenerator.basicEmbed(
-            '[Click me for the support server invite!](https://discord.gg/BdJ4JwCveu)'
+            '[Click me for the support server invite!](https://discord.gg/5nWZ8BJae4)'
         );
     },
 };
