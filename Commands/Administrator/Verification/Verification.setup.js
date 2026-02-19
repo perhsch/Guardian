@@ -22,7 +22,7 @@ module.exports = {
             option
                 .setName('role')
                 .setDescription(
-                    'Role to give to unverified members. (Will be created if unspecified)'
+                    'Role to give when verification is completed. (Will be created if unspecified)'
                 )
         )
         .addChannelOption((option) =>
@@ -41,15 +41,16 @@ module.exports = {
     async execute(interaction, client, dbGuild) {
         /** @type { 'button' | 'command' | 'captcha' } */ const type =
             interaction.options.getString('type', true);
-        /** @type {Discord.Role} */ let role = interaction.options.getRole('role');
+        /** @type {Discord.Role} */ let verificationRole = interaction.options.getRole('role');
         /** @type {Discord.TextChannel} */ let channel = interaction.options.getChannel('channel');
 
         await interaction.deferReply();
 
-        if (!role) {
-            role = await interaction.guild.roles
+        // Verification role = role given when member completes verification
+        if (!verificationRole) {
+            verificationRole = await interaction.guild.roles
                 .create({
-                    name: 'unverified',
+                    name: 'Verified',
                     color: '#000001',
                     hoist: false,
                     mentionable: false,
@@ -58,9 +59,24 @@ module.exports = {
                 })
                 .catch(() => null);
 
-            if (!role)
+            if (!verificationRole)
                 return EmbedGenerator.errorEmbed(':x: | Failed to create a verification role');
         }
+
+        // Unverified role = given to new members, removed when they verify (auto-created)
+        const unverifiedRole = await interaction.guild.roles
+            .create({
+                name: 'unverified',
+                color: '#000001',
+                hoist: false,
+                mentionable: false,
+                permissions: [],
+                position: 0,
+            })
+            .catch(() => null);
+
+        if (!unverifiedRole)
+            return EmbedGenerator.errorEmbed(':x: | Failed to create the unverified role');
 
         if (!channel) {
             channel = await interaction.guild.channels
@@ -69,7 +85,7 @@ module.exports = {
                     type: Discord.ChannelType.GuildText,
                     permissionOverwrites: [
                         {
-                            id: role.id,
+                            id: unverifiedRole.id,
                             allow: ['ViewChannel', 'ReadMessageHistory'],
                         },
                         {
@@ -86,7 +102,16 @@ module.exports = {
             for (const c of (await interaction.guild.channels.fetch()).values())
                 if (channel.id !== c.id)
                     await c.permissionOverwrites
-                        .create(role.id, { ViewChannel: false })
+                        .create(unverifiedRole.id, { ViewChannel: false })
+                        .catch(() => null);
+        } else {
+            await channel.permissionOverwrites
+                .edit(unverifiedRole.id, { ViewChannel: true, ReadMessageHistory: true })
+                .catch(() => null);
+            for (const c of (await interaction.guild.channels.fetch()).values())
+                if (channel.id !== c.id)
+                    await c.permissionOverwrites
+                        .create(unverifiedRole.id, { ViewChannel: false })
                         .catch(() => null);
         }
 
@@ -144,14 +169,15 @@ module.exports = {
         dbGuild.verification.enabled = true;
         dbGuild.verification.version = type;
         dbGuild.verification.channel = channel.id;
-        dbGuild.verification.role = role.id;
+        dbGuild.verification.role = verificationRole.id;
+        dbGuild.verification.unverifiedRole = unverifiedRole.id;
 
         const logEmbed = EmbedGenerator.basicEmbed(
             [
                 `- Moderator: ${interaction.user.tag}`,
                 `- Type: ${type}`,
                 `- Channel: <#${channel.id}>`,
-                `- Role: ${role}`,
+                `- Verification role: ${verificationRole}`,
             ].join('\n')
         ).setTitle('/verification setup command used');
         await sendModLog(interaction.guild, dbGuild, logEmbed);

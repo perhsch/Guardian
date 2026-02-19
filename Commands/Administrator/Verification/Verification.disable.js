@@ -25,6 +25,7 @@ module.exports = {
         dbGuild.verification.version = null;
         dbGuild.verification.channel = null;
         dbGuild.verification.role = null;
+        dbGuild.verification.unverifiedRole = null;
 
         return EmbedGenerator.basicEmbed('🔓 | Member verification has been disabled.');
     },

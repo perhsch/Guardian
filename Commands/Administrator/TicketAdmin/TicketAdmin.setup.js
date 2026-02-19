@@ -92,12 +92,16 @@ module.exports = {
             staffChannel = await interaction.guild.channels
                 .create({
                     name: 'staff-chat',
-                    type: Discord.ChannelType.TextChannel,
+                    type: Discord.ChannelType.GuildText,
                     parent: category.id,
                     permissionOverwrites: [
                         {
+                            id: interaction.guild.roles.everyone.id,
+                            deny: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'],
+                        },
+                        {
                             id: role.id,
-                            allow: ['ViewChannel', 'SendMessages'],
+                            allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'],
                         },
                     ],
                 })
@@ -109,7 +113,18 @@ module.exports = {
         } else {
             await staffChannel.setParent(category.id).catch(() => null);
             await staffChannel.permissionOverwrites
-                .edit(role.id, { ViewChannel: true, SendMessages: true })
+                .edit(interaction.guild.roles.everyone.id, {
+                    ViewChannel: false,
+                    SendMessages: false,
+                    ReadMessageHistory: false,
+                })
+                .catch(() => null);
+            await staffChannel.permissionOverwrites
+                .edit(role.id, {
+                    ViewChannel: true,
+                    SendMessages: true,
+                    ReadMessageHistory: true,
+                })
                 .catch(() => null);
         }
 

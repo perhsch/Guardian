@@ -151,8 +151,8 @@ module.exports = {
             }
         }
 
-        if (guild.verification.enabled) {
-            const role = await member.guild.roles.fetch(guild.verification.role);
+        if (guild.verification.enabled && guild.verification.unverifiedRole) {
+            const role = await member.guild.roles.fetch(guild.verification.unverifiedRole);
             if (role && role instanceof Discord.Role) member.roles.add(role).catch(() => null);
         }
 

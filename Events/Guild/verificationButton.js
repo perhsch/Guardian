@@ -24,7 +24,7 @@ module.exports = {
                     ephemeral: true,
                 });
 
-            if (!interaction.member.roles.cache.has(guild.verification.role))
+            if (!guild.verification.unverifiedRole || !interaction.member.roles.cache.has(guild.verification.unverifiedRole))
                 return interaction.reply({
                     embeds: [EmbedGenerator.errorEmbed('You are already verified.')],
                     ephemeral: true,
@@ -33,13 +33,18 @@ module.exports = {
             // Handle button version
             if (guild.verification.version === 'button') {
                 await interaction.member.roles
-                    .remove(guild.verification.role, 'Verification completed')
+                    .remove(guild.verification.unverifiedRole, 'Verification completed')
                     .catch(() => {
                         return interaction.reply({
                             embeds: [EmbedGenerator.errorEmbed()],
                             ephemeral: true,
                         });
                     });
+                if (guild.verification.role) {
+                    await interaction.member.roles
+                        .add(guild.verification.role, 'Verification completed')
+                        .catch(() => null);
+                }
 
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('Verification completed.')],
@@ -124,7 +129,7 @@ module.exports = {
                     ephemeral: true,
                 });
 
-            if (!interaction.member.roles.cache.has(guild.verification.role))
+            if (!guild.verification.unverifiedRole || !interaction.member.roles.cache.has(guild.verification.unverifiedRole))
                 return interaction.reply({
                     embeds: [EmbedGenerator.errorEmbed('You are already verified.')],
                     ephemeral: true,
@@ -146,13 +151,18 @@ module.exports = {
 
             if (captchaInput.toUpperCase() === dbUser.captcha) {
                 await interaction.member.roles
-                    .remove(guild.verification.role, 'Verification completed')
+                    .remove(guild.verification.unverifiedRole, 'Verification completed')
                     .catch(() => {
                         return interaction.reply({
                             embeds: [EmbedGenerator.errorEmbed()],
                             ephemeral: true,
                         });
                     });
+                if (guild.verification.role) {
+                    await interaction.member.roles
+                        .add(guild.verification.role, 'Verification completed')
+                        .catch(() => null);
+                }
 
                 dbUser.captcha = null; // Clear captcha after successful verification
 

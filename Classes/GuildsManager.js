@@ -66,6 +66,24 @@ class GuildsManagerVerification {
     /**
      * @type {String | null}
      */
+    get unverifiedRole() {
+        return this.parent.document.verification.unverifiedRole;
+    }
+
+    /**
+     * @param {String | null} roleId
+     */
+    set unverifiedRole(roleId) {
+        this.parent.document.verification.unverifiedRole = roleId;
+        Guilds.updateOne(
+            { guild: this.parent.id },
+            { $set: { 'verification.unverifiedRole': roleId } }
+        ).then(() => null);
+    }
+
+    /**
+     * @type {String | null}
+     */
     get channel() {
         return this.parent.document.verification.channel;
     }

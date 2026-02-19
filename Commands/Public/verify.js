@@ -31,7 +31,7 @@ module.exports = {
                 ],
                 ephemeral: true,
             };
-        if (!interaction.member.roles.cache.has(dbGuild.verification.role))
+        if (!dbGuild.verification.unverifiedRole || !interaction.member.roles.cache.has(dbGuild.verification.unverifiedRole))
             return {
                 embeds: [EmbedGenerator.errorEmbed('You are already verified.')],
                 ephemeral: true,
@@ -55,11 +55,16 @@ module.exports = {
 
         if (dbGuild.verification.version === 'command') {
             interaction.member.roles
-                .remove(dbGuild.verification.role, 'Verification completed')
+                .remove(dbGuild.verification.unverifiedRole, 'Verification completed')
                 .catch(() => {
                     interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true });
                 })
                 .then(() => {
+                    if (dbGuild.verification.role) {
+                        interaction.member.roles
+                            .add(dbGuild.verification.role, 'Verification completed')
+                            .catch(() => null);
+                    }
                     interaction.reply({
                         embeds: [EmbedGenerator.basicEmbed('Verification completed.')],
                         ephemeral: true,

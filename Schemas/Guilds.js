@@ -9,6 +9,7 @@ module.exports = Mongoose.model(
             enabled: { type: Boolean, default: false },
             version: { type: String, enum: [null, 'button', 'command', 'captcha'], default: null },
             role: { type: String, default: null },
+            unverifiedRole: { type: String, default: null },
             channel: { type: String, default: null },
         },
         logs: {
