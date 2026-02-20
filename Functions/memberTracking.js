@@ -7,7 +7,11 @@ const { GuildsManager } = require('../Classes/GuildsManager');
  */
 async function fetchAllMembers(client) {
     const guilds = await client.guilds.fetch().catch(() => null);
-    if (!guilds) return await fetchAllMembers(client);
+    if (!guilds) {
+        // Add a delay before retrying to prevent infinite recursion
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return await fetchAllMembers(client);
+    }
 
     const fetchedGuilds = [];
     for (const guild of guilds.values()) {
@@ -25,7 +29,19 @@ async function fetchAllMembers(client) {
  * @param {Discord.Guild} guild
  */
 async function addGuild(guild, retries = 0) {
-    const members = await guild.members.fetch().catch((e) => retries >= 5 && console.log(e.stack));
+    // Check if guild.members exists and has fetch method
+    if (!guild.members || typeof guild.members.fetch !== 'function') {
+        console.log(
+            `[Member Tracking]: guild.members.fetch is not available for guild ${guild.id}`
+        );
+        return;
+    }
+
+    const members = await guild.members.fetch().catch((e) => {
+        console.log(`[Member Tracking]: Failed to fetch members for guild ${guild.id}:`, e.message);
+        return null;
+    });
+
     if (!members) {
         if (retries >= 5)
             return console.log(

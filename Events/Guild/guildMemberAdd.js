@@ -21,12 +21,12 @@ module.exports = {
             guild.antiraid.action
         ) {
             const timeWindowMs = guild.antiraid.joinWithin * 1000;
-            
+
             if (!guild.antiraid.raid) {
                 recordJoin(member.guild.id, member.id, timeWindowMs);
-                
+
                 const joinCount = getJoinCount(member.guild.id, timeWindowMs);
-                
+
                 if (joinCount >= guild.antiraid.joinAmount) {
                     guild.document.antiraid.raid = true;
                     if (guild.antiraid.lockdown.enabled) {
@@ -46,7 +46,9 @@ module.exports = {
 
                     if (guild.antiraid.channel) {
                         try {
-                            const channel = await member.guild.channels.fetch(guild.antiraid.channel);
+                            const channel = await member.guild.channels.fetch(
+                                guild.antiraid.channel
+                            );
                             if (channel && channel instanceof Discord.TextChannel) {
                                 await channel.send({
                                     embeds: [
@@ -80,29 +82,38 @@ module.exports = {
 
                     for (const userId of recentJoiners) {
                         try {
-                            const targetMember = await member.guild.members.fetch(userId).catch(() => null);
+                            const targetMember = await member.guild.members
+                                .fetch(userId)
+                                .catch(() => null);
                             if (!targetMember || targetMember.id === client.user.id) continue;
 
                             const dmMessage = EmbedGenerator.basicEmbed(
                                 `**Automod Action: Anti-Raid**\n\n` +
-                                `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}** by the automoderation system.\n\n` +
-                                `**Reason:** Mass join detected during raid protection\n` +
-                                `**System:** Anti Raid Protection\n` +
-                                `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
-                                `This server is currently in raid mode. Please try again later!`
+                                    `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}** by the automoderation system.\n\n` +
+                                    `**Reason:** Mass join detected during raid protection\n` +
+                                    `**System:** Anti Raid Protection\n` +
+                                    `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
+                                    `This server is currently in raid mode. Please try again later!`
                             )
                                 .setColor('Red')
                                 .setTitle(`Automod: ${action === 'ban' ? 'Banned' : 'Kicked'}`)
-                                .setFooter({ text: `${member.guild.name}`, iconURL: member.guild.iconURL() })
+                                .setFooter({
+                                    text: `${member.guild.name}`,
+                                    iconURL: member.guild.iconURL(),
+                                })
                                 .setTimestamp();
 
                             if (action === 'kick') {
                                 await targetMember.send({ embeds: [dmMessage] }).catch(() => null);
-                                await targetMember.kick('Anti-Raid: Mass join detected').catch(() => null);
+                                await targetMember
+                                    .kick('Anti-Raid: Mass join detected')
+                                    .catch(() => null);
                                 successCount++;
                             } else if (action === 'ban') {
                                 await targetMember.send({ embeds: [dmMessage] }).catch(() => null);
-                                await targetMember.ban({ reason: 'Anti-Raid: Mass join detected' }).catch(() => null);
+                                await targetMember
+                                    .ban({ reason: 'Anti-Raid: Mass join detected' })
+                                    .catch(() => null);
                                 successCount++;
                             }
                         } catch (err) {
@@ -127,15 +138,18 @@ module.exports = {
                 try {
                     const dmMessage = EmbedGenerator.basicEmbed(
                         `**Automod Action: Anti-Raid**\n\n` +
-                        `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}** by the automoderation system.\n\n` +
-                        `**Reason:** Server is currently in raid mode\n` +
-                        `**System:** Anti Raid Protection\n` +
-                        `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
-                        `This server is currently in raid mode. Please try again later!`
+                            `You have been ${action === 'ban' ? 'banned' : 'kicked'} from **${member.guild.name}** by the automoderation system.\n\n` +
+                            `**Reason:** Server is currently in raid mode\n` +
+                            `**System:** Anti Raid Protection\n` +
+                            `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
+                            `This server is currently in raid mode. Please try again later!`
                     )
                         .setColor('Red')
                         .setTitle(`Automod: ${action === 'ban' ? 'Banned' : 'Kicked'}`)
-                        .setFooter({ text: `${member.guild.name}`, iconURL: member.guild.iconURL() })
+                        .setFooter({
+                            text: `${member.guild.name}`,
+                            iconURL: member.guild.iconURL(),
+                        })
                         .setTimestamp();
 
                     if (action === 'kick') {
@@ -143,7 +157,9 @@ module.exports = {
                         await member.kick('Anti-Raid: Server is in raid mode').catch(() => null);
                     } else if (action === 'ban') {
                         await member.send({ embeds: [dmMessage] }).catch(() => null);
-                        await member.ban({ reason: 'Anti-Raid: Server is in raid mode' }).catch(() => null);
+                        await member
+                            .ban({ reason: 'Anti-Raid: Server is in raid mode' })
+                            .catch(() => null);
                     }
                 } catch (err) {
                     console.error('Error processing raid mode member:', err);
@@ -153,7 +169,9 @@ module.exports = {
 
         if (guild.verification.enabled && guild.verification.unverifiedRole) {
             const role = await member.guild.roles.fetch(guild.verification.unverifiedRole);
-            if (role && role instanceof Discord.Role) member.roles.add(role).catch(() => null);
+            if (role && role instanceof Discord.Role) {
+                member.roles.add(role).catch(() => null);
+            }
         }
 
         let assignedRole;

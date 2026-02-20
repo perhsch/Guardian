@@ -36,6 +36,9 @@ const client = new Discord.Client({
     ],
 });
 
+// Increase max listeners to prevent memory leak warnings
+client.setMaxListeners(20);
+
 processErrorHandler();
 
 client.commands = new Discord.Collection();

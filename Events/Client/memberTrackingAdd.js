@@ -8,6 +8,7 @@ module.exports = {
      * @param {Discord.Client} client
      */
     async execute(guild, client) {
-        await addGuild(await guild.fetch());
+        const fetchedGuild = await guild.fetch();
+        await addGuild(fetchedGuild);
     },
 };
