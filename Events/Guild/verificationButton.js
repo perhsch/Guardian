@@ -24,7 +24,10 @@ module.exports = {
                     ephemeral: true,
                 });
 
-            if (!guild.verification.unverifiedRole || !interaction.member.roles.cache.has(guild.verification.unverifiedRole))
+            if (
+                !guild.verification.unverifiedRole ||
+                !interaction.member?.roles?.cache.has(guild.verification.unverifiedRole)
+            )
                 return interaction.reply({
                     embeds: [EmbedGenerator.errorEmbed('You are already verified.')],
                     ephemeral: true,
@@ -129,7 +132,10 @@ module.exports = {
                     ephemeral: true,
                 });
 
-            if (!guild.verification.unverifiedRole || !interaction.member.roles.cache.has(guild.verification.unverifiedRole))
+            if (
+                !guild.verification.unverifiedRole ||
+                !interaction.member?.roles?.cache.has(guild.verification.unverifiedRole)
+            )
                 return interaction.reply({
                     embeds: [EmbedGenerator.errorEmbed('You are already verified.')],
                     ephemeral: true,
@@ -172,9 +178,7 @@ module.exports = {
                 });
             } else {
                 return interaction.reply({
-                    embeds: [
-                        EmbedGenerator.errorEmbed('The captcha you provided is incorrect.'),
-                    ],
+                    embeds: [EmbedGenerator.errorEmbed('The captcha you provided is incorrect.')],
                     ephemeral: true,
                 });
             }

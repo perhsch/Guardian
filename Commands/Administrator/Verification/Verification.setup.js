@@ -78,6 +78,11 @@ module.exports = {
         if (!unverifiedRole)
             return EmbedGenerator.errorEmbed(':x: | Failed to create the unverified role');
 
+        // Check if unverifiedRole exists before using it
+        if (!unverifiedRole || !unverifiedRole.id) {
+            return EmbedGenerator.errorEmbed(':x: | Invalid unverified role created');
+        }
+
         if (!channel) {
             channel = await interaction.guild.channels
                 .create({
@@ -85,7 +90,7 @@ module.exports = {
                     type: Discord.ChannelType.GuildText,
                     permissionOverwrites: [
                         {
-                            id: unverifiedRole.id,
+                            id: unverifiedRole?.id || interaction.guild.roles.everyone.id,
                             allow: ['ViewChannel', 'ReadMessageHistory'],
                         },
                         {
@@ -102,16 +107,23 @@ module.exports = {
             for (const c of (await interaction.guild.channels.fetch()).values())
                 if (channel.id !== c.id)
                     await c.permissionOverwrites
-                        .create(unverifiedRole.id, { ViewChannel: false })
+                        .create(unverifiedRole?.id || interaction.guild.roles.everyone.id, {
+                            ViewChannel: false,
+                        })
                         .catch(() => null);
         } else {
             await channel.permissionOverwrites
-                .edit(unverifiedRole.id, { ViewChannel: true, ReadMessageHistory: true })
+                .edit(unverifiedRole?.id || interaction.guild.roles.everyone.id, {
+                    ViewChannel: true,
+                    ReadMessageHistory: true,
+                })
                 .catch(() => null);
             for (const c of (await interaction.guild.channels.fetch()).values())
                 if (channel.id !== c.id)
                     await c.permissionOverwrites
-                        .create(unverifiedRole.id, { ViewChannel: false })
+                        .create(unverifiedRole?.id || interaction.guild.roles.everyone.id, {
+                            ViewChannel: false,
+                        })
                         .catch(() => null);
         }
 
