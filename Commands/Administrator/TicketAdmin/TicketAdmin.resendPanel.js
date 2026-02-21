@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const EmbedGenerator = require('../../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('resend_panel')
         .setDescription('Resend the ticket creation panel (e.g. after setup via /setup).')

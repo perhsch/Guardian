@@ -4,6 +4,7 @@ const SuggestionSetup = require('./Suggestion.setup');
 const SuggestionDisable = require('./Suggestion.disable');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('suggestion')
         .setDescription('Suggestion system.')

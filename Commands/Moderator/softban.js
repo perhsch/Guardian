@@ -7,6 +7,7 @@ const { sendModLog } = require('../../Functions/modLog');
 const Infractions = require('../../Schemas/Infractions');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('softban')
         .setDMPermission(false)

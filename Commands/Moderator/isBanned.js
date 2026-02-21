@@ -1,6 +1,7 @@
 const Discord = require(`discord.js`);
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('isbanned')
         .setDescription('Check if a user is banned or not via user id.')

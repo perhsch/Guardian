@@ -5,6 +5,7 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 const Reminders = require('../../../Schemas/Reminders');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('delete')
         .setDescription('Delete a reminder.')

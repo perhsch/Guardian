@@ -6,6 +6,7 @@ const { setMaintenanceEnabled } = require('../../Functions/maintenance');
 const { ActivityType } = Discord;
 
 module.exports = {
+    enabled: true,
     developer: true,
     data: new Discord.SlashCommandBuilder()
         .setName('maintenance')

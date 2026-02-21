@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const passwordGenerator = require('generate-password');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('generate-password')
         .setDescription('Generate a secure password.')

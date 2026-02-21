@@ -34,6 +34,7 @@ const lifeAdvices = [
 ];
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('advice')
         .setDescription('Get a random life advice!')

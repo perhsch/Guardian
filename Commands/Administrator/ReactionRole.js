@@ -6,6 +6,7 @@ const { sendModLog } = require('../../Functions/modLog');
 const ReactionRoles = require('../../Schemas/ReactionRoles');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('reactionrole')
         .setDescription('Create a reaction role message.')

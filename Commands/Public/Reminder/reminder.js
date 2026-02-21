@@ -5,6 +5,7 @@ const ReminderList = require('./Reminder.list');
 const ReminderDelete = require('./Reminder.delete');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('reminder')
         .setDescription('Reminder system.')

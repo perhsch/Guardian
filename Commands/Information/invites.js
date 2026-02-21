@@ -4,6 +4,7 @@ const emojis = require('../../Config/emojis.json');
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('invites')
         .setDMPermission(false)

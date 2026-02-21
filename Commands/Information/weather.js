@@ -4,6 +4,7 @@ const weather = require(`weather-js`);
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('weather')
         .setDescription('Check the weather of a state or country.')

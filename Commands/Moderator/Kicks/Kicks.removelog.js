@@ -5,6 +5,7 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 const Infractions = require('../../../Schemas/Infractions');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('removelog')
         .setDescription('Removes a logged kick from a member of the discord.')

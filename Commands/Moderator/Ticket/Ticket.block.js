@@ -11,6 +11,7 @@ function hasTicketStaff(interaction, dbGuild) {
 }
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('block')
         .setDescription('Block a user from creating tickets.')

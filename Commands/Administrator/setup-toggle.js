@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const Guilds = require('../../Schemas/Guilds');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('setup-toggle')
         .setDescription('Toggle the setup status of the server (Admin only)')

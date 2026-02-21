@@ -10,6 +10,7 @@ function hasTicketStaff(interaction, dbGuild) {
 }
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('add_user')
         .setDescription('Give a user permission to view a ticket.')

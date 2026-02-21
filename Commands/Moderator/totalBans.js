@@ -3,6 +3,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
+    enabled: true,
     data: new SlashCommandBuilder()
         .setName('totalbans')
         .setDescription('Check how many users are banned in the server.')

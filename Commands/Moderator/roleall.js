@@ -4,6 +4,7 @@ const EmbedGenerator = require('../../Functions/embedGenerator');
 const { sendModLog } = require('../../Functions/modLog');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('giveroleall')
         .setDescription('Gives a specified role to all members in the server.')

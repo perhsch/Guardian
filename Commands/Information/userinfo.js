@@ -3,6 +3,7 @@ const { SlashCommandBuilder, Client, ChatInputCommandInteraction } = require('di
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new SlashCommandBuilder()
         .setName('userinfo')
         .setDMPermission(false)

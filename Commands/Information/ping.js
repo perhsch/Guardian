@@ -3,6 +3,7 @@ const { ChatInputCommandInteraction, SlashCommandBuilder, Client } = require('di
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new SlashCommandBuilder()
         .setName('ping')
         .setDMPermission(false)

@@ -4,6 +4,7 @@ const WarnsView = require('./Warns.view');
 const WarnsRemoveLog = require('./Warns.removelog');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('warns')
         .setDescription('Warn logging system.')

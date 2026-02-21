@@ -6,6 +6,7 @@ const Guilds = require('../../Schemas/Guilds');
 const { emojis: e } = require('../../Config/emojis.json');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('botinfo')
         .setDescription('Receive information about the bot')

@@ -6,6 +6,7 @@ const EmbedGenerator = require('../../Functions/embedGenerator');
 const activeCollectors = new Set();
 
 module.exports = {
+    enabled: true,
     developer: true,
     data: new Discord.SlashCommandBuilder()
         .setName('listservers')

@@ -5,6 +5,7 @@ const TicketAdminDisable = require('./TicketAdmin.disable');
 const TicketAdminResendPanel = require('./TicketAdmin.resendPanel');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('ticket_admin')
         .setDescription('Ticket system management.')

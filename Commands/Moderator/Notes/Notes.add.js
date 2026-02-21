@@ -5,6 +5,7 @@ const { sendModLog } = require('../../../Functions/modLog');
 const Notes = require('../../../Schemas/Notes');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('add')
         .setDescription('Add a note on a user.')

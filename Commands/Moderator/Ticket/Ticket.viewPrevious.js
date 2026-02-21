@@ -10,6 +10,7 @@ function hasTicketStaff(interaction, dbGuild) {
 }
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('view_previous')
         .setDescription("View a user's previous tickets.")

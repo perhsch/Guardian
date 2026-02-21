@@ -1,6 +1,7 @@
 const Discord = require(`discord.js`);
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('feedback')
         .setDescription('Send feedback to a certain channel.')

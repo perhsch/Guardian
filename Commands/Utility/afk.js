@@ -3,6 +3,7 @@ const Discord = require(`discord.js`);
 const AFK = require('../../Schemas/AFK');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('afk')
         .setDescription('Set yourself as AFK')

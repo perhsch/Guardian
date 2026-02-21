@@ -2,6 +2,7 @@ const Discord = require(`discord.js`);
 const axios = require('axios');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('github')
         .setDescription('Check GitHub stats of a user.')

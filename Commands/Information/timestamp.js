@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
+    enabled: true,
     data: new SlashCommandBuilder()
         .setName('timestamp')
         .setDescription('Generate a custom date or timestamp for Discord.')

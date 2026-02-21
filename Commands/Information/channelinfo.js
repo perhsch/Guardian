@@ -8,6 +8,7 @@ const {
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new SlashCommandBuilder()
         .setName('channelinfo')
         .setDescription('Receive information about the current channel'),

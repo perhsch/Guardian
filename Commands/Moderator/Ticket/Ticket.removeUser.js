@@ -10,6 +10,7 @@ function hasTicketStaff(interaction, dbGuild) {
 }
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('remove_user')
         .setDescription('Remove permission from a user to view a ticket.')

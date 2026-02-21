@@ -3,6 +3,7 @@ const backupSchema = require(`../../Schemas/Backup`);
 const mongoose = require('mongoose');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('backup')
         .setDescription('Create a backup of the server.')

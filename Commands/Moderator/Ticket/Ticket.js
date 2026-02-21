@@ -8,6 +8,7 @@ const TicketAddUser = require('./Ticket.addUser');
 const TicketRemoveUser = require('./Ticket.removeUser');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('ticket')
         .setDescription('Ticket system.')

@@ -187,6 +187,7 @@ function getAutomodComponents() {
 }
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('automod')
         .setDescription('Configure automod: Anti Raid, Anti Zalgo, Anti Badwords, Anti Nuke, Anti Advertisement.')

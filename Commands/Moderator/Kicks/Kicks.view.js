@@ -6,6 +6,7 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 const Infractions = require('../../../Schemas/Infractions');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('view')
         .setDescription('View the logged kicks of a user.')

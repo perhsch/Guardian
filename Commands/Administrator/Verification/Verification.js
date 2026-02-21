@@ -4,6 +4,7 @@ const VerificationSetup = require('./Verification.setup');
 const VerificationDisable = require('./Verification.disable');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('verification')
         .setDescription('Verification system.')

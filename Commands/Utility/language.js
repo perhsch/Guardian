@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('language')
         .setDescription('Set your preferred language for bot responses')

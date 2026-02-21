@@ -5,6 +5,7 @@ const NotesAdd = require('./Notes.add');
 const NotesRemove = require('./Notes.remove');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('notes')
         .setDescription('Moderator notes system for tracking users.')

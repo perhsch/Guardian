@@ -2,6 +2,7 @@ const Discord = require(`discord.js`);
 const backupSchema = require(`../../Schemas/Backup`);
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('deletebackup')
         .setDescription('Delete a backup of the server.')

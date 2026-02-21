@@ -4,6 +4,7 @@ const TimeoutsView = require('./Timeouts.view');
 const TimeoutsRemoveLog = require('./Timeouts.removelog');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('timeouts')
         .setDescription('Timeout logging system.')

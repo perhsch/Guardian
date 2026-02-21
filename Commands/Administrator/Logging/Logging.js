@@ -4,6 +4,7 @@ const LoggingSetup = require('./Logging.setup');
 const LoggingDisable = require('./Logging.disable');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('logging')
         .setDescription('Logging system.')

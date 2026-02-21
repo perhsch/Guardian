@@ -74,6 +74,7 @@ const SETUP_STEPS = [
 ];
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('setup')
         .setDescription('Setup basic bot stuff.')

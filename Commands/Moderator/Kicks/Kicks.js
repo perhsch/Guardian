@@ -4,6 +4,7 @@ const KicksView = require('./Kicks.view');
 const KicksRemoveLog = require('./Kicks.removelog');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('kicks')
         .setDescription('Kick logging system.')

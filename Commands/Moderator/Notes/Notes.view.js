@@ -5,6 +5,7 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 const Notes = require('../../../Schemas/Notes');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('view')
         .setDescription('View notes on a user.')

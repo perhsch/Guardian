@@ -6,6 +6,7 @@ const EmbedGenerator = require('../../../Functions/embedGenerator');
 const Infractions = require('../../../Schemas/Infractions');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandSubcommandBuilder()
         .setName('view')
         .setDescription('View the logged warnings of a user.')
@@ -26,7 +27,11 @@ module.exports = {
             user: user.id,
             type: 'warning',
         }).sort({ time: -1 });
-        if (warnings.length === 0) return EmbedGenerator.errorEmbed('No warnings found');
+        if (warnings.length === 0)
+            return interaction.reply({
+                embeds: [EmbedGenerator.errorEmbed('No warnings found')],
+                ephemeral: true,
+            });
 
         const embeds = [];
 

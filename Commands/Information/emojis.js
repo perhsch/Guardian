@@ -1,6 +1,7 @@
 const Discord = require(`discord.js`);
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('emojis')
         .setDescription('Lists the number of animated and non-animated emojis in the server.')

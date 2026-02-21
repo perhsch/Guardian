@@ -4,6 +4,7 @@ const ms = require('ms');
 const EmbedGenerator = require('../../Functions/embedGenerator');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('uptime')
         .setDMPermission(false)

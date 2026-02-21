@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
+    enabled: true,
     data: new SlashCommandBuilder()
         .setName('rules')
         .setDescription('Posts default server rules to the current channel..')

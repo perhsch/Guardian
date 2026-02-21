@@ -4,6 +4,7 @@ const EmbedGenerator = require('../../Functions/embedGenerator');
 const { sendModLog } = require('../../Functions/modLog');
 
 module.exports = {
+    enabled: true,
   data: new SlashCommandBuilder()
     .setName("clearchannel")
     .setDescription("Clear all messages in the channel")

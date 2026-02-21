@@ -4,6 +4,7 @@ const EmbedGenerator = require('../../Functions/embedGenerator');
 const { sendModLog } = require('../../Functions/modLog');
 
 module.exports = {
+    enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('announce')
         .setDescription('Announce a message to the server')
