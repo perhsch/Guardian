@@ -48,28 +48,75 @@ module.exports = {
             .then(async () => {
                 const durationString =
                     durationSeconds === 0 ? 'disabled' : ms(ms(duration), { long: true });
-                const logEmbed = EmbedGenerator.basicEmbed(
-                    [
-                        `- Moderator: ${interaction.user.tag}`,
-                        `- Channel: <#${channel.id}>`,
-                        `- Slowmode: ${durationString}`,
-                        `- Reason: ${reason}`,
-                    ].join('\n')
-                ).setTitle('/slowmode command used');
+
+                // Enhanced success embed
+                const successEmbed = new Discord.EmbedBuilder()
+                    .setColor(durationSeconds === 0 ? 0x57f287 : 0xfee75c)
+                    .setTitle(`${durationSeconds === 0 ? '🟢' : '⏱️'} Slowmode Updated`)
+                    .setThumbnail(interaction.guild.iconURL({ size: 256 }))
+                    .setDescription(
+                        `>>> **Channel slowmode has been successfully updated!**\n\n📝 **Details**\n• **Channel**: ${channel.toString()}\n• **Duration**: \`${durationString}\`\n• **Reason**: ${reason}`
+                    )
+                    .addFields(
+                        {
+                            name: '🔧 Configuration',
+                            value: `• **Set by**: ${interaction.user.toString()}\n• **Time**: <t:${Math.floor(Date.now() / 1000)}:R>`,
+                            inline: true,
+                        },
+                        {
+                            name: '📊 Status',
+                            value: `• **Previous**: \`${channel.rateLimitPerUser}s\`\n• **New**: \`${durationSeconds}s\``,
+                            inline: true,
+                        }
+                    )
+                    .setFooter({
+                        text: `Guardian Moderation • ${interaction.guild.name}`,
+                        iconURL: client.user.displayAvatarURL(),
+                    })
+                    .setTimestamp();
+
+                // Enhanced moderation log embed
+                const logEmbed = new Discord.EmbedBuilder()
+                    .setColor(0xfee75c)
+                    .setTitle('⚙️ Slowmode Configuration')
+                    .setThumbnail(interaction.user.displayAvatarURL({ size: 256 }))
+                    .setDescription(
+                        `>>> **Channel slowmode settings have been modified**\n\n**Action Details**\n• **Moderator**: ${interaction.user.toString()}\n• **Channel**: ${channel.toString()}\n• **New Duration**: \`${durationString}\`\n• **Reason**: ${reason}`
+                    )
+                    .addFields({
+                        name: '🔍 Technical Information',
+                        value: `• **Channel ID**: \`${channel.id}\`\n• **Moderator ID**: \`${interaction.user.id}\`\n• **Previous Rate Limit**: \`${channel.rateLimitPerUser}s\`\n• **New Rate Limit**: \`${durationSeconds}s\``,
+                        inline: false,
+                    })
+                    .setFooter({
+                        text: `Moderation Log • ${interaction.guild.name}`,
+                        iconURL: interaction.guild.iconURL(),
+                    })
+                    .setTimestamp();
+
                 await sendModLog(interaction.guild, dbGuild, logEmbed);
-                interaction.reply({
-                    embeds: [
-                        EmbedGenerator.basicEmbed(
-                            `The slowmode for this channel is now ${durationString} | ${reason}`
-                        ),
-                    ],
-                });
+                interaction.reply({ embeds: [successEmbed] });
             })
             .catch(() => {
-                interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('There was an error.')],
-                    ephemeral: true,
-                });
+                const errorEmbed = new Discord.EmbedBuilder()
+                    .setColor(0xed4245)
+                    .setTitle('❌ Slowmode Error')
+                    .setThumbnail(interaction.guild.iconURL({ size: 256 }))
+                    .setDescription(
+                        `>>> **Failed to update channel slowmode**\n\n**Possible Reasons**\n• Bot lacks \`Manage Channels\` permission\n• Channel permissions conflict\n• Invalid duration specified`
+                    )
+                    .addFields({
+                        name: '🔧 Troubleshooting',
+                        value: `• Check bot permissions\n• Verify channel settings\n• Ensure duration is between 0-6 hours`,
+                        inline: false,
+                    })
+                    .setFooter({
+                        text: `Guardian Moderation • Error occurred`,
+                        iconURL: client.user.displayAvatarURL(),
+                    })
+                    .setTimestamp();
+
+                interaction.reply({ embeds: [errorEmbed], ephemeral: true });
             });
     },
 };
