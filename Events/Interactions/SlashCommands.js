@@ -134,16 +134,26 @@ module.exports = {
 
         const subCommand = interaction.options.getSubcommand(false);
         if (subCommand) {
-            const subCommandFile = client.subCommands.get(
-                `${interaction.commandName}.${subCommand}`
-            );
-            if (!subCommandFile)
-                return interaction.reply({
-                    content: await translateContent('This sub command is outdated.'),
-                    ephemeral: true,
-                });
+            // Check if the main command handles subcommands internally
+            if (
+                command.subCommands ||
+                command.data.options?.some((opt) => opt.type === 'SUB_COMMAND')
+            ) {
+                // Command handles subcommands internally, keep main execute function
+                executeFunction = command.execute;
+            } else {
+                // Look for separate subcommand file
+                const subCommandFile = client.subCommands.get(
+                    `${interaction.commandName}.${subCommand}`
+                );
+                if (!subCommandFile)
+                    return interaction.reply({
+                        content: await translateContent('This sub command is outdated.'),
+                        ephemeral: true,
+                    });
 
-            executeFunction = subCommandFile.execute;
+                executeFunction = subCommandFile.execute;
+            }
         }
 
         const dbGuild = interaction.guild ? await GuildsManager.fetch(interaction.guild.id) : null;
