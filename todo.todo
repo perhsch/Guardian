@@ -3,6 +3,7 @@
     -- New Features
         : Next Update???
 
+        - Alt detection system
         - Configurable welcome & goodbye systems
         - Add more logging options
         - Config command to configure everything with one click
