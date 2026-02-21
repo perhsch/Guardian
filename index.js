@@ -175,13 +175,6 @@ app.use('/', router);
 module.exports.client = client;
 module.exports.server = server;
 
-client.on('guildCreate', async (guild) => {
-    const DevGuilds = ['1460113401631211664']; // replace with your dev guild of server IDs
-    if (!DevGuilds.includes(guild.id)) {
-        await guild.leave();
-    }
-});
-
 client.on('messageCreate', (message) => {
     if (!message.mentions.has(client.user)) return;
     if (message.reference) return;
