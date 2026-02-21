@@ -43,6 +43,14 @@ module.exports = {
             { name: `${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
             { name: `${totalMembers} members!`, type: ActivityType.Watching },
             { name: `beep bop boop`, type: ActivityType.Playing },
+            { name: `use /setup to get started!`, type: ActivityType.Playing },
+            { name: `Guardian Bot • Made for your server!`, type: ActivityType.Playing },
+            { name: `hi hru?`, type: ActivityType.Watching },
+            {
+                name: `MEOW :3`,
+                type: ActivityType.Streaming,
+                url: 'https://github.com/Guardians-Stuff',
+            },
         ];
 
         let statusIndex = 0;

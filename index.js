@@ -187,7 +187,7 @@ client.on('messageCreate', (message) => {
         .setColor(0x5865f2)
         .setTitle("Hello! I'm Guardian 🤖")
         .setDescription(
-            'Thanks for mentioning me!\n\n**My default prefix is:** `/` (I use [slash commands](https://discord.com/developers/docs/interactions/application-commands))\n\nUse `/help` to get a list of commands or explore the resources below!'
+            'Thanks for mentioning me!\n\n**My default prefix is:** `/` (I use [slash commands](https://discord.com/developers/docs/interactions/application-commands))\n\nUse `/setup` to get started!'
         )
         .addFields(
             { name: 'Quick Start', value: 'Type `/help` for a full command list.' },

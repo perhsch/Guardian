@@ -30,7 +30,7 @@ function wrapInteractionForTranslation(interaction, userLang) {
     const replyOptions = (o) => {
         if (typeof o === 'string') return { content: o };
         const safe = {};
-        if (o.content !== undefined) safe.content = o.content;
+        if (o.content !== undefined && o.content !== null) safe.content = o.content;
         if (o.embeds !== undefined) safe.embeds = o.embeds;
         if (o.components !== undefined) safe.components = o.components;
         if (o.files !== undefined) safe.files = o.files;
@@ -183,14 +183,28 @@ module.exports = {
 
         if (response) {
             let parsedResponse = {
-                content: response.content || null,
                 embeds: response.embeds || [],
                 components: response.components || [],
                 ephemeral: response.ephemeral || false,
             };
 
+            // Only set content if it exists and is not empty
+            if (response.content && response.content.trim() !== '') {
+                parsedResponse.content = response.content;
+            }
+
             if (response instanceof Discord.EmbedBuilder) parsedResponse.embeds.push(response);
-            if (typeof response === 'string') parsedResponse.content = response;
+            if (typeof response === 'string' && response.trim() !== '') {
+                parsedResponse.content = response;
+            }
+
+            // Ensure we have either content or embeds to avoid empty message error
+            if (
+                !parsedResponse.content &&
+                (!parsedResponse.embeds || parsedResponse.embeds.length === 0)
+            ) {
+                return; // Don't send empty message
+            }
 
             if (needsTranslation) {
                 parsedResponse = await translateResponse(parsedResponse, userLang);

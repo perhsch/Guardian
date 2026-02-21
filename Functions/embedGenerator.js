@@ -72,7 +72,7 @@ async function pagesEmbed(interaction, embeds, ephemeral = false, targetLang = n
         return interaction.reply({ content: 'There was an error.', ephemeral: true });
     if (embeds.length === 1) {
         if (targetLang && targetLang.toLowerCase() !== 'en') {
-            await translateResponse({ content: null, embeds, ephemeral }, targetLang);
+            await translateResponse({ embeds, ephemeral }, targetLang);
         }
         return interaction.reply({
             embeds: [embeds[0].setFooter({ text: 'Page 1/1' })],
@@ -81,7 +81,7 @@ async function pagesEmbed(interaction, embeds, ephemeral = false, targetLang = n
     }
 
     if (targetLang && targetLang.toLowerCase() !== 'en') {
-        await translateResponse({ content: null, embeds, ephemeral }, targetLang);
+        await translateResponse({ embeds, ephemeral }, targetLang);
     }
 
     let page = 0;
