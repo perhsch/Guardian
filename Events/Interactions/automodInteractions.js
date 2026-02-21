@@ -35,7 +35,17 @@ function buildAntiraidModal(dbGuild) {
             opt('joinAmount', 'Joins required to trigger', ar.joinAmount ?? 5),
             opt('joinWithin', 'Within seconds', ar.joinWithin ?? 10),
             opt('action', 'Action: kick or ban', ar.action ?? 'kick'),
-            opt('lockdown', 'Lockdown (yes/no). Alert channel ID optional:', ar.lockdown?.enabled ? (ar.channel ? `yes, ${ar.channel}` : 'yes') : (ar.channel ? ar.channel : 'no'))
+            opt(
+                'lockdown',
+                'Lockdown (yes/no). Alert channel ID optional:',
+                ar.lockdown?.enabled
+                    ? ar.channel
+                        ? `yes, ${ar.channel}`
+                        : 'yes'
+                    : ar.channel
+                      ? ar.channel
+                      : 'no'
+            )
         );
 }
 
@@ -112,7 +122,11 @@ function buildAntiNukeModal(dbGuild) {
         .setTitle('Anti Nuke Settings')
         .addComponents(
             opt('enabled', 'Enabled (yes/no)', an.enabled ? 'yes' : 'no'),
-            opt('maxChannelsPerMinute', 'Max channels deleted per minute', an.maxChannelsPerMinute ?? 3),
+            opt(
+                'maxChannelsPerMinute',
+                'Max channels deleted per minute',
+                an.maxChannelsPerMinute ?? 3
+            ),
             opt('maxRolesPerMinute', 'Max roles deleted per minute', an.maxRolesPerMinute ?? 3),
             opt('action', 'Action: kick or ban', an.action ?? 'ban')
         );
@@ -151,13 +165,92 @@ function buildAntiAdvertisementModal(dbGuild) {
         );
 }
 
+function buildAntiCapsModal(dbGuild) {
+    const ac = dbGuild?.document?.automod?.antiCaps || {};
+    const opt = (id, label, val) => {
+        const input = new Discord.TextInputBuilder()
+            .setCustomId(id)
+            .setLabel(label)
+            .setStyle(TextInputStyle.Short)
+            .setRequired(id === 'enabled')
+            .setMaxLength(20);
+        if (val != null && val !== '') input.setValue(String(val));
+        return new Discord.ActionRowBuilder().addComponents(input);
+    };
+
+    return new Discord.ModalBuilder()
+        .setCustomId('automod_modal_anticaps')
+        .setTitle('Anti Caps Settings')
+        .addComponents(
+            opt('enabled', 'Enabled (yes/no)', ac.enabled ? 'yes' : 'no'),
+            opt('threshold', 'Caps percentage threshold (1-100)', ac.threshold ?? 70),
+            opt('minLength', 'Minimum message length', ac.minLength ?? 10),
+            opt('action', 'Action: delete, warn, or timeout', ac.action ?? 'delete')
+        );
+}
+
+function buildAntiMentionSpamModal(dbGuild) {
+    const ams = dbGuild?.document?.automod?.antiMentionSpam || {};
+    const opt = (id, label, val) => {
+        const input = new Discord.TextInputBuilder()
+            .setCustomId(id)
+            .setLabel(label)
+            .setStyle(TextInputStyle.Short)
+            .setRequired(id === 'enabled')
+            .setMaxLength(20);
+        if (val != null && val !== '') input.setValue(String(val));
+        return new Discord.ActionRowBuilder().addComponents(input);
+    };
+
+    return new Discord.ModalBuilder()
+        .setCustomId('automod_modal_antimentionspam')
+        .setTitle('Anti Mention Spam Settings')
+        .addComponents(
+            opt('enabled', 'Enabled (yes/no)', ams.enabled ? 'yes' : 'no'),
+            opt('maxMentions', 'Max mentions per message', ams.maxMentions ?? 5),
+            opt(
+                'checkEveryone',
+                'Check @everyone/@here (yes/no)',
+                ams.checkEveryone ? 'yes' : 'no'
+            ),
+            opt('action', 'Action: delete, warn, or timeout', ams.action ?? 'delete')
+        );
+}
+
+function buildAntiSpamModal(dbGuild) {
+    const as = dbGuild?.document?.automod?.antiSpam || {};
+    const opt = (id, label, val) => {
+        const input = new Discord.TextInputBuilder()
+            .setCustomId(id)
+            .setLabel(label)
+            .setStyle(TextInputStyle.Short)
+            .setRequired(id === 'enabled')
+            .setMaxLength(20);
+        if (val != null && val !== '') input.setValue(String(val));
+        return new Discord.ActionRowBuilder().addComponents(input);
+    };
+
+    return new Discord.ModalBuilder()
+        .setCustomId('automod_modal_antispam')
+        .setTitle('Anti Spam Settings')
+        .addComponents(
+            opt('enabled', 'Enabled (yes/no)', as.enabled ? 'yes' : 'no'),
+            opt('maxMessages', 'Max messages in timeframe', as.maxMessages ?? 5),
+            opt('timeframe', 'Timeframe in milliseconds', as.timeframe ?? 5000),
+            opt('maxDuplicates', 'Max duplicate messages', as.maxDuplicates ?? 3),
+            opt('action', 'Action: delete, warn, or timeout', as.action ?? 'delete')
+        );
+}
+
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
         if (interaction.isButton() && interaction.customId === 'automod_configure') {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only administrators can configure automod.')],
+                    embeds: [
+                        EmbedGenerator.errorEmbed('Only administrators can configure automod.'),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -190,7 +283,22 @@ module.exports = {
                             .setLabel('Anti Advertisement')
                             .setValue('antiad')
                             .setDescription('Block Discord invite links')
-                            .setEmoji('📢')
+                            .setEmoji('📢'),
+                        new Discord.StringSelectMenuOptionBuilder()
+                            .setLabel('Anti Caps')
+                            .setValue('anticaps')
+                            .setDescription('Detect excessive capitalization')
+                            .setEmoji('🔠'),
+                        new Discord.StringSelectMenuOptionBuilder()
+                            .setLabel('Anti Mention Spam')
+                            .setValue('antimentionspam')
+                            .setDescription('Limit mass mentions')
+                            .setEmoji('🏷️'),
+                        new Discord.StringSelectMenuOptionBuilder()
+                            .setLabel('Anti Spam')
+                            .setValue('antispam')
+                            .setDescription('Detect rapid message sending')
+                            .setEmoji('📧')
                     )
             );
             return interaction.reply({
@@ -199,10 +307,15 @@ module.exports = {
             });
         }
 
-        if (interaction.isStringSelectMenu() && interaction.customId === 'automod_settings_select') {
+        if (
+            interaction.isStringSelectMenu() &&
+            interaction.customId === 'automod_settings_select'
+        ) {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only administrators can configure automod.')],
+                    embeds: [
+                        EmbedGenerator.errorEmbed('Only administrators can configure automod.'),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -214,6 +327,9 @@ module.exports = {
             else if (value === 'antibadwords') modal = buildAntiBadwordsModal(dbGuild);
             else if (value === 'antinuke') modal = buildAntiNukeModal(dbGuild);
             else if (value === 'antiad') modal = buildAntiAdvertisementModal(dbGuild);
+            else if (value === 'anticaps') modal = buildAntiCapsModal(dbGuild);
+            else if (value === 'antimentionspam') modal = buildAntiMentionSpamModal(dbGuild);
+            else if (value === 'antispam') modal = buildAntiSpamModal(dbGuild);
             else return;
             return interaction.showModal(modal);
         }
@@ -221,7 +337,9 @@ module.exports = {
         if (interaction.isModalSubmit() && interaction.customId.startsWith('automod_modal_')) {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only administrators can configure automod.')],
+                    embeds: [
+                        EmbedGenerator.errorEmbed('Only administrators can configure automod.'),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -236,11 +354,17 @@ module.exports = {
 
             if (customId === 'automod_modal_antiraid') {
                 const enabled = parseBool(interaction.fields.getTextInputValue('enabled'));
-                const joinAmount = parseInt(interaction.fields.getTextInputValue('joinAmount'), 10) || 5;
-                const joinWithin = parseInt(interaction.fields.getTextInputValue('joinWithin'), 10) || 10;
-                const actionRaw = (interaction.fields.getTextInputValue('action') || 'kick').trim().toLowerCase();
+                const joinAmount =
+                    parseInt(interaction.fields.getTextInputValue('joinAmount'), 10) || 5;
+                const joinWithin =
+                    parseInt(interaction.fields.getTextInputValue('joinWithin'), 10) || 10;
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'kick')
+                    .trim()
+                    .toLowerCase();
                 const action = actionRaw === 'ban' ? 'ban' : 'kick';
-                const lockdownStr = (interaction.fields.getTextInputValue('lockdown') || '').trim().toLowerCase();
+                const lockdownStr = (interaction.fields.getTextInputValue('lockdown') || '')
+                    .trim()
+                    .toLowerCase();
                 const lockdown = parseBool(lockdownStr);
                 let channel = dbGuild?.antiraid?.channel ?? null;
                 const channelMatch = lockdownStr.match(/(\d{17,20})/);
@@ -281,8 +405,12 @@ module.exports = {
 
             if (customId === 'automod_modal_antizalgo') {
                 const enabled = parseBool(interaction.fields.getTextInputValue('enabled'));
-                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete').trim().toLowerCase();
-                const action = ['delete', 'warn', 'timeout'].includes(actionRaw) ? actionRaw : 'delete';
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete')
+                    .trim()
+                    .toLowerCase();
+                const action = ['delete', 'warn', 'timeout'].includes(actionRaw)
+                    ? actionRaw
+                    : 'delete';
 
                 await Guilds.updateOne(
                     { guild: interaction.guildId },
@@ -324,8 +452,12 @@ module.exports = {
                     .split(',')
                     .map((w) => w.trim().toLowerCase())
                     .filter((w) => w.length > 0);
-                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete').trim().toLowerCase();
-                const action = ['delete', 'warn', 'timeout'].includes(actionRaw) ? actionRaw : 'delete';
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete')
+                    .trim()
+                    .toLowerCase();
+                const action = ['delete', 'warn', 'timeout'].includes(actionRaw)
+                    ? actionRaw
+                    : 'delete';
 
                 await Guilds.updateOne(
                     { guild: interaction.guildId },
@@ -338,7 +470,8 @@ module.exports = {
                     }
                 );
                 if (!dbGuild.document.automod) dbGuild.document.automod = {};
-                if (!dbGuild.document.automod.antiBadwords) dbGuild.document.automod.antiBadwords = {};
+                if (!dbGuild.document.automod.antiBadwords)
+                    dbGuild.document.automod.antiBadwords = {};
                 dbGuild.document.automod.antiBadwords.enabled = enabled;
                 dbGuild.document.automod.antiBadwords.words = words;
                 dbGuild.document.automod.antiBadwords.action = action;
@@ -364,9 +497,13 @@ module.exports = {
 
             if (customId === 'automod_modal_antinuke') {
                 const enabled = parseBool(interaction.fields.getTextInputValue('enabled'));
-                const maxChannels = parseInt(interaction.fields.getTextInputValue('maxChannelsPerMinute'), 10) || 3;
-                const maxRoles = parseInt(interaction.fields.getTextInputValue('maxRolesPerMinute'), 10) || 3;
-                const actionRaw = (interaction.fields.getTextInputValue('action') || 'ban').trim().toLowerCase();
+                const maxChannels =
+                    parseInt(interaction.fields.getTextInputValue('maxChannelsPerMinute'), 10) || 3;
+                const maxRoles =
+                    parseInt(interaction.fields.getTextInputValue('maxRolesPerMinute'), 10) || 3;
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'ban')
+                    .trim()
+                    .toLowerCase();
                 const action = actionRaw === 'kick' ? 'kick' : 'ban';
 
                 await Guilds.updateOne(
@@ -413,8 +550,12 @@ module.exports = {
                     .split(',')
                     .map((c) => c.trim())
                     .filter((c) => c.length >= 17 && c.length <= 20);
-                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete').trim().toLowerCase();
-                const action = ['delete', 'warn', 'timeout'].includes(actionRaw) ? actionRaw : 'delete';
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete')
+                    .trim()
+                    .toLowerCase();
+                const action = ['delete', 'warn', 'timeout'].includes(actionRaw)
+                    ? actionRaw
+                    : 'delete';
 
                 await Guilds.updateOne(
                     { guild: interaction.guildId },
@@ -427,7 +568,8 @@ module.exports = {
                     }
                 );
                 if (!dbGuild.document.automod) dbGuild.document.automod = {};
-                if (!dbGuild.document.automod.antiAdvertisement) dbGuild.document.automod.antiAdvertisement = {};
+                if (!dbGuild.document.automod.antiAdvertisement)
+                    dbGuild.document.automod.antiAdvertisement = {};
                 dbGuild.document.automod.antiAdvertisement.enabled = enabled;
                 dbGuild.document.automod.antiAdvertisement.whitelistChannels = whitelistChannels;
                 dbGuild.document.automod.antiAdvertisement.action = action;
@@ -447,6 +589,162 @@ module.exports = {
                 } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Advertisement settings saved!')],
+                    ephemeral: true,
+                });
+            }
+
+            if (customId === 'automod_modal_anticaps') {
+                const enabled = parseBool(interaction.fields.getTextInputValue('enabled'));
+                const threshold =
+                    parseInt(interaction.fields.getTextInputValue('threshold'), 10) || 70;
+                const minLength =
+                    parseInt(interaction.fields.getTextInputValue('minLength'), 10) || 10;
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete')
+                    .trim()
+                    .toLowerCase();
+                const action = ['delete', 'warn', 'timeout'].includes(actionRaw)
+                    ? actionRaw
+                    : 'delete';
+
+                await Guilds.updateOne(
+                    { guild: interaction.guildId },
+                    {
+                        $set: {
+                            'automod.antiCaps.enabled': enabled,
+                            'automod.antiCaps.threshold': Math.max(1, Math.min(100, threshold)),
+                            'automod.antiCaps.minLength': Math.max(1, minLength),
+                            'automod.antiCaps.action': action,
+                        },
+                    }
+                );
+                if (!dbGuild.document.automod) dbGuild.document.automod = {};
+                if (!dbGuild.document.automod.antiCaps) dbGuild.document.automod.antiCaps = {};
+                dbGuild.document.automod.antiCaps.enabled = enabled;
+                dbGuild.document.automod.antiCaps.threshold = Math.max(1, Math.min(100, threshold));
+                dbGuild.document.automod.antiCaps.minLength = Math.max(1, minLength);
+                dbGuild.document.automod.antiCaps.action = action;
+
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    `Anti Caps configured by ${interaction.user.tag}\nEnabled: ${enabled}\nThreshold: ${threshold}% | Min Length: ${minLength} | Action: ${action}`
+                ).setTitle('Automod: Anti Caps');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
+
+                try {
+                    const msg = await interaction.message?.fetch?.();
+                    if (msg) {
+                        const embed = automodCommand.buildAutomodEmbed(dbGuild);
+                        const components = automodCommand.getAutomodComponents(dbGuild);
+                        await msg.edit({ embeds: [embed], components });
+                    }
+                } catch {}
+                return interaction.reply({
+                    embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Caps settings saved!')],
+                    ephemeral: true,
+                });
+            }
+
+            if (customId === 'automod_modal_antimentionspam') {
+                const enabled = parseBool(interaction.fields.getTextInputValue('enabled'));
+                const maxMentions =
+                    parseInt(interaction.fields.getTextInputValue('maxMentions'), 10) || 5;
+                const checkEveryone = parseBool(
+                    interaction.fields.getTextInputValue('checkEveryone')
+                );
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete')
+                    .trim()
+                    .toLowerCase();
+                const action = ['delete', 'warn', 'timeout'].includes(actionRaw)
+                    ? actionRaw
+                    : 'delete';
+
+                await Guilds.updateOne(
+                    { guild: interaction.guildId },
+                    {
+                        $set: {
+                            'automod.antiMentionSpam.enabled': enabled,
+                            'automod.antiMentionSpam.maxMentions': Math.max(1, maxMentions),
+                            'automod.antiMentionSpam.checkEveryone': checkEveryone,
+                            'automod.antiMentionSpam.action': action,
+                        },
+                    }
+                );
+                if (!dbGuild.document.automod) dbGuild.document.automod = {};
+                if (!dbGuild.document.automod.antiMentionSpam)
+                    dbGuild.document.automod.antiMentionSpam = {};
+                dbGuild.document.automod.antiMentionSpam.enabled = enabled;
+                dbGuild.document.automod.antiMentionSpam.maxMentions = Math.max(1, maxMentions);
+                dbGuild.document.automod.antiMentionSpam.checkEveryone = checkEveryone;
+                dbGuild.document.automod.antiMentionSpam.action = action;
+
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    `Anti Mention Spam configured by ${interaction.user.tag}\nEnabled: ${enabled}\nMax Mentions: ${maxMentions} | Check @everyone: ${checkEveryone} | Action: ${action}`
+                ).setTitle('Automod: Anti Mention Spam');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
+
+                try {
+                    const msg = await interaction.message?.fetch?.();
+                    if (msg) {
+                        const embed = automodCommand.buildAutomodEmbed(dbGuild);
+                        const components = automodCommand.getAutomodComponents(dbGuild);
+                        await msg.edit({ embeds: [embed], components });
+                    }
+                } catch {}
+                return interaction.reply({
+                    embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Mention Spam settings saved!')],
+                    ephemeral: true,
+                });
+            }
+
+            if (customId === 'automod_modal_antispam') {
+                const enabled = parseBool(interaction.fields.getTextInputValue('enabled'));
+                const maxMessages =
+                    parseInt(interaction.fields.getTextInputValue('maxMessages'), 10) || 5;
+                const timeframe =
+                    parseInt(interaction.fields.getTextInputValue('timeframe'), 10) || 5000;
+                const maxDuplicates =
+                    parseInt(interaction.fields.getTextInputValue('maxDuplicates'), 10) || 3;
+                const actionRaw = (interaction.fields.getTextInputValue('action') || 'delete')
+                    .trim()
+                    .toLowerCase();
+                const action = ['delete', 'warn', 'timeout'].includes(actionRaw)
+                    ? actionRaw
+                    : 'delete';
+
+                await Guilds.updateOne(
+                    { guild: interaction.guildId },
+                    {
+                        $set: {
+                            'automod.antiSpam.enabled': enabled,
+                            'automod.antiSpam.maxMessages': Math.max(1, maxMessages),
+                            'automod.antiSpam.timeframe': Math.max(1000, timeframe),
+                            'automod.antiSpam.maxDuplicates': Math.max(1, maxDuplicates),
+                            'automod.antiSpam.action': action,
+                        },
+                    }
+                );
+                if (!dbGuild.document.automod) dbGuild.document.automod = {};
+                if (!dbGuild.document.automod.antiSpam) dbGuild.document.automod.antiSpam = {};
+                dbGuild.document.automod.antiSpam.enabled = enabled;
+                dbGuild.document.automod.antiSpam.maxMessages = Math.max(1, maxMessages);
+                dbGuild.document.automod.antiSpam.timeframe = Math.max(1000, timeframe);
+                dbGuild.document.automod.antiSpam.maxDuplicates = Math.max(1, maxDuplicates);
+                dbGuild.document.automod.antiSpam.action = action;
+
+                const logEmbed = EmbedGenerator.basicEmbed(
+                    `Anti Spam configured by ${interaction.user.tag}\nEnabled: ${enabled}\nMax Messages: ${maxMessages}/${timeframe}ms | Max Duplicates: ${maxDuplicates} | Action: ${action}`
+                ).setTitle('Automod: Anti Spam');
+                await sendModLog(interaction.guild, dbGuild, logEmbed);
+
+                try {
+                    const msg = await interaction.message?.fetch?.();
+                    if (msg) {
+                        const embed = automodCommand.buildAutomodEmbed(dbGuild);
+                        const components = automodCommand.getAutomodComponents(dbGuild);
+                        await msg.edit({ embeds: [embed], components });
+                    }
+                } catch {}
+                return interaction.reply({
+                    embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Spam settings saved!')],
                     ephemeral: true,
                 });
             }

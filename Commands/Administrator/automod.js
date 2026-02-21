@@ -8,6 +8,9 @@ const AUTOMOD_PATHS = {
     antiBadwords: 'automod.antiBadwords',
     antiNuke: 'automod.antiNuke',
     antiAdvertisement: 'automod.antiAdvertisement',
+    antiCaps: 'automod.antiCaps',
+    antiMentionSpam: 'automod.antiMentionSpam',
+    antiSpam: 'automod.antiSpam',
 };
 
 function isAutomodEnabled(doc, feature) {
@@ -28,9 +31,7 @@ function buildAutomodEmbed(dbGuild, interaction = null) {
     const antiNuke = automod.antiNuke || {};
     const antiAd = automod.antiAdvertisement || {};
 
-    const status = (enabled) => enabled
-        ? '`🟢 ENABLED`'
-        : '`🔴 DISABLED`';
+    const status = (enabled) => (enabled ? '`🟢 ENABLED`' : '`🔴 DISABLED`');
 
     function prettyAntiraid() {
         if (!isAutomodEnabled(doc, 'antiraid')) {
@@ -38,7 +39,7 @@ function buildAutomodEmbed(dbGuild, interaction = null) {
                 '**Status:** ' + status(false),
                 '> Prevents mass joins during raids.',
                 '',
-                '`Configure this to secure your community from join attacks.`'
+                '`Configure this to secure your community from join attacks.`',
             ].join('\n');
         }
 
@@ -47,60 +48,104 @@ function buildAutomodEmbed(dbGuild, interaction = null) {
             `**Threshold:** \`${antiraid.joinAmount || '?'}\` users in \`${antiraid.joinWithin || '?'}\`s`,
             `**Action:** \`${antiraid.action || 'none'}\` | **Lockdown:** ${antiraid.lockdown?.enabled ? '`ACTIVE`' : '`INACTIVE`'}`,
             '',
-            `${antiraid.notice ? `> Notice: ${antiraid.notice}` : ''}`
+            `${antiraid.notice ? `> Notice: ${antiraid.notice}` : ''}`,
         ].join('\n');
     }
     function prettyAntiZalgo() {
         if (!isAutomodEnabled(doc, 'antiZalgo')) {
             return [
                 '**Status:** ' + status(false),
-                '> Blocks corrupted or glitchy text (Zalgo).'
+                '> Blocks corrupted or glitchy text (Zalgo).',
             ].join('\n');
         }
         return [
             '**Status:** ' + status(true),
             `**Action:** \`${antiZalgo.action || 'delete'}\``,
-            ''
+            '',
         ].join('\n');
     }
     function prettyAntiBadwords() {
         if (!isAutomodEnabled(doc, 'antiBadwords')) {
             return [
                 '**Status:** ' + status(false),
-                '> Filters and blocks configured bad words.'
+                '> Filters and blocks configured bad words.',
             ].join('\n');
         }
         return [
             '**Status:** ' + status(true),
             `**Words Blocked:** \`${(antiBadwords.words || []).length}\``,
-            `**Action:** \`${antiBadwords.action || 'delete'}\``
+            `**Action:** \`${antiBadwords.action || 'delete'}\``,
         ].join('\n');
     }
     function prettyAntiNuke() {
         if (!isAutomodEnabled(doc, 'antiNuke')) {
             return [
                 '**Status:** ' + status(false),
-                '> Prevents mass deletion of channels/roles.'
+                '> Prevents mass deletion of channels/roles.',
             ].join('\n');
         }
         return [
             '**Status:** ' + status(true),
             `**Max/Min:** \`${antiNuke.maxChannelsPerMinute || 3}\` channels / \`${antiNuke.maxRolesPerMinute || 3}\` roles/min`,
-            `**Action:** \`${antiNuke.action || 'ban'}\``
+            `**Action:** \`${antiNuke.action || 'ban'}\``,
         ].join('\n');
     }
     function prettyAntiAd() {
         if (!isAutomodEnabled(doc, 'antiAdvertisement')) {
             return [
                 '**Status:** ' + status(false),
-                '> Blocks Discord invite links/advertising.'
+                '> Blocks Discord invite links/advertising.',
             ].join('\n');
         }
         const wl = antiAd.whitelistChannels || [];
         return [
             '**Status:** ' + status(true),
             `**Action:** \`${antiAd.action || 'delete'}\``,
-            `**Whitelisted Channels:** \`${wl.length}\``
+            `**Whitelisted Channels:** \`${wl.length}\``,
+        ].join('\n');
+    }
+    function prettyAntiCaps() {
+        if (!isAutomodEnabled(doc, 'antiCaps')) {
+            return ['**Status:** ' + status(false), '> Detects excessive capitalization.'].join(
+                '\n'
+            );
+        }
+        const antiCaps = automod.antiCaps || {};
+        return [
+            '**Status:** ' + status(true),
+            `**Threshold:** \`${antiCaps.threshold || 70}%\` caps`,
+            `**Min Length:** \`${antiCaps.minLength || 10}\` chars`,
+            `**Action:** \`${antiCaps.action || 'delete'}\``,
+        ].join('\n');
+    }
+    function prettyAntiMentionSpam() {
+        if (!isAutomodEnabled(doc, 'antiMentionSpam')) {
+            return [
+                '**Status:** ' + status(false),
+                '> Limits mass mentions (@everyone/@here/@user).',
+            ].join('\n');
+        }
+        const antiMentionSpam = automod.antiMentionSpam || {};
+        return [
+            '**Status:** ' + status(true),
+            `**Max Mentions:** \`${antiMentionSpam.maxMentions || 5}\` per message`,
+            `**Check @everyone:** ${antiMentionSpam.checkEveryone ? '`YES`' : '`NO`'}`,
+            `**Action:** \`${antiMentionSpam.action || 'delete'}\``,
+        ].join('\n');
+    }
+    function prettyAntiSpam() {
+        if (!isAutomodEnabled(doc, 'antiSpam')) {
+            return [
+                '**Status:** ' + status(false),
+                '> Detects rapid message sending and duplicates.',
+            ].join('\n');
+        }
+        const antiSpam = automod.antiSpam || {};
+        return [
+            '**Status:** ' + status(true),
+            `**Max Messages:** \`${antiSpam.maxMessages || 5}\` in \`${(antiSpam.timeframe || 5000) / 1000}s\``,
+            `**Max Duplicates:** \`${antiSpam.maxDuplicates || 3}\``,
+            `**Action:** \`${antiSpam.action || 'delete'}\``,
         ].join('\n');
     }
 
@@ -109,7 +154,7 @@ function buildAutomodEmbed(dbGuild, interaction = null) {
         '\u001b[1;36mGuardian Automod Overview\u001b[0m',
         '```',
         '',
-        '**🛡️  Automod is your Discord server\'s automatic guardian!**',
+        "**🛡️  Automod is your Discord server's automatic guardian!**",
         '— Protects your community 24/7 against common threats and spam.',
         '',
         '**Systems Enabled:**',
@@ -118,15 +163,18 @@ function buildAutomodEmbed(dbGuild, interaction = null) {
         `> 🚫 Anti Badwords  —   ${status(isAutomodEnabled(doc, 'antiBadwords'))}`,
         `> 💣 Anti Nuke      —   ${status(isAutomodEnabled(doc, 'antiNuke'))}`,
         `> 📢 Anti Ad        —   ${status(isAutomodEnabled(doc, 'antiAdvertisement'))}`,
-        ''
+        `> 🔠 Anti Caps      —   ${status(isAutomodEnabled(doc, 'antiCaps'))}`,
+        `> 🏷️ Anti Mentions  —   ${status(isAutomodEnabled(doc, 'antiMentionSpam'))}`,
+        `> 📧 Anti Spam      —   ${status(isAutomodEnabled(doc, 'antiSpam'))}`,
+        '',
     ].join('\n');
 
     const embed = EmbedGenerator.basicEmbed(null)
         .setAuthor({
             name: interaction?.guild?.name
                 ? `Automod Configuration for ${interaction.guild.name}`
-                : "Automod Configuration",
-            iconURL: interaction?.guild?.iconURL?.() || undefined
+                : 'Automod Configuration',
+            iconURL: interaction?.guild?.iconURL?.() || undefined,
         })
         .setTitle('🛡️ AUTOMOD CONTROL DASHBOARD')
         .setColor(0x14b089)
@@ -157,20 +205,37 @@ function buildAutomodEmbed(dbGuild, interaction = null) {
                 value: prettyAntiAd(),
                 inline: true,
             },
+            {
+                name: '🔠 Anti Caps',
+                value: prettyAntiCaps(),
+                inline: true,
+            },
+            {
+                name: '🏷️ Anti Mentions',
+                value: prettyAntiMentionSpam(),
+                inline: true,
+            },
+            {
+                name: '📧 Anti Spam',
+                value: prettyAntiSpam(),
+                inline: true,
+            },
         ])
         .setFooter({
-            text: '⚙️  Click "Configure Automod" below to change settings and keep your server secure!'
+            text: '⚙️  Click "Configure Automod" below to change settings and keep your server secure!',
         })
         .setTimestamp();
 
-    embed.addFields([{
-        name: 'ℹ️  Quick Legend',
-        value: [
-            '`🟢 Enabled` = Feature Active   |   `🔴 Disabled` = Feature Off',
-            'Update settings anytime with `/automod` or click “Configure Automod” below.'
-        ].join('\n'),
-        inline: false
-    }]);
+    embed.addFields([
+        {
+            name: 'ℹ️  Quick Legend',
+            value: [
+                '`🟢 Enabled` = Feature Active   |   `🔴 Disabled` = Feature Off',
+                'Update settings anytime with `/automod` or click “Configure Automod” below.',
+            ].join('\n'),
+            inline: false,
+        },
+    ]);
     return embed;
 }
 
@@ -190,7 +255,7 @@ module.exports = {
     enabled: true,
     data: new Discord.SlashCommandBuilder()
         .setName('automod')
-        .setDescription('Configure automod: Anti Raid, Anti Zalgo, Anti Badwords, Anti Nuke, Anti Advertisement.')
+        .setDescription('Configure automod protection systems for your server.')
         .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
         .setDMPermission(false),
     category: 'administrator',

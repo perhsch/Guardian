@@ -59,6 +59,25 @@ module.exports = Mongoose.model(
                 action: { type: String, enum: ['delete', 'warn', 'timeout'], default: 'delete' },
                 whitelistChannels: { type: [String], default: [] },
             },
+            antiCaps: {
+                enabled: { type: Boolean, default: false },
+                action: { type: String, enum: ['delete', 'warn', 'timeout'], default: 'delete' },
+                threshold: { type: Number, default: 70 }, // percentage of caps
+                minLength: { type: Number, default: 10 }, // minimum message length
+            },
+            antiMentionSpam: {
+                enabled: { type: Boolean, default: false },
+                action: { type: String, enum: ['delete', 'warn', 'timeout'], default: 'delete' },
+                maxMentions: { type: Number, default: 5 }, // max mentions per message
+                checkEveryone: { type: Boolean, default: true }, // check @everyone/@here
+            },
+            antiSpam: {
+                enabled: { type: Boolean, default: false },
+                action: { type: String, enum: ['delete', 'warn', 'timeout'], default: 'delete' },
+                maxMessages: { type: Number, default: 5 }, // max messages in timeframe
+                timeframe: { type: Number, default: 5000 }, // timeframe in milliseconds
+                maxDuplicates: { type: Number, default: 3 }, // max duplicate messages
+            },
         },
         suggestion: {
             enabled: { type: Boolean, default: false },
