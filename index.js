@@ -220,6 +220,7 @@ client.on('messageCreate', (message) => {
     message.reply({ embeds: [embed], components: [row] });
 });
 
+Mongoose.set('strictQuery', false);
 Mongoose.connect(process.env.MONGODB_URL).then(async () => {
     console.log('Client is connected to the database.');
 
