@@ -609,6 +609,13 @@ class GuildsManager {
     }
 
     /**
+     * @type {Boolean}
+     */
+    get setup() {
+        return this.document.setup;
+    }
+
+    /**
      * @param {String} id
      */
     static async fetch(id) {

@@ -1,6 +1,7 @@
 const Discord = require(`discord.js`);
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const Guilds = require('../../Schemas/Guilds');
 
 /** @typedef {{ id: number; label: string; warningOnFailure: boolean; check: (dbGuild: import('../../Classes/GuildsManager').GuildsManager) => boolean }} SetupStep */
 
@@ -99,7 +100,7 @@ module.exports = {
                         '- Bot is missing the administrator permissions! -',
                         '```',
                         '',
-                        '❌ Please grant the `Administrator` permission to the bot\'s role and run `/setup` again.',
+                        "❌ Please grant the `Administrator` permission to the bot's role and run `/setup` again.",
                     ].join('\n')
                 );
             return interaction.editReply({ embeds: [embed], components: [] });
@@ -125,8 +126,8 @@ module.exports = {
                         `⚠️ Some role-based actions might fail if higher roles exist above the bot.`,
                         '',
                         '**How to fix:**',
-                        '• Go to your server\'s roles settings',
-                        '• Drag the Guardian bot\'s role **above** the roles it needs to manage',
+                        "• Go to your server's roles settings",
+                        "• Drag the Guardian bot's role **above** the roles it needs to manage",
                         '• Run `/setup` again if you have issues',
                     ].join('\n')
                 );
@@ -151,6 +152,11 @@ module.exports = {
             embeds: [generateEmbed(SETUP_STEPS.length, completed, dbGuild)],
             components: getSetupComponents(dbGuild),
         });
+
+        // Mark guild as set up
+        await Guilds.updateOne({ guild: interaction.guild.id }, { $set: { setup: true } });
+        // Update the cached document as well
+        dbGuild.document.setup = true;
     },
 };
 
@@ -199,7 +205,7 @@ function generateEmbed(count, completed, dbGuild) {
         lines.push(
             [
                 `**${prefix} [${idx + 1}/${SETUP_STEPS.length}]** \`${step.label}\``,
-                `> _${stepInfo[idx]}_`
+                `> _${stepInfo[idx]}_`,
             ].join('\n')
         );
     });
@@ -211,7 +217,7 @@ function generateEmbed(count, completed, dbGuild) {
         lines.push(
             '',
             '```diff\n+ All system checks complete! +\n```',
-            '🎉 **Guardian is fully configured! Use `/settings` or `/help` to further customize.**'
+            '🎉 **Guardian is fully configured! Use `/help` to further customize.**'
         );
     }
 
@@ -259,7 +265,9 @@ function getSetupComponents(dbGuild) {
             new Discord.StringSelectMenuOptionBuilder()
                 .setLabel('Logging & Channels')
                 .setValue('logging')
-                .setDescription('Configure log, mod log, suggestions, announcement & giveaway channels')
+                .setDescription(
+                    'Configure log, mod log, suggestions, announcement & giveaway channels'
+                )
                 .setEmoji('📋')
         );
     if (needsSuggestion)

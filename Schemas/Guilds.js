@@ -4,6 +4,7 @@ module.exports = Mongoose.model(
     'Guilds',
     new Mongoose.Schema({
         guild: { type: String, required: true, index: true, immutable: true },
+        setup: { type: Boolean, default: false },
         members: { type: [String], index: true, default: [] },
         verification: {
             enabled: { type: Boolean, default: false },
@@ -91,4 +92,3 @@ module.exports = Mongoose.model(
  * }
  * other stuff?
  */
-

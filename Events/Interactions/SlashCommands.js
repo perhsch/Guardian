@@ -104,7 +104,9 @@ module.exports = {
         const userLang = dbUser.language;
 
         const translateContent = async (text) =>
-            userLang && userLang.toLowerCase() !== 'en' ? await translateText(text, userLang) : text;
+            userLang && userLang.toLowerCase() !== 'en'
+                ? await translateText(text, userLang)
+                : text;
 
         let executeFunction;
 
@@ -125,9 +127,7 @@ module.exports = {
 
         if (command.developer && interaction.user.id !== '1447738202600505407') {
             return interaction.reply({
-                content: await translateContent(
-                    'This command is only available to the developer.'
-                ),
+                content: await translateContent('This command is only available to the developer.'),
                 ephemeral: true,
             });
         }
@@ -146,16 +146,28 @@ module.exports = {
             executeFunction = subCommandFile.execute;
         }
 
-        const dbGuild = interaction.guild
-            ? await GuildsManager.fetch(interaction.guild.id)
-            : null;
+        const dbGuild = interaction.guild ? await GuildsManager.fetch(interaction.guild.id) : null;
+
+        // Check if guild is set up (only for guild commands, not DMs)
+        // Allow setup command to run even if not set up
+        if (interaction.guild && !dbGuild.setup && interaction.commandName !== 'setup') {
+            return interaction.reply({
+                content: await translateContent(
+                    'This server has not completed setup. Please run the `/setup` command first.'
+                ),
+                ephemeral: true,
+            });
+        }
 
         const needsTranslation = userLang && userLang.toLowerCase() !== 'en';
         if (needsTranslation && interaction.deferReply) {
             await interaction.deferReply({ ephemeral: true }).catch(() => {});
         }
 
-        const { originalReply, originalEditReply } = wrapInteractionForTranslation(interaction, userLang);
+        const { originalReply, originalEditReply } = wrapInteractionForTranslation(
+            interaction,
+            userLang
+        );
 
         const response = await executeFunction(interaction, client, dbGuild, dbUser);
 
