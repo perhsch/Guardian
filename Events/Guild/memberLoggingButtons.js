@@ -6,8 +6,9 @@ module.exports = {
     name: 'interactionCreate',
     /**
      * @param {Discord.Interaction} interaction
+     * @param {Discord.Client} client
      */
-    async execute(interaction) {
+    async execute(interaction, client) {
         if (!interaction.isButton()) return;
 
         const splitArray = interaction.customId.split('-');
@@ -17,8 +18,20 @@ module.exports = {
         if (!member) return;
 
         const errorArray = [];
-        if (!interaction.member.permissions.has('KickMembers'))
-            errorArray.push('You do not have the required permissions for this action.');
+        const action = splitArray[1];
+
+        if (action === 'Ban') {
+            if (!interaction.member.permissions.has('BanMembers'))
+                errorArray.push('You do not have the required permissions for this action.');
+            if (!interaction.guild.members.me.permissions.has('BanMembers'))
+                errorArray.push('Bot does not have Ban Members permission.');
+        }
+        if (action === 'Kick') {
+            if (!interaction.member.permissions.has('KickMembers'))
+                errorArray.push('You do not have the required permissions for this action.');
+            if (!interaction.guild.members.me.permissions.has('KickMembers'))
+                errorArray.push('Bot does not have Kick Members permission.');
+        }
         if (!member) errorArray.push('This user is no longer in this server.');
         if (!member.moderatable) errorArray.push('This user cannot be moderated by the bot.');
 

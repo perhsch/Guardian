@@ -40,17 +40,12 @@ module.exports = {
 
         const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
         const statuses = [
-            { name: `${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
+            { name: `Serving ${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
             { name: `${totalMembers} members!`, type: ActivityType.Watching },
             { name: `Guardian Bot • Securing Servers`, type: ActivityType.Playing },
             { name: `use /setup to get started!`, type: ActivityType.Playing },
             { name: `Guardian Bot • Made for your server!`, type: ActivityType.Playing },
             { name: `Join server for help!`, type: ActivityType.Watching },
-            {
-                name: `MEOW :3`,
-                type: ActivityType.Streaming,
-                url: 'https://github.com/Guardians-Stuff',
-            },
         ];
 
         let statusIndex = 0;
