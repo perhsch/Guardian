@@ -2,15 +2,16 @@ const Discord = require('discord.js');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
 const { translateResponse, translateText } = require('../../Functions/translate');
+const emojis = require('../../Config/emojis.json').emojis;
 
 const CATEGORY_INFO = {
     administrator: {
-        emoji: '⚙️',
+        emoji: emojis.administrator || '⚙️',
         description: 'Server configuration & management',
         color: 0xed4245,
     },
     backup: {
-        emoji: '💾',
+        emoji: emojis.backup || '💾',
         description: 'Server backup & restore',
         color: 0x57f287,
     },
@@ -20,22 +21,22 @@ const CATEGORY_INFO = {
         color: 0xfee75c,
     },
     information: {
-        emoji: 'ℹ️',
+        emoji: emojis.information || 'ℹ️',
         description: 'Bot, server & user info',
         color: 0x5865f2,
     },
     moderator: {
-        emoji: '🛡️',
+        emoji: emojis.moderator || '🛡️',
         description: 'Moderation & safety tools',
         color: 0xeb459e,
     },
     public: {
-        emoji: '🌐',
+        emoji: emojis.public || '🌐',
         description: 'User-facing features',
         color: 0x57f287,
     },
     utility: {
-        emoji: '🔧',
+        emoji: emojis.utility || '🔧',
         description: 'Helpful utilities',
         color: 0x5865f2,
     },
@@ -67,53 +68,82 @@ function buildHelpEmbeds(commands, client, user) {
             name: `${client.user.username} Command Center`,
             iconURL: client.user.displayAvatarURL(),
         })
-        .setTitle('🌟 Welcome to the Help Menu')
-        .setDescription(
-            `>>> 🎯 **Navigate with ease**\nUse the buttons below to explore our command categories. Each category is carefully organized to help you find exactly what you need!\n\n🚀 **Quick Start**\n• \`/language <language>\` 🌍 - Set your preferred language\n• \`/support\` 🤝 - Get help & invite links\n• \`/setup\` ⚙️ - Configure the bot for your server`
-        )
+        .setTitle(`${emojis.blurple_bot || '🤖'} **Guardian Bot Help Menu**`)
+        .setDescription(`>>> **Welcome to Guardian!** ${emojis.blurple_bot || '🤖'}`)
         .addFields(
             {
-                name: '📊 **Statistics**',
-                value: `**Total Commands:** \`${commands.size}\`\n**Categories:** \`${commandsByCategory.size}\`\n**Servers:** \`${client.guilds.cache.size}\``,
+                name: `${emojis.statistics || '📊'} **Bot Statistics**`,
+                value: `**🔢 Total Commands:** \`${commands.size}\`\n**📁 Categories:** \`${commandsByCategory.size}\`\n**🌐 Servers:** \`${client.guilds.cache.size}\`\n**👥 Users:** \`${client.users.cache.size}\``,
                 inline: true,
             },
             {
-                name: '🔗 **Useful Links**',
-                value: `• [Support Server](${process.env.SUPPORT_SERVER || '#'})\n• [Bot Invite](${process.env.BOT_INVITE || '#'})\n• [Documentation](${process.env.DOCUMENTATION || '#'})`,
+                name: `${emojis['useful-links'] || '🔗'} **Quick Links**`,
+                value: `**${emojis.blurple_invite || '🔗'}** [Support Server](${process.env.SUPPORT_SERVER || 'https://discord.gg/support'})\n**${emojis.blurple_bot || '🤖'}** [Bot Invite](${process.env.BOT_INVITE || 'https://discord.com/oauth2/authorize?client_id=' + client.user.id})\n**${emojis.github || '📚'}** [Documentation](${process.env.DOCUMENTATION || 'https://github.com/Guardian-Discord-Bot/Guardian/wiki'})`,
                 inline: true,
             }
         )
-        .addFields(
-            Array.from(commandsByCategory.entries())
-                .sort(([a], [b]) => a.localeCompare(b))
+        .addFields({
+            name: `📁 **Command Categories**`,
+            value: Array.from(commandsByCategory.entries())
+                .sort(([a], [b]) => {
+                    // Priority order: admin, moderator, backup, information, public, utility, developer
+                    const priority = [
+                        'administrator',
+                        'moderator',
+                        'backup',
+                        'information',
+                        'public',
+                        'utility',
+                        'developer',
+                    ];
+                    const aIndex = priority.indexOf(a);
+                    const bIndex = priority.indexOf(b);
+                    if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+                    if (aIndex === -1) return 1;
+                    if (bIndex === -1) return -1;
+                    return aIndex - bIndex;
+                })
                 .map(([category, cmds]) => {
                     const info = CATEGORY_INFO[category] || {
                         emoji: '📋',
                         description: 'Commands',
                         color: 0x95a5a6,
                     };
-                    return {
-                        name: `${info.emoji} **${category.charAt(0).toUpperCase() + category.slice(1)}**`,
-                        value: `> ${info.description}\n> **\`${cmds.length}\`** commands available`,
-                        inline: true,
-                    };
+                    return `${info.emoji} **${category.charAt(0).toUpperCase() + category.slice(1)}** • \`${cmds.length}\` commands`;
                 })
-        )
+                .join('\n'),
+            inline: false,
+        })
         .setFooter({
-            text: `Page 1/${commandsByCategory.size + 1} • Requested by ${user.username}`,
+            text: `Page 1/${commandsByCategory.size + 1} • Requested by ${user.username} • Guardian Bot`,
             iconURL: user.displayAvatarURL(),
         })
         .setTimestamp()
         .setImage(
             'https://cdn.discordapp.com/attachments/1043870997220687972/1043870998668779540/banner.png'
-        );
+        )
+        .setThumbnail(client.user.displayAvatarURL({ size: 256 }));
 
     embeds.push(overviewEmbed);
 
     // Category pages
-    const sortedCategories = Array.from(commandsByCategory.entries()).sort(([a], [b]) =>
-        a.localeCompare(b)
-    );
+    const categoryOrder = [
+        'administrator',
+        'moderator',
+        'backup',
+        'information',
+        'public',
+        'utility',
+        'developer',
+    ];
+    const sortedCategories = Array.from(commandsByCategory.entries()).sort(([a], [b]) => {
+        const aIndex = categoryOrder.indexOf(a);
+        const bIndex = categoryOrder.indexOf(b);
+        if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+    });
 
     for (const [category, cmds] of sortedCategories) {
         const info = CATEGORY_INFO[category] || {
@@ -139,18 +169,21 @@ function buildHelpEmbeds(commands, client, user) {
                 name: `${client.user.username} Command Center`,
                 iconURL: client.user.displayAvatarURL(),
             })
-            .setTitle(`${info.emoji} ${categoryName} Commands`)
-            .setDescription(`>>> **${info.description}**\n\n${lines.join('\n\n')}`)
+            .setTitle(`${info.emoji} **${categoryName} Commands**`)
+            .setDescription(
+                `>>> **${info.description}**\n\n${lines.join('\n\n')}\n\n---\n**💡 Tips:** • Click command names to copy • Use Tab for autocomplete • Hover over options for help`
+            )
             .addFields({
-                name: '📝 **Usage Tips**',
-                value: `• Click on any command name to copy it\n• Use Tab to autocomplete commands\n• Hover over options for descriptions`,
+                name: `${emojis['useful-links'] || '�'} **Quick Actions**`,
+                value: `• \`/help\` - Return to main menu\n• \`/support\` - Get additional help\n• \`/language\` - Change language settings`,
                 inline: false,
             })
             .setFooter({
-                text: `Page ${embeds.length + 1}/${commandsByCategory.size + 1} • Requested by ${user.username}`,
+                text: `Page ${embeds.length + 1}/${commandsByCategory.size + 1} • Requested by ${user.username} • Guardian Bot`,
                 iconURL: user.displayAvatarURL(),
             })
-            .setTimestamp();
+            .setTimestamp()
+            .setThumbnail(client.user.displayAvatarURL({ size: 128 }));
 
         embeds.push(categoryEmbed);
     }
@@ -159,6 +192,7 @@ function buildHelpEmbeds(commands, client, user) {
 }
 
 module.exports = {
+    buildHelpEmbeds,
     data: new Discord.SlashCommandBuilder()
         .setName('help')
         .setDescription('View all commands and categories')

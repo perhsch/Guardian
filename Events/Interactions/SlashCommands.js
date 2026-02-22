@@ -154,8 +154,13 @@ module.exports = {
         const dbGuild = interaction.guild ? await GuildsManager.fetch(interaction.guild.id) : null;
 
         // Check if guild is set up (only for guild commands, not DMs)
-        // Allow setup command to run even if not set up
-        if (interaction.guild && !dbGuild.setup && interaction.commandName !== 'setup') {
+        // Allow setup and help commands to run even if not set up
+        if (
+            interaction.guild &&
+            !dbGuild.setup &&
+            interaction.commandName !== 'setup' &&
+            interaction.commandName !== 'help'
+        ) {
             return interaction.reply({
                 content: await translateContent(
                     'This server has not completed setup. Please run the `/setup` command first.'

@@ -184,23 +184,36 @@ client.on('messageCreate', (message) => {
     if (contentWithoutBotMention.length > 0) return;
 
     const embed = new Discord.EmbedBuilder()
-        .setColor(0x5865f2)
-        .setTitle("Hello! I'm Guardian 🤖")
+        .setColor(0x1a1a1a)
+        .setTitle('Guardian')
         .setDescription(
-            'Thanks for mentioning me!\n\n**My default prefix is:** `/` (I use [slash commands](https://discord.com/developers/docs/interactions/application-commands))\n\nUse `/setup` to get started!'
+            '```yaml\nProtection • Management • Engagement\n```\n\n**━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━**\n\n> **Advanced Server Protection System**\n> \n> � **Smart Moderation** • Auto-mod & warnings\n> 🔸 **Server Management** • Complete control\n> � **User Engagement** • Giveaways & events\n> 🔸 **Utility Tools** • Reminders & analytics'
         )
         .addFields(
-            { name: 'Quick Start', value: 'Type `/help` for a full command list.' },
-            { name: 'Support Server', value: '[Click here](https://discord.gg/5nWZ8BJae4)' } // your discord support server
+            {
+                name: '〈 📊 〉 **Statistics**',
+                value: `**Servers:** \`${client.guilds.cache.size}\`\n**Users:** \`${client.users.cache.size}\`\n**Uptime:** <t:${Math.floor(Date.now() / 1000)}:R>`,
+                inline: true,
+            },
+            {
+                name: '〈 ⚡ 〉 **Essential Commands**',
+                value: '`/setup` • `/help` • `/giveaway`\n`/reminder` • `/userinfo` • `/moderation`',
+                inline: true,
+            }
+        )
+        .setThumbnail(client.user.displayAvatarURL({ format: 'png', size: 128 }))
+        .setImage(
+            'https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png'
         )
         .setFooter({
-            text: `Guardian Bot • Made for your server!`,
+            text: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGuardian • Advanced protection system`,
             iconURL: client.user.displayAvatarURL(),
-        });
+        })
+        .setTimestamp();
 
     const row = new Discord.ActionRowBuilder().addComponents(
         new Discord.ButtonBuilder()
-            .setLabel('Invite Me')
+            .setLabel('Invite')
             .setStyle(Discord.ButtonStyle.Link)
             .setURL(
                 'https://discord.com/oauth2/authorize?client_id=' +
@@ -208,16 +221,102 @@ client.on('messageCreate', (message) => {
                     '&permissions=8&scope=bot%20applications.commands'
             ),
         new Discord.ButtonBuilder()
-            .setLabel('Support Server')
+            .setLabel('Support')
             .setStyle(Discord.ButtonStyle.Link)
-            .setURL('https://discord.gg/5nWZ8BJae4'), // Your discord support server
+            .setURL('https://discord.gg/5nWZ8BJae4'),
         new Discord.ButtonBuilder()
-            .setLabel('Website')
+            .setLabel('Commands')
+            .setStyle(Discord.ButtonStyle.Secondary)
+            .setCustomId('show_commands'),
+        new Discord.ButtonBuilder()
+            .setLabel('Vote')
             .setStyle(Discord.ButtonStyle.Link)
-            .setURL('https://localhost:3000') // Discord bot web dashboard
+            .setURL('https://top.gg/bot/' + client.user.id)
     );
 
-    message.reply({ embeds: [embed], components: [row] });
+    message.reply({ embeds: [embed], components: [row] }).then((sent) => {
+        const filter = (i) => i.customId === 'show_commands' && i.user.id === message.author.id;
+        const collector = sent.createMessageComponentCollector({ filter, time: 60000 });
+
+        collector.on('collect', async (i) => {
+            if (i.customId === 'show_commands') {
+                const { buildHelpEmbeds } = require('./Commands/Information/help.js');
+                const helpEmbeds = buildHelpEmbeds(client.commands, client, i.user);
+
+                if (helpEmbeds.length > 0) {
+                    await i.update({
+                        embeds: [helpEmbeds[0]],
+                        components: [
+                            new Discord.ActionRowBuilder().addComponents(
+                                new Discord.ButtonBuilder()
+                                    .setCustomId('help_prev')
+                                    .setEmoji('◀️')
+                                    .setLabel('Previous')
+                                    .setStyle(Discord.ButtonStyle.Primary)
+                                    .setDisabled(true),
+                                new Discord.ButtonBuilder()
+                                    .setCustomId('help_next')
+                                    .setEmoji('▶️')
+                                    .setLabel('Next')
+                                    .setStyle(Discord.ButtonStyle.Primary)
+                                    .setDisabled(helpEmbeds.length === 1),
+                                new Discord.ButtonBuilder()
+                                    .setLabel('Back')
+                                    .setStyle(Discord.ButtonStyle.Secondary)
+                                    .setCustomId('back_to_main')
+                            ),
+                        ],
+                    });
+
+                    let currentPage = 0;
+                    const helpFilter = (interaction) =>
+                        ['help_prev', 'help_next', 'back_to_main'].includes(interaction.customId) &&
+                        interaction.user.id === i.user.id;
+
+                    const helpCollector = sent.createMessageComponentCollector({
+                        filter: helpFilter,
+                        time: 120000,
+                    });
+
+                    helpCollector.on('collect', async (interaction) => {
+                        if (interaction.customId === 'help_prev') {
+                            currentPage = Math.max(0, currentPage - 1);
+                        } else if (interaction.customId === 'help_next') {
+                            currentPage = Math.min(helpEmbeds.length - 1, currentPage + 1);
+                        } else if (interaction.customId === 'back_to_main') {
+                            await interaction.update({ embeds: [embed], components: [row] });
+                            helpCollector.stop();
+                            return;
+                        }
+
+                        await interaction.update({
+                            embeds: [helpEmbeds[currentPage]],
+                            components: [
+                                new Discord.ActionRowBuilder().addComponents(
+                                    new Discord.ButtonBuilder()
+                                        .setCustomId('help_prev')
+                                        .setEmoji('◀️')
+                                        .setLabel('Previous')
+                                        .setStyle(Discord.ButtonStyle.Primary)
+                                        .setDisabled(currentPage === 0),
+                                    new Discord.ButtonBuilder()
+                                        .setCustomId('help_next')
+                                        .setEmoji('▶️')
+                                        .setLabel('Next')
+                                        .setStyle(Discord.ButtonStyle.Primary)
+                                        .setDisabled(currentPage === helpEmbeds.length - 1),
+                                    new Discord.ButtonBuilder()
+                                        .setLabel('Back')
+                                        .setStyle(Discord.ButtonStyle.Secondary)
+                                        .setCustomId('back_to_main')
+                                ),
+                            ],
+                        });
+                    });
+                }
+            }
+        });
+    });
 });
 
 Mongoose.set('strictQuery', false);

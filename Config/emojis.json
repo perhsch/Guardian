@@ -10,6 +10,15 @@
         "nodejs": "<:nodejs:1471350804224020663>",
         "discord_js": "<:discordjs:1471350726835044468>",
         "blurple_lock": "<:mongodb:1471350770602479863>",
-        "blurple_link": "<:blurplelink:1471352149299433482>"
+        "blurple_link": "<:blurplelink:1471352149299433482>",
+
+        "statistics": "<:stats:1475074330605129738>",
+        "useful-links": "<:linksymbol:1475074402289848401>",
+        "administrator": "<:adminsheild:1475074425106726912>",
+        "backup": "<:guidefolder:1475074946391867423>",
+        "information": "<:information:1475075239263076402>",
+        "moderator": "<:gavel:1475075462513426547>",
+        "public": "<:announce:1475075659490529433>",
+        "utility": "<:merptools:1475075879288967258>"
     }
 }
