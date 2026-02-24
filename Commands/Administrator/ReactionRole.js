@@ -10,7 +10,9 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('reactionrole')
         .setDescription('Create a reaction role message.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(
+            Discord.PermissionFlagsBits.ManageRoles | Discord.PermissionFlagsBits.ManageMessages
+        )
         .setDMPermission(false)
         .addStringOption((option) =>
             option.setName('title').setDescription('Title to use for the embed.').setRequired(true)

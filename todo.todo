@@ -9,6 +9,7 @@
         - Config command to configure everything with one click
         - Automod cases command 
         - Starboard (perhaps, not sure yet)
+        - Implement global logging across servers which would log raids, and nukes.
 
     -- Changes & Bugs
         : Core Features
@@ -16,6 +17,7 @@
         - Make logs more detailed & better formatted
         - Fix ticket systems to actually work & make more settings with it
         - Fix logging such as warn, to not say loading and update the embed
+        - Make Guild schema also includee global logs
     --/
 --/
 ```

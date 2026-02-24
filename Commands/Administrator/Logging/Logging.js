@@ -8,7 +8,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('logging')
         .setDescription('Logging system.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ViewAuditLog)
         .setDMPermission(false)
         .addSubcommand(LoggingSetup.data)
         .addSubcommand(LoggingDisable.data),

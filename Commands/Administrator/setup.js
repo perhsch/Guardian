@@ -78,7 +78,12 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('setup')
         .setDescription('Setup basic bot stuff.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(
+            Discord.PermissionFlagsBits.ManageChannels |
+                Discord.PermissionFlagsBits.ManageRoles |
+                Discord.PermissionFlagsBits.ViewAuditLog |
+                Discord.PermissionFlagsBits.SendMessages
+        )
         .setDMPermission(false),
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
@@ -113,6 +118,17 @@ module.exports = {
         });
 
         const botRole = interaction.guild.roles.botRoleFor(client.user);
+        if (!botRole) {
+            const embed = generateEmbed(1, [0], dbGuild);
+            embed
+                .setColor('Red')
+                .setDescription(
+                    '❌ Bot role not found. Please ensure the bot has a role in this server.'
+                );
+            await interaction.editReply({ embeds: [embed], components: [] });
+            return;
+        }
+
         const rolesAboveBot = interaction.guild.roles.cache.filter(
             (role) => role.position > botRole.position && !role.managed && role.editable
         );

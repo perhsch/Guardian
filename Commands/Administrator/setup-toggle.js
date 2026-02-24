@@ -6,7 +6,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('setup-toggle')
         .setDescription('Toggle the setup status of the server (Admin only)')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ManageRoles)
         .setDMPermission(false),
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction

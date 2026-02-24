@@ -8,7 +8,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('suggestion')
         .setDescription('Suggestion system.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ManageChannels)
         .setDMPermission(false)
         .addSubcommand(SuggestionSetup.data)
         .addSubcommand(SuggestionDisable.data),

@@ -8,7 +8,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('autorole')
         .setDescription('Autorole system.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ManageRoles)
         .setDMPermission(false)
         .addSubcommand(AutoRoleSetup.data)
         .addSubcommand(AutoRoleDisable.data),

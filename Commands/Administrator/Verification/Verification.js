@@ -8,7 +8,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('verification')
         .setDescription('Verification system.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ManageRoles)
         .setDMPermission(false)
         .addSubcommand(VerificationSetup.data)
         .addSubcommand(VerificationDisable.data),

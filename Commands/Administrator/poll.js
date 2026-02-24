@@ -17,7 +17,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('poll')
         .setDescription('Start an interactive poll')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
         .addStringOption((option) =>
             option
                 .setName('question')

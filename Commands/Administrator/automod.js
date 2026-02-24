@@ -256,7 +256,11 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('automod')
         .setDescription('Configure automod protection systems for your server.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(
+            Discord.PermissionFlagsBits.ManageRoles |
+                Discord.PermissionFlagsBits.ManageChannels |
+                Discord.PermissionFlagsBits.ModerateMembers
+        )
         .setDMPermission(false),
     category: 'administrator',
     buildAutomodEmbed,

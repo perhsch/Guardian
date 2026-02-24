@@ -9,7 +9,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('ticket_admin')
         .setDescription('Ticket system management.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ManageChannels)
         .setDMPermission(false)
         .addSubcommand(TicketAdminSetup.data)
         .addSubcommand(TicketAdminDisable.data)
