@@ -5,6 +5,7 @@ const EmbedGenerator = require('../../Functions/embedGenerator');
 const { setLockdown } = require('../../Functions/antiRaidLockdown');
 const { sendModLog } = require('../../Functions/modLog');
 const { recordJoin, getJoinCount, getRecentJoiners } = require('../../Functions/antiRaidTracking');
+const { broadcastRaidAlert } = require('../../Functions/crossServerRaidAlert');
 const Guilds = require('../../Schemas/Guilds');
 const { GuildsManager } = require('../../Classes/GuildsManager');
 
@@ -132,6 +133,23 @@ module.exports = {
                         .setColor('Red')
                         .setTitle('Automod: Anti Raid');
                     await sendModLog(member.guild, guild, logEmbed);
+
+                    // Broadcast cross-server raid alert
+                    const raidData = {
+                        joinCount,
+                        joinWithin: guild.antiraid.joinWithin,
+                        action,
+                        successCount,
+                        failCount,
+                        lockdown: guild.antiraid.lockdown.enabled
+                    };
+
+                    const raiders = recentJoiners.map(userId => ({
+                        userId,
+                        timestamp: Date.now()
+                    }));
+
+                    await broadcastRaidAlert(member.guild, client, raidData, raiders);
                 }
             } else {
                 const action = guild.antiraid.action;

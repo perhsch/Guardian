@@ -17,6 +17,7 @@ module.exports = Mongoose.model(
             enabled: { type: Boolean, default: false },
             basic: { type: String, default: null },
             moderator: { type: String, default: null },
+            global: { type: String, default: null },
             suggestionsChannel: { type: String, default: null },
             announcementChannel: { type: String, default: null },
             giveawayChannel: { type: String, default: null },
