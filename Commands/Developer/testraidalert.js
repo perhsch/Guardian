@@ -17,15 +17,18 @@ module.exports = {
     async execute(interaction, client, dbGuild) {
         await interaction.deferReply({ ephemeral: true });
 
-        // Check if user is authorized (bot owner or has admin permissions)
-        let isAuthorized = false;
+        // Check if user is authorized (developer, bot owner, or has admin permissions)
+        const DEVELOPER_ID = '1447738202600505407';
+        let isAuthorized = interaction.user.id === DEVELOPER_ID;
         
-        try {
-            // Try to get the application owner
-            const application = await client.application.fetch();
-            isAuthorized = interaction.user.id === application.owner?.id;
-        } catch (error) {
-            console.error('Error fetching application owner:', error);
+        if (!isAuthorized) {
+            try {
+                // Try to get the application owner
+                const application = await client.application.fetch();
+                isAuthorized = interaction.user.id === application.owner?.id;
+            } catch (error) {
+                console.error('Error fetching application owner:', error);
+            }
         }
 
         // Fallback: Check if user has administrator permissions in the guild
@@ -35,7 +38,7 @@ module.exports = {
 
         if (!isAuthorized) {
             return interaction.editReply({
-                embeds: [EmbedGenerator.errorEmbed('This command is restricted to the bot owner or server administrators.')]
+                embeds: [EmbedGenerator.errorEmbed('This command is restricted to the developer, bot owner, or server administrators.')]
             });
         }
 
