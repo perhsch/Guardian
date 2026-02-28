@@ -13,7 +13,7 @@ module.exports = Mongoose.model(
                 required: true,
                 immutable: true,
                 lowercase: true,
-                enum: ['ban', 'kick', 'warning', 'timeout', 'block'],
+                enum: ['ban', 'kick', 'warning', 'timeout', 'block', 'voice_kick'],
             },
             active: { type: Boolean, default: true },
             reason: { type: String, default: 'Unspecified reason.' },
