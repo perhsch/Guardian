@@ -14,7 +14,7 @@ module.exports = {
      */
     execute(interaction, client) {
         return EmbedGenerator.basicEmbed(
-            `[Click me for the invite to the bot!](https://discord.com/oauth2/authorize?client_id=1130480504097996832&scope=bot)`
+            `[Click me for the invite to the bot!](https://discord.com/oauth2/authorize?client_id=1469385720270426358&scope=bot)`
         );
     },
 };

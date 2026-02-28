@@ -25,23 +25,25 @@ module.exports = {
 
         let remainingInvites = 0;
         let fakeInvites = 0;
-        let bonusInvites = 0;
 
         userInvites.forEach((invite) => {
-            const uses = invite.uses;
-            const maxUses = invite.maxUses;
+            const uses = invite.uses || 0;
+            const maxUses = invite.maxUses || 0;
 
             if (uses === 0) {
                 remainingInvites++;
-            } else if (uses > maxUses) {
+            } else if (maxUses > 0 && uses > maxUses) {
                 fakeInvites++;
-            } else if (uses <= maxUses) {
-                bonusInvites += maxUses - uses;
+            } else {
+                // This counts as successful invites
             }
         });
 
+        const successfulInvites = userInvites.reduce((total, invite) => total + (invite.uses || 0), 0) - fakeInvites;
+        const successRate = userInvites.size > 0 ? Math.round((successfulInvites / userInvites.reduce((total, invite) => total + (invite.uses || 0), 1)) * 100) : 0;
+
         const embed = new Discord.EmbedBuilder()
-            .setColor('#9B59B6')
+            .setColor('#5865F2')
             .setAuthor({
                 name: '🔗 Invite Statistics',
                 iconURL: inviter.displayAvatarURL({ dynamic: true, size: 256 }),
@@ -58,40 +60,40 @@ module.exports = {
                     inline: true,
                 },
                 {
-                    name: '⏳ Remaining Invites',
+                    name: '⏳ Unused Invites',
                     value: `\`\`\`${remainingInvites}\`\`\``,
                     inline: true,
                 },
                 {
-                    name: '✅ Successful Invites',
-                    value: `\`\`\`${userInvites.size - remainingInvites - fakeInvites}\`\`\``,
+                    name: '✅ Successful Joins',
+                    value: `\`\`\`${successfulInvites}\`\`\``,
                     inline: true,
                 },
                 {
-                    name: '❌ Fake/Left Invites',
+                    name: '❌ Left/Invalid',
                     value: `\`\`\`${fakeInvites}\`\`\``,
                     inline: true,
                 },
                 {
-                    name: '🎁 Bonus Potential',
-                    value: `\`\`\`${bonusInvites}\`\`\``,
+                    name: '📈 Success Rate',
+                    value: `\`\`\`${successRate}%\`\`\``,
                     inline: true,
                 },
                 {
-                    name: '📈 Success Rate',
-                    value: `\`\`\`${userInvites.size > 0 ? Math.round(((userInvites.size - remainingInvites - fakeInvites) / userInvites.size) * 100) : 0}%\`\`\``,
+                    name: '🏆 Rank',
+                    value: `\`\`\`${successfulInvites >= 10 ? 'Gold' : successfulInvites >= 5 ? 'Silver' : successfulInvites >= 1 ? 'Bronze' : 'None'}\`\`\``,
                     inline: true,
                 }
             )
             .setFooter({
-                text: `Requested by ${interaction.user.tag} • ${new Date().toLocaleDateString()}`,
-                iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+                text: `Requested by ${interaction.user.tag} • Guardian Bot`,
+                iconURL: interaction.client.user.displayAvatarURL({ dynamic: true }),
             })
             .setTimestamp();
 
         if (userInvites.size === 0) {
             embed.setDescription(
-                `**${inviter.tag}** hasn't created any invites for **${interaction.guild.name}** yet.\n\n💡 *Tip: Create an invite link in the server settings or use \`/createinvite\` to start inviting people!*`
+                `**${inviter.tag}** hasn't created any invites for **${interaction.guild.name}** yet.\n\n💡 *Tip: Create an invite link in the server settings to start inviting people!*`
             );
         }
 
