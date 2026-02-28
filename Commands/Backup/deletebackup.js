@@ -6,7 +6,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('deletebackup')
         .setDescription('Delete a backup of the server.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ManageGuild)
         .setDMPermission(false)
         .addStringOption((option) =>
             option

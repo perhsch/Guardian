@@ -7,7 +7,7 @@ module.exports = {
     data: new Discord.SlashCommandBuilder()
         .setName('backup')
         .setDescription('Create a backup of the server.')
-        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(Discord.PermissionFlagsBits.ManageGuild)
         .setDMPermission(false),
     /**
      * @param {Discord.ChatInputCommandInteraction} interaction
