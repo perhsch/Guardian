@@ -23,6 +23,13 @@ module.exports = {
      * @param {import('../../Classes/GuildsManager').GuildsManager} dbGuild
      */
     async execute(interaction, client, dbGuild) {
+        if (!interaction.guild) {
+            return {
+                embeds: [EmbedGenerator.errorEmbed('This command can only be used in a server.')],
+                ephemeral: true,
+            };
+        }
+
         const user = interaction.options.getUser('user', true);
         const member = await interaction.guild.members.fetch({ user: user.id }).catch(() => null);
         const reason = interaction.options.getString('reason') || 'Unspecified reason.';

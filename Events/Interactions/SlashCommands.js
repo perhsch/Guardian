@@ -171,7 +171,7 @@ module.exports = {
 
         const needsTranslation = userLang && userLang.toLowerCase() !== 'en';
         if (needsTranslation && interaction.deferReply) {
-            await interaction.deferReply({ ephemeral: true }).catch(() => {});
+            await interaction.deferReply({ ephemeral: true }).catch(() => { });
         }
 
         const { originalReply, originalEditReply } = wrapInteractionForTranslation(
@@ -182,6 +182,14 @@ module.exports = {
         if (!executeFunction) {
             return interaction.reply({
                 content: await translateContent('This command has no execution function.'),
+                ephemeral: true,
+            });
+        }
+
+        // Additional null check for interaction.guild before executing command
+        if (interaction.commandName !== 'help' && !interaction.guild) {
+            return interaction.reply({
+                content: await translateContent('This command can only be used in a server.'),
                 ephemeral: true,
             });
         }
