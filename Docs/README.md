@@ -246,7 +246,7 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](./LICE
 ## 🔗 Links
 
 - **GitHub Repository:** [Guardians-Stuff/Guardian](https://github.com/Guardians-Stuff/Guardian)
-- **Invite Bot:** [Invite Guardian to your server](https://discord.com/oauth2/authorize?client_id=1130480504097996832&scope=bot)
+- **Invite Bot:** [Invite Guardian to your server](https://discord.com/oauth2/authorize?client_id=1469385720270426358&scope=bot)
 
 ---
 
