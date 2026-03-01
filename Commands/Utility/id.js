@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const EmbedGenerator = require('../../Functions/embedGenerator');
+const emojis = require('../../Config/emojis.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -17,7 +18,7 @@ module.exports = {
         if (!person) person = interaction.user;
         const id = EmbedGenerator.basicEmbed()
             .setColor('#2f3136')
-            .setDescription(`${person} <:blurple_line:1115975887939182612> **${person.id}**`)
+            .setDescription(`${person} ${emojis.emojis.blurple_link} **${person.id}**`)
             .setFooter({ text: `The ID of the user pinged.` });
         interaction.reply({ embeds: [id] });
     },
