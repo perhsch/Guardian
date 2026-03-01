@@ -23,12 +23,12 @@ module.exports = {
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         dbGuild.logs.enabled = false;
-        dbGuild.logs.basic = null;
+        dbGuild.logs.basic_logs = null;
         dbGuild.logs.moderator = null;
 
         await Guilds.updateOne(
             { guild: interaction.guildId },
-            { $set: { logs: { enabled: false, basic: null, moderator: null } } }
+            { $set: { logs: { enabled: false, basic_logs: null, moderator: null } } }
         );
 
         return EmbedGenerator.basicEmbed('🔓 | The logging system has been disabled!');

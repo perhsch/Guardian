@@ -214,7 +214,7 @@ module.exports = {
         }
 
         if (guild.logs.enabled) {
-            const logChannel = await member.guild.channels.fetch(guild.logs.basic);
+            const logChannel = await member.guild.channels.fetch(guild.logs.basic_logs);
             if (!logChannel || !(logChannel instanceof Discord.TextChannel)) return;
 
             let color = '#74e21e';

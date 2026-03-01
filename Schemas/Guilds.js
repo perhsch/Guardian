@@ -15,7 +15,7 @@ module.exports = Mongoose.model(
         },
         logs: {
             enabled: { type: Boolean, default: false },
-            basic: { type: String, default: null },
+            basic_logs: { type: String, default: null },
             moderator: { type: String, default: null },
             global: { type: String, default: null },
             suggestionsChannel: { type: String, default: null },

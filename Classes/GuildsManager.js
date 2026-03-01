@@ -128,16 +128,16 @@ class GuildsManagerLogs {
     /**
      * @type {String | null}
      */
-    get basic() {
-        return this.parent.document.logs.basic;
+    get basic_logs() {
+        return this.parent.document.logs.basic_logs;
     }
 
     /**
      * @param {String | null} basic
      */
-    set basic(basic) {
-        this.parent.document.logs.basic = basic;
-        Guilds.updateOne({ guild: this.parent.id }, { $set: { 'logs.basic': basic } }).then(
+    set basic_logs(basic_logs) {
+        this.parent.document.logs.basic_logs = basic_logs;
+        Guilds.updateOne({ guild: this.parent.id }, { $set: { 'logs.basic_logs': basic_logs } }).then(
             () => null
         );
     }

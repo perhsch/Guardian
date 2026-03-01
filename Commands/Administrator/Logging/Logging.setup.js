@@ -12,7 +12,7 @@ module.exports = {
         .setDescription('Configure the logging system.')
         .addChannelOption((option) =>
             option
-                .setName('log_channel')
+                .setName('basic_logs')
                 .setDescription('Select the basic logging channel for this system.')
                 .addChannelTypes(textChannel)
                 .setRequired(true)
@@ -53,7 +53,7 @@ module.exports = {
      * @param {import('../../../Classes/GuildsManager').GuildsManager} dbGuild
      */
     async execute(interaction, client, dbGuild) {
-        const logChannel = interaction.options.getChannel('log_channel', true);
+        const logChannel = interaction.options.getChannel('basic_logs', true);
         const modLogChannel = interaction.options.getChannel('modlog_channel');
         const suggestionsChannel = interaction.options.getChannel('suggestions_channel');
         const announcementChannel = interaction.options.getChannel('announcement_channel');
@@ -61,7 +61,7 @@ module.exports = {
         const globalChannel = interaction.options.getChannel('global_channel');
 
         dbGuild.logs.enabled = true;
-        dbGuild.logs.basic = logChannel.id;
+        dbGuild.logs.basic_logs = logChannel.id;
         dbGuild.logs.moderator = modLogChannel?.id ?? null;
         dbGuild.logs.global = globalChannel?.id ?? null;
         dbGuild.logs.suggestionsChannel = suggestionsChannel?.id ?? null;
@@ -74,7 +74,7 @@ module.exports = {
 
         const logsPayload = {
             enabled: true,
-            basic: logChannel.id,
+            basic_logs: logChannel.id,
             moderator: modLogChannel?.id ?? null,
             global: globalChannel?.id ?? null,
             suggestionsChannel: suggestionsChannel?.id ?? null,

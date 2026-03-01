@@ -57,14 +57,14 @@ function parseIdInput(value) {
 
 function buildLoggingModal(dbGuild) {
     const basicInput = new Discord.TextInputBuilder()
-        .setCustomId('log_channel')
+        .setCustomId('basic_logs')
         .setLabel('Basic Log Channel ID')
         .setPlaceholder('Paste the channel ID (required)')
         .setStyle(TextInputStyle.Short)
         .setRequired(true)
         .setMinLength(17)
         .setMaxLength(20);
-    if (dbGuild?.logs?.basic) basicInput.setValue(dbGuild.logs.basic);
+    if (dbGuild?.logs?.basic_logs) basicInput.setValue(dbGuild.logs.basic_logs);
 
     const optional = (id, label, value) => {
         const input = new Discord.TextInputBuilder()
@@ -227,7 +227,7 @@ module.exports = {
             const dbGuild = await GuildsManager.fetch(interaction.guild.id);
 
             if (customId === 'setup_modal_logging') {
-                const logChannelId = interaction.fields.getTextInputValue('log_channel').trim();
+                const logChannelId = interaction.fields.getTextInputValue('basic_logs').trim();
                 const modLogId = parseIdInput(interaction.fields.getTextInputValue('modlog_channel'));
                 const suggestionsId = parseIdInput(
                     interaction.fields.getTextInputValue('suggestions_channel')
@@ -316,7 +316,7 @@ module.exports = {
 
                 const logsPayload = {
                     enabled: true,
-                    basic: logChannel.id,
+                    basic_logs: logChannel.id,
                     moderator: modLogValid,
                     suggestionsChannel: suggestionsValid,
                     announcementChannel: announcementValid,
