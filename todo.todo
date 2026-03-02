@@ -10,6 +10,7 @@
         - Automod cases command 
         - Starboard (perhaps, not sure yet)
         - Add more backup commands
+        - Add ghost ping detection system
 
     -- Changes & Bugs
         : Core Features
