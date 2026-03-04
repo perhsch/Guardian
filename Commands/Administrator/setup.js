@@ -96,7 +96,7 @@ module.exports = {
             components: getSetupComponents(dbGuild),
         });
 
-        if (!interaction.guild.members.me.permissions.has('Administrator')) {
+        if (!interaction.guild.members.me.permissions.has('ModerateMembers')) {
             const embed = generateEmbed(0, [], dbGuild);
             embed
                 .setColor('Red')
