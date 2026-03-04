@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const Moment = require('moment');
 const Express = require('express');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
 
 // Import custom modules
 const index = require('./index');
@@ -11,6 +12,12 @@ const Infractions = require('./Schemas/Infractions');
 
 // Create an Express router object
 const router = Express.Router();
+
+// Rate limiter for infractions routes to mitigate DoS via expensive DB/Discord operations
+const infractionsLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 5, // limit each IP to 5 requests per windowMs for this endpoint
+});
 
 router.use((req, res, next) => {
     // Middleware function to validate authorization header
@@ -142,7 +149,7 @@ router.get('/api/guilds/:guild/members/:member', async (req, res) => {
     }); // Send the member information as a JSON response
 });
 
-router.get('/infractions/:id/inactive', async (req, res) => {
+router.get('/infractions/:id/inactive', infractionsLimiter, async (req, res) => {
     // API route to handle inactive instructions
     if (!req.params.id) return res.sendStatus(400);
 
