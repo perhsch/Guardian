@@ -33,6 +33,23 @@ module.exports = {
                 content: 'That user is no longer in the server.',
                 ephemeral: true,
             });
+
+        // Check if target is a bot
+        if (member.user.bot) {
+            return interaction.reply({
+                content: 'You cannot kick bots.',
+                ephemeral: true,
+            });
+        }
+
+        // Check if trying to kick yourself
+        if (member.id === interaction.user.id) {
+            return interaction.reply({
+                content: 'You cannot kick yourself.',
+                ephemeral: true,
+            });
+        }
+
         if (!member.kickable)
             return interaction.reply({ content: 'User cannot be kicked.', ephemeral: true });
 

@@ -80,9 +80,9 @@ module.exports = {
         .setDescription('Setup basic bot stuff.')
         .setDefaultMemberPermissions(
             Discord.PermissionFlagsBits.ManageChannels |
-                Discord.PermissionFlagsBits.ManageRoles |
-                Discord.PermissionFlagsBits.ViewAuditLog |
-                Discord.PermissionFlagsBits.SendMessages
+            Discord.PermissionFlagsBits.ManageRoles |
+            Discord.PermissionFlagsBits.ViewAuditLog |
+            Discord.PermissionFlagsBits.SendMessages
         )
         .setDMPermission(false),
     /**
@@ -118,21 +118,15 @@ module.exports = {
         });
 
         const botRole = interaction.guild.roles.botRoleFor(client.user);
-        if (!botRole) {
-            const embed = generateEmbed(1, [0], dbGuild);
-            embed
-                .setColor('Red')
-                .setDescription(
-                    '❌ Bot role not found. Please ensure the bot has a role in this server.'
-                );
-            await interaction.editReply({ embeds: [embed], components: [] });
-            return;
+        let rolesAboveBot = null;
+
+        if (botRole) {
+            rolesAboveBot = interaction.guild.roles.cache.filter(
+                (role) => role.position > botRole.position && !role.managed && role.editable
+            );
         }
 
-        const rolesAboveBot = interaction.guild.roles.cache.filter(
-            (role) => role.position > botRole.position && !role.managed && role.editable
-        );
-        if (rolesAboveBot.size > 0) {
+        if (botRole && rolesAboveBot && rolesAboveBot.size > 0) {
             const embed = generateEmbed(1, [0], dbGuild);
             embed
                 .setColor('Yellow')
@@ -146,6 +140,8 @@ module.exports = {
                         "• Go to your server's roles settings",
                         "• Drag the Guardian bot's role **above** the roles it needs to manage",
                         '• Run `/setup` again if you have issues',
+                        '',
+                        '*Note: Bot role is optional - setup will continue with warnings.*'
                     ].join('\n')
                 );
             return interaction.editReply({

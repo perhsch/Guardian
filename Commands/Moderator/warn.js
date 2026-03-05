@@ -40,6 +40,22 @@ module.exports = {
                 ephemeral: true,
             };
 
+        // Check if target is a bot
+        if (member.user.bot) {
+            return {
+                embeds: [EmbedGenerator.errorEmbed('You cannot warn bots.')],
+                ephemeral: true,
+            };
+        }
+
+        // Check if trying to warn yourself
+        if (member.id === interaction.user.id) {
+            return {
+                embeds: [EmbedGenerator.errorEmbed('You cannot warn yourself.')],
+                ephemeral: true,
+            };
+        }
+
         // Enhanced infraction embed for user DM
         const infractionEmbed = new Discord.EmbedBuilder()
             .setColor(0xeb459e)
@@ -81,12 +97,11 @@ module.exports = {
             .addFields(
                 {
                     name: '🔍 Member Details',
-                    value: `• **Joined Server**: <t:${Math.floor(member.joinedTimestamp / 1000)}:R>\n• **Account Created**: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>\n• **Roles**: ${
-                        member.roles.cache
+                    value: `• **Joined Server**: <t:${Math.floor(member.joinedTimestamp / 1000)}:R>\n• **Account Created**: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>\n• **Roles**: ${member.roles.cache
                             .map((r) => r)
                             .slice(0, 3)
                             .join(' ') || 'None'
-                    }${member.roles.cache.size > 3 ? ` +${member.roles.cache.size - 3} more` : ''}`,
+                        }${member.roles.cache.size > 3 ? ` +${member.roles.cache.size - 3} more` : ''}`,
                     inline: true,
                 },
                 {

@@ -50,6 +50,23 @@ module.exports = {
                 content: 'That user is no longer in the server.',
                 ephemeral: true,
             });
+
+        // Check if target is a bot
+        if (member.user.bot) {
+            return interaction.reply({
+                content: 'You cannot ban bots.',
+                ephemeral: true,
+            });
+        }
+
+        // Check if trying to ban yourself
+        if (member.id === interaction.user.id) {
+            return interaction.reply({
+                content: 'You cannot ban yourself.',
+                ephemeral: true,
+            });
+        }
+
         if (!member.bannable)
             return interaction.reply({ content: 'User cannot be banned.', ephemeral: true });
 
