@@ -1,12 +1,13 @@
 import Discord from 'discord.js';
-// @ts-ignore
+// @ts-expect-error The ascii-table package has no type declarations, but still works.
 import ascii from 'ascii-table';
 import { loadFiles } from '../Functions/fileLoader.ts';
+import { GuardianClient } from '../types.ts';
 
 /**
  * @param {Discord.Client} client
  */
-export async function loadCommands(client: any): Promise<void> {
+export async function loadCommands(client: GuardianClient): Promise<void> {
     const table = new ascii().setHeading('Commands', 'Status');
     const files = await loadFiles('Commands');
     let commandsArray: any[] = [];
