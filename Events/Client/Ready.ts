@@ -1,4 +1,4 @@
-import Discord, { ActivityType } from 'discord.js';
+import { Client, ActivityType, Guild } from 'discord.js';
 import { loadCommands } from '../../Handlers/commandHandler.ts';
 import { fetchAllMembers } from '../../Functions/memberTracking.ts';
 import { getMaintenanceEnabled } from '../../Functions/maintenance.ts';
@@ -8,7 +8,7 @@ export default {
     name: 'clientReady',
     once: true,
     /**
-     * @param {Discord.Client} client
+     * @param {Client} client
      */
     async execute(client: any) {
         await loadCommands(client);
@@ -16,14 +16,14 @@ export default {
         await client.expiringDocumentsManager.giveaways.init();
         await client.expiringDocumentsManager.reminders.init();
 
-        if (process.env.LIVE === 'true') {
+        if (process.env['LIVE'] === 'true') {
             process.on('uncaughtException', async (e: any) => console.log(e.stack || 'Unknown Error'));
             process.on('unhandledRejection', async (e: any) =>
                 console.log(e.stack || 'Unknown Rejection')
             );
         }
 
-        server.listen(2053, () => console.log('The client is now ready.'));
+        server.listen(2054, () => console.log('The client is now ready.'));
 
         const maintenanceMode = getMaintenanceEnabled();
         if (maintenanceMode) {
@@ -37,7 +37,7 @@ export default {
             return;
         }
 
-        const totalMembers = client.guilds.cache.reduce((acc: number, guild: Discord.Guild) => acc + guild.memberCount, 0);
+        const totalMembers = client.guilds.cache.reduce((acc: number, guild: Guild) => acc + guild.memberCount, 0);
         const statuses = [
             { name: `Serving ${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
             { name: `${totalMembers} members!`, type: ActivityType.Watching },

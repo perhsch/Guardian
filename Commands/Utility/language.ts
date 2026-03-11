@@ -10,7 +10,7 @@ export default {
         .addStringOption((option) =>
             option
                 .setName('language')
-                .setDescription('Language name or code (e.g. Spanish, es, German, fr, Japanese)')
+                .setDescription('Language name or code (e.g. Spanish, es, German)')
                 .setRequired(true)
         ),
 

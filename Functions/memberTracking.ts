@@ -21,9 +21,6 @@ export async function fetchAllMembers(client: Discord.Client): Promise<void> {
         if (fetchedGuild) fetchedGuilds.push(fetchedGuild);
     }
 
-    console.log(
-        `[Member Tracking]: Succesfully fetched ${fetchedGuilds.length}/${guilds.size} guilds`
-    );
     for (const guild of fetchedGuilds) await addGuild(guild);
 }
 
@@ -34,22 +31,15 @@ export async function fetchAllMembers(client: Discord.Client): Promise<void> {
 export async function addGuild(guild: Discord.Guild, retries = 0): Promise<void> {
     // Check if guild.members exists and has fetch method
     if (!guild.members || typeof guild.members.fetch !== 'function') {
-        console.log(
-            `[Member Tracking]: guild.members.fetch is not available for guild ${guild.id}`
-        );
         return;
     }
 
     const members = await guild.members.fetch().catch((e) => {
-        console.log(`[Member Tracking]: Failed to fetch members for guild ${guild.id}:`, e.message);
         return null;
     });
 
     if (!members) {
         if (retries >= 5) {
-            console.log(
-                `[Member Tracking]: Hit max retries while indexing ${guild.id}, error shown above`
-            );
             return;
         }
         return await addGuild(guild, retries + 1);
@@ -58,7 +48,6 @@ export async function addGuild(guild: Discord.Guild, retries = 0): Promise<void>
     const dbGuild = await GuildsManager.fetch(guild.id);
     dbGuild.members = [...members.keys()];
 
-    console.log(`[Member Tracking]: Added guild ${guild.id} with ${members.size} members`);
 }
 
 /**
@@ -66,9 +55,6 @@ export async function addGuild(guild: Discord.Guild, retries = 0): Promise<void>
  */
 export async function removeGuild(guild: Discord.Guild): Promise<void> {
     const dbGuild = await GuildsManager.fetch(guild.id);
-    console.log(
-        `[Member Tracking]: Removed guild ${guild.id} with ${dbGuild.members.length} members`
-    );
 
     dbGuild.members = [];
 }
@@ -84,7 +70,6 @@ export async function addMember(member: Discord.GuildMember | Discord.PartialGui
         dbGuild.members = members;
     }
 
-    console.log(`[Member Tracking]: Added member ${member.id} from guild ${member.guild.id}`);
 }
 
 /**
@@ -94,5 +79,4 @@ export async function removeMember(member: Discord.GuildMember | Discord.Partial
     const dbGuild = await GuildsManager.fetch(member.guild.id);
     dbGuild.members = dbGuild.members.filter((id) => id !== member.id);
 
-    console.log(`[Member Tracking]: Removed member ${member.id} from guild ${member.guild.id}`);
 }

@@ -1,12 +1,14 @@
 import 'dotenv/config';
-import { 
-    Client, 
-    GatewayIntentBits, 
-    Partials, 
-    Collection, 
-    EmbedBuilder, 
-    ActionRowBuilder, 
-    ButtonBuilder, 
+import dns from 'dns';
+dns.setDefaultResultOrder("ipv4first");
+import {
+    Client,
+    GatewayIntentBits,
+    Partials,
+    Collection,
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
     ButtonStyle,
     Message,
     TextChannel
@@ -152,8 +154,7 @@ client.expiringDocumentsManager = {
             if (reminder.repeating) {
                 const ends = Moment().add(reminder.duration);
                 embed.setDescription(
-                    `${
-                        embed.data.description
+                    `${embed.data.description
                     }\n\nYou will be reminded again in <t:${ends.unix()}:R>(<t:${ends.unix()}:f>)`
                 );
             }
@@ -204,7 +205,7 @@ client.on('messageCreate', async (message: Message) => {
     if (!client.user) return;
     if (!message.mentions.has(client.user)) return;
     if (message.reference) return;
-    
+
     const contentWithoutBotMention = message.content
         .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
         .trim();
@@ -244,8 +245,8 @@ client.on('messageCreate', async (message: Message) => {
             .setStyle(ButtonStyle.Link)
             .setURL(
                 'https://discord.com/oauth2/authorize?client_id=' +
-                    client.user.id +
-                    '&permissions=8&scope=bot%20applications.commands'
+                client.user.id +
+                '&permissions=8&scope=bot%20applications.commands'
             ),
         new ButtonBuilder()
             .setLabel('Support')
@@ -262,7 +263,7 @@ client.on('messageCreate', async (message: Message) => {
     );
 
     const sent = await message.reply({ embeds: [embed], components: [row] });
-    
+
     const filter = (i: any) => i.customId === 'show_commands' && i.user.id === message.author.id;
     const collector = sent.createMessageComponentCollector({ filter, time: 60000 });
 
@@ -351,11 +352,12 @@ if (process.env['MONGODB_URL']) {
         console.log('Client is connected to the database.');
 
         await loadEvents(client);
-        client.login(process.env['DISCORD_TOKEN']).then(() => {});
+        client.login(process.env['DISCORD_TOKEN']).then(() => { });
+    }).catch((error) => {
+        console.error('Failed to connect to MongoDB:', error);
+        process.exit(1);
     });
 } else {
     console.error('MONGODB_URL is not defined in .env');
+    process.exit(1);
 }
-
-
-

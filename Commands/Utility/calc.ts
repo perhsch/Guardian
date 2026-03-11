@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-// @ts-ignore — mathjs may need @types/mathjs
-import math from 'mathjs';
+import { create, all } from 'mathjs';
+const math = create(all);
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 
 export default {

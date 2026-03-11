@@ -159,3 +159,10 @@ export async function pagesEmbed(
         });
     });
 }
+
+export default {
+    basicEmbed,
+    errorEmbed,
+    infractionEmbed,
+    pagesEmbed
+}

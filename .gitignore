@@ -3,6 +3,7 @@ yarn.lock
 ./Commands/Utility/setup
 data/server/fullchain.pem
 data/server/privkey.pem
-.env
 .vscode
 ./Commands/Administrator/Giveaway
+.env
+bun.lock 

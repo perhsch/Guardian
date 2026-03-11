@@ -28,7 +28,7 @@ const InfractionSchema = new Schema<IInfraction>(
         },
         active: { type: Boolean, default: true },
         reason: { type: String, default: 'Unspecified reason.' },
-        time: { type: number, default: Date.now },
+        time: { type: Number, default: Date.now },
         duration: { type: Number, default: Infinity, required: true },
         expires: {
             type: Number,
@@ -47,6 +47,6 @@ InfractionSchema.virtual('permanent').get(function (this: IInfraction) {
     return !isFinite(this.duration);
 });
 
-const Infractions: Model<IInfraction> = Mongoose.models.Infractions || Mongoose.model<IInfraction>('Infractions', InfractionSchema);
+const Infractions = Mongoose.model<IInfraction>('Infractions', InfractionSchema);
 
 export default Infractions;

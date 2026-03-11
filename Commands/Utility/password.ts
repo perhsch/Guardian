@@ -19,7 +19,7 @@ export default {
         ),
 
     async execute(interaction: ChatInputCommandInteraction) {
-        const length = interaction.options.getString('length', true);
+        const length = parseInt(interaction.options.getString('length', true));
         const numbers = interaction.options.getBoolean('numbers') ?? true;
         const symbols = interaction.options.getBoolean('symbols') ?? false;
 
