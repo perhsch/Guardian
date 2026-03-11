@@ -15,7 +15,7 @@ export default {
         .setName('announce')
         .setDescription('Announce a message to the server')
         .setDMPermission(false)
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addStringOption((option) =>
             option.setName('message').setDescription('Message to announce').setRequired(true)
         )
@@ -66,8 +66,10 @@ export default {
                     [`- Moderator: ${interaction.user.tag}`, `- Channel: <#${channelRef.id}>`, `- Message: ${message.substring(0, 500)}${message.length > 500 ? '...' : ''}`].join('\n')
                 ).setTitle('/announce command used');
                 await sendModLog(interaction.guild!, dbGuild, logEmbed);
-                interaction.reply({ embeds: [EmbedGenerator.basicEmbed(':mega: | Announced message successfully!')], ephemeral: true });
+                return interaction.reply({ embeds: [EmbedGenerator.basicEmbed(':mega: | Announced message successfully!')], ephemeral: true });
             })
             .catch(() => interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true }));
+
+        return;
     },
 };

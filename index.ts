@@ -246,7 +246,7 @@ client.on('messageCreate', async (message: Message) => {
             .setURL(
                 'https://discord.com/oauth2/authorize?client_id=' +
                 client.user.id +
-                '&permissions=8&scope=bot%20applications.commands'
+                '&permissions=68479744&scope=bot%20applications.commands'
             ),
         new ButtonBuilder()
             .setLabel('Support')

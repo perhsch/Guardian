@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import * as Discord from 'discord.js';
 import Guilds from '../Schemas/Guilds.ts';
 import EmbedGenerator from '../Functions/embedGenerator.ts';
 import { getRecentJoiners } from '../Functions/antiRaidTracking.ts';
@@ -19,7 +19,7 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
         });
 
         // For real raids, require anti-raid to be enabled
-        const eligibleGuilds = raidData.isTest 
+        const eligibleGuilds = raidData.isTest
             ? guildsWithGlobalLogging
             : guildsWithGlobalLogging.filter(guild => guild.antiraid?.enabled);
 
@@ -51,31 +51,31 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
                 `**🕐 Detection Time:** <t:${Math.floor(Date.now() / 1000)}:R>`
             )
             .addFields(
-                { 
-                    name: '🛡️ **Your Protection Status**', 
+                {
+                    name: '🛡️ **Your Protection Status**',
                     value: `✅ **Anti-Raid:** Enabled in your server\n🔒 **Global Logging:** Active\n🚨 **Cross-Server Defense:** Operational`,
-                    inline: true 
+                    inline: true
                 },
-                { 
-                    name: '⚠️ **Recommended Actions**', 
-                    value: raidData.isTest 
+                {
+                    name: '⚠️ **Recommended Actions**',
+                    value: raidData.isTest
                         ? '🧪 **Test Mode:** No action needed\n✅ **System Verified:** Working correctly'
                         : '🔒 **Enable Lockdown:** Temporary protection\n📈 **Increase Verification:** Strengthen security\n👀 **Monitor Activity:** Watch for suspicious behavior',
-                    inline: true 
+                    inline: true
                 }
             )
             .addFields(
                 {
                     name: `📊 **Threat Analysis**`,
                     value: `**Severity Level:** ${raidData.joinCount >= 20 ? '🔴 **CRITICAL**' : raidData.joinCount >= 10 ? '🟡 **HIGH**' : '🟠 **ELEVATED**'}\n` +
-                            `**Attack Pattern:** ${raidData.joinWithin <= 10 ? '⚡ **Lightning Fast**' : raidData.joinWithin <= 30 ? '🚀 **Rapid**' : '📈 **Sustained**'}\n` +
-                            `**Response Time:** **Instant**\n` +
-                            `**Network Defense:** **Active**`,
+                        `**Attack Pattern:** ${raidData.joinWithin <= 10 ? '⚡ **Lightning Fast**' : raidData.joinWithin <= 30 ? '🚀 **Rapid**' : '📈 **Sustained**'}\n` +
+                        `**Response Time:** **Instant**\n` +
+                        `**Network Defense:** **Active**`,
                     inline: false
                 }
             )
             .setImage('https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png')
-            .setFooter({ 
+            .setFooter({
                 text: `Guardian Cross-Server Protection${raidData.isTest ? ' • TEST MODE' : ''} • Defending ${client.guilds.cache.size} servers`,
                 iconURL: client.user?.displayAvatarURL()
             })
@@ -125,7 +125,7 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
         // Send to all eligible guilds
         const sentGuilds: string[] = [];
         const skippedGuilds: any[] = [];
-        
+
         for (const guildDoc of eligibleGuilds) {
             try {
                 // Skip the raided guild itself for real alerts, but allow it for test mode
@@ -166,7 +166,7 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
         }
 
         console.log(`🚨 Cross-server raid alert (${raidData.isTest ? 'TEST' : 'REAL'}) sent to ${sentGuilds.length} guilds: ${sentGuilds.join(', ')}`);
-        
+
         if (skippedGuilds.length > 0) {
             console.log(`⚠️ Skipped ${skippedGuilds.length} guilds:`);
             skippedGuilds.forEach(skipped => {
@@ -186,14 +186,14 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
  */
 export async function handleRaidButtonInteraction(interaction: Discord.ButtonInteraction, client: Discord.Client): Promise<void> {
     const customId = interaction.customId;
-    
+
     if (!customId.startsWith('raid_')) return;
 
     await interaction.deferReply({ ephemeral: true });
 
     try {
         const [, action, raidedGuildId] = customId.split('_');
-        
+
         // Get the raided guild information
         const raidedGuildDoc = await Guilds.findOne({ guild: raidedGuildId });
         if (!raidedGuildDoc) {
@@ -203,7 +203,7 @@ export async function handleRaidButtonInteraction(interaction: Discord.ButtonInt
             return;
         }
 
-        const raidedGuild = client.guilds.cache.get(raidedGuildId);
+        const raidedGuild = client.guilds.cache.get(raidedGuildId!);
         if (!raidedGuild) {
             await interaction.editReply({
                 embeds: [EmbedGenerator.errorEmbed('Raided guild is no longer available.')]
@@ -235,11 +235,11 @@ export async function handleRaidButtonInteraction(interaction: Discord.ButtonInt
 /**
  * Handles banning raiders from the user's guild
  */
-async function handleBanRaiders(interaction: Discord.ButtonInteraction, client: Discord.Client, raidedGuild: Discord.Guild, raidedGuildDoc: any): Promise<void> {
+async function handleBanRaiders(interaction: Discord.ButtonInteraction, _client: Discord.Client, raidedGuild: Discord.Guild, _raidedGuildDoc: any): Promise<void> {
     try {
         // Get recent joiners from the raided guild (last 5 minutes)
         const recentJoiners = getRecentJoiners(raidedGuild.id, 300000); // 5 minutes
-        
+
         if (recentJoiners.length === 0) {
             await interaction.editReply({
                 embeds: [EmbedGenerator.basicEmbed('No recent raiders found to ban.')]
@@ -263,15 +263,17 @@ async function handleBanRaiders(interaction: Discord.ButtonInteraction, client: 
                     continue;
                 }
 
-                // Don't ban if they're the server owner or have higher permissions
-                if (member.id === userGuild.ownerId || 
-                    member.permissions.has(Discord.PermissionFlagsBits.Administrator)) {
+                // Don't ban if they're the server owner or have moderation permissions
+                if (member.id === userGuild.ownerId ||
+                    member.permissions.has(Discord.PermissionFlagsBits.ManageGuild) ||
+                    member.permissions.has(Discord.PermissionFlagsBits.BanMembers) ||
+                    member.permissions.has(Discord.PermissionFlagsBits.KickMembers)) {
                     failedCount++;
                     continue;
                 }
 
-                await member.ban({ 
-                    reason: `Cross-server raid protection - Preemptive ban from raid in ${raidedGuild.name}` 
+                await member.ban({
+                    reason: `Cross-server raid protection - Preemptive ban from raid in ${raidedGuild.name}`
                 });
                 bannedCount++;
             } catch (error) {
@@ -286,9 +288,9 @@ async function handleBanRaiders(interaction: Discord.ButtonInteraction, client: 
             `👻 **Not Found:** ${notFoundCount} raiders\n\n` +
             `Your server is now protected from the raiders that attacked **${raidedGuild.name}**!`
         )
-        .setColor(Discord.Colors.Green)
-        .setTitle('✅ Preemptive Ban Complete')
-        .setFooter({ text: 'Guardian Cross-Server Protection' });
+            .setColor(Discord.Colors.Green)
+            .setTitle('✅ Preemptive Ban Complete')
+            .setFooter({ text: 'Guardian Cross-Server Protection' });
 
         await interaction.editReply({ embeds: [resultEmbed] });
 

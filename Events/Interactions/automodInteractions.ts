@@ -37,8 +37,8 @@ function buildAntiraidModal(dbGuild: any): Discord.ModalBuilder {
                         ? `yes, ${ar.channel}`
                         : 'yes'
                     : ar.channel
-                      ? ar.channel
-                      : 'no'
+                        ? ar.channel
+                        : 'no'
             )
         );
 }
@@ -242,10 +242,10 @@ export default {
         if (!interaction.guild) return;
 
         if (interaction.isButton() && interaction.customId === 'automod_configure') {
-            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
+            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
                     embeds: [
-                        EmbedGenerator.errorEmbed('Only administrators can configure automod.'),
+                        EmbedGenerator.errorEmbed('Only members with Manage Server permission can configure automod.'),
                     ],
                     ephemeral: true,
                 });
@@ -307,10 +307,10 @@ export default {
             interaction.isStringSelectMenu() &&
             interaction.customId === 'automod_settings_select'
         ) {
-            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
+            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
                     embeds: [
-                        EmbedGenerator.errorEmbed('Only administrators can configure automod.'),
+                        EmbedGenerator.errorEmbed('Only members with Manage Server permission can configure automod.'),
                     ],
                     ephemeral: true,
                 });
@@ -332,10 +332,10 @@ export default {
         }
 
         if (interaction.isModalSubmit() && interaction.customId.startsWith('automod_modal_')) {
-            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
+            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
                     embeds: [
-                        EmbedGenerator.errorEmbed('Only administrators can configure automod.'),
+                        EmbedGenerator.errorEmbed('Only members with Manage Server permission can configure automod.'),
                     ],
                     ephemeral: true,
                 });
@@ -380,7 +380,7 @@ export default {
                         },
                     }
                 );
-                
+
                 dbGuild.antiraid = dbGuild.antiraid || {};
                 dbGuild.antiraid.enabled = enabled;
                 dbGuild.antiraid.joinAmount = joinAmount;
@@ -436,7 +436,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch {}
+                } catch { }
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Zalgo settings saved!')],
                     ephemeral: true,
@@ -486,7 +486,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch {}
+                } catch { }
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Badwords settings saved!')],
                     ephemeral: true,
@@ -534,7 +534,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch {}
+                } catch { }
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Nuke settings saved!')],
                     ephemeral: true,
@@ -584,7 +584,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch {}
+                } catch { }
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Advertisement settings saved!')],
                     ephemeral: true,
@@ -634,7 +634,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch {}
+                } catch { }
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Caps settings saved!')],
                     ephemeral: true,
@@ -686,7 +686,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch {}
+                } catch { }
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Mention Spam settings saved!')],
                     ephemeral: true,
@@ -740,7 +740,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch {}
+                } catch { }
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Spam settings saved!')],
                     ephemeral: true,

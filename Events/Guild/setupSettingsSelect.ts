@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import * as Discord from 'discord.js';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { GuildsManager } from '../../Classes/GuildsManager.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
@@ -159,13 +159,13 @@ export default {
      * @param {Discord.Interaction} interaction
      * @param {Discord.Client} client
      */
-    async execute(interaction: Discord.Interaction, client: Discord.Client) {
+    async execute(interaction: Discord.Interaction, _client: Discord.Client) {
         if (!interaction.guild) return;
 
         if (interaction.isButton() && interaction.customId === 'setup_settings_button') {
-            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
+            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only administrators can use setup.')],
+                    embeds: [EmbedGenerator.errorEmbed('Only members with Manage Server permission can use setup.')],
                     ephemeral: true,
                 });
             }
@@ -189,9 +189,9 @@ export default {
         }
 
         if (interaction.isStringSelectMenu() && interaction.customId === 'setup_settings_select') {
-            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
+            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only administrators can use setup.')],
+                    embeds: [EmbedGenerator.errorEmbed('Only members with Manage Server permission can use setup.')],
                     ephemeral: true,
                 });
             }
@@ -218,9 +218,9 @@ export default {
                 return;
             }
 
-            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.Administrator)) {
+            if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only administrators can use setup.')],
+                    embeds: [EmbedGenerator.errorEmbed('Only members with Manage Server permission can use setup.')],
                     ephemeral: true,
                 });
             }
@@ -364,7 +364,7 @@ export default {
                     .getTextInputValue('reactions')
                     .trim()
                     .toLowerCase();
-                    
+
                 const reactions = reactionsInput !== 'no' && reactionsInput !== 'false';
 
                 const channel = await interaction.guild.channels.fetch(channelId).catch(() => null);

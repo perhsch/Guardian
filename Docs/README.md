@@ -135,8 +135,17 @@ The client is now ready.
 ### Bot Permissions
 
 Ensure your bot has the following permissions:
-- **Administrator** (recommended for full functionality)
-- Or individually: Manage Roles, Manage Channels, Kick Members, Ban Members, Manage Messages, etc.
+- **Manage Server** (for configuration and setup)
+- **Manage Roles** (for role management commands)
+- **Manage Channels** (for channel management)
+- **Kick Members** (for moderation commands)
+- **Ban Members** (for moderation commands)
+- **Manage Messages** (for message moderation and logging)
+- **Send Messages** (for announcements and responses)
+- **Embed Links** (for rich embeds)
+- **Attach Files** (for logging and utilities)
+- **Read Message History** (for moderation context)
+- **Add Reactions** (for interaction responses)
 
 ### MongoDB Setup
 

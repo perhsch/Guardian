@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, ActivityType } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, ActivityType } from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { setMaintenanceEnabled } from '../../Functions/maintenance.ts';
 
@@ -8,7 +8,6 @@ export default {
     data: new SlashCommandBuilder()
         .setName('maintenance')
         .setDescription('Enable or disable maintenance mode (status + commands).')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addBooleanOption((option) =>
             option
                 .setName('enable')
@@ -17,6 +16,14 @@ export default {
         ),
 
     async execute(interaction: ChatInputCommandInteraction, client: any) {
+        // Double-check developer permission for additional security
+        if (interaction.user.id !== '1447738202600505407') {
+            return {
+                embeds: [EmbedGenerator.errorEmbed('This command is only available to the developer.')],
+                ephemeral: true,
+            };
+        }
+
         const enable = interaction.options.getBoolean('enable', true);
 
         if (enable) {
