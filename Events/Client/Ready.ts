@@ -3,6 +3,7 @@ import { loadCommands } from '../../Handlers/commandHandler.ts';
 import { fetchAllMembers } from '../../Functions/memberTracking.ts';
 import { getMaintenanceEnabled } from '../../Functions/maintenance.ts';
 import { server } from '../../index.ts';
+import { StatcordManager } from '../../Functions/statcordManager.ts';
 
 /**
  * Sends a startup notification to the specified channel
@@ -127,6 +128,10 @@ export default {
         }, 15000); // Rotate every 15 seconds
 
         await fetchAllMembers(client);
+
+        // Initialize Statcord
+        const statcordManager = new StatcordManager(client);
+        await statcordManager.start();
 
         // Send startup notification to specified channel
         await sendStartupNotification(client);

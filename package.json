@@ -35,6 +35,7 @@
         "node-fetch": "^3.3.1",
         "nodemon": "^2.0.20",
         "octokit": "^2.0.14",
+        "statcord.js": "^3.4.3",
         "urban": "^0.3.4",
         "weather-js": "^2.0.0"
     },

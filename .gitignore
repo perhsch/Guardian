@@ -5,5 +5,5 @@ data/server/fullchain.pem
 data/server/privkey.pem
 .vscode
 ./Commands/Administrator/Giveaway
-.env
 bun.lock 
+.env
