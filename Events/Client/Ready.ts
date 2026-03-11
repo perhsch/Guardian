@@ -63,9 +63,9 @@ async function sendStartupNotification(client: Client) {
             .setTimestamp();
 
         await channel.send({ embeds: [startupEmbed] });
-        console.log(`Startup notification sent to channel: ${channelId}`);
+        //console.log(`Startup notification sent to channel: ${channelId}`);
     } catch (error) {
-        console.error('Failed to send startup notification:', error);
+        //console.error('Failed to send startup notification:', error);
     }
 }
 
