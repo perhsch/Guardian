@@ -11,16 +11,16 @@ import { StatcordManager } from '../../Functions/statcordManager.ts';
  */
 async function sendStartupNotification(client: Client) {
     try {
-        const channelId = '1471691901324361971';
+        const channelId = '1481375968332349500';
         const channel = await client.channels.fetch(channelId).catch(() => null);
 
         if (!channel || !(channel instanceof TextChannel)) {
-            console.log(`Could not find startup notification channel: ${channelId}`);
+            // console.log(`Could not find startup notification channel: ${channelId}`);
             return;
         }
 
         if (!client.user) {
-            console.log('Client user is not available');
+            // console.log('Client user is not available');
             return;
         }
 
@@ -89,7 +89,7 @@ export default {
             );
         }
 
-        server.listen(2054, () => console.log('The client is now ready.'));
+        server.listen(2054, () => { });
 
         const maintenanceMode = getMaintenanceEnabled();
         if (maintenanceMode) {

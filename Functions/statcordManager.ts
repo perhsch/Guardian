@@ -15,23 +15,23 @@ export class StatcordManager {
         const apiKey = process.env['STATCORD_API_KEY'];
 
         if (!apiKey) {
-            console.error('STATCORD_API_KEY not found in environment variables');
+            // console.error('STATCORD_API_KEY not found in environment variables');
             throw new Error('STATCORD_API_KEY is required');
         }
 
         if (!this.client.user) {
-            console.error('Client user is not available for Statcord initialization');
+            // console.error('Client user is not available for Statcord initialization');
             return;
         }
 
-        console.log('Initializing Statcord with API key:', apiKey);
-        console.log('Bot client ID:', this.client.user.id);
+        // console.log('Initializing Statcord with API key:', apiKey);
+        // console.log('Bot client ID:', this.client.user.id);
 
         // Try different initialization methods
         try {
             this.statcord = new (Statcord as any).Client(apiKey, this.client);
         } catch (error) {
-            console.log('Trying alternative Statcord initialization...');
+            // console.log('Trying alternative Statcord initialization...');
             this.statcord = new (Statcord as any).Client({
                 key: apiKey,
                 client: this.client
@@ -46,7 +46,7 @@ export class StatcordManager {
 
             await this.initializeStatcord();
 
-            console.log('Starting Statcord with API key:', process.env['STATCORD_API_KEY'] || 'statcord.com-SC-8479334b4c8f4be39ba050687');
+            // console.log('Starting Statcord with API key:', process.env['STATCORD_API_KEY'] || 'statcord.com-SC-8479334b4c8f4be39ba050687');
 
             // Post initial stats
             await this.postStats();
@@ -56,17 +56,17 @@ export class StatcordManager {
                 await this.postStats();
             }, 30 * 60 * 1000);
 
-            console.log('Statcord integration started successfully');
+            // console.log('Statcord integration started successfully');
         } catch (error) {
-            console.error('Failed to start Statcord:', error);
-            console.error('Error details:', JSON.stringify(error, null, 2));
+            // console.error('Failed to start Statcord:', error);
+            // console.error('Error details:', JSON.stringify(error, null, 2));
         }
     }
 
     async postStats(): Promise<void> {
         try {
             if (!this.client.user || !this.client.guilds.cache.size) {
-                console.log('Client or guilds not ready, skipping stats post');
+                // console.log('Client or guilds not ready, skipping stats post');
                 return;
             }
 
@@ -92,14 +92,14 @@ export class StatcordManager {
             try {
                 await this.statcord.postStats(stats);
             } catch (error) {
-                console.log('Trying post method...');
+                // console.log('Trying post method...');
                 await this.statcord.post(stats);
             }
 
-            console.log(`Statcord stats posted! Servers: ${stats.servers}, Users: ${stats.users}`);
+            // console.log(`Statcord stats posted! Servers: ${stats.servers}, Users: ${stats.users}`);
         } catch (error) {
-            console.error('Failed to post stats to Statcord:', error);
-            console.error('Post error details:', JSON.stringify(error, null, 2));
+            // console.error('Failed to post stats to Statcord:', error);
+            // console.error('Post error details:', JSON.stringify(error, null, 2));
         }
     }
 
@@ -116,9 +116,9 @@ export class StatcordManager {
                 uptime: 0,
                 memory: { total: 0, used: 0, percentage: 0 }
             });
-            console.log('Statcord stopped');
+            // console.log('Statcord stopped');
         } catch (error) {
-            console.error('Failed to stop Statcord:', error);
+            // console.error('Failed to stop Statcord:', error);
         }
     }
 }
