@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 
 const lifeAdvices = [
     'Take care of your mental health.',
@@ -42,6 +42,24 @@ export default {
 
     async execute(interaction: ChatInputCommandInteraction) {
         const advice = lifeAdvices[Math.floor(Math.random() * lifeAdvices.length)];
-        await interaction.reply(advice!);
+
+        const embed = new EmbedBuilder()
+            .setColor(0x00FF00)
+            .setTitle('💡 Life Advice')
+            .setDescription(advice!)
+            .addFields(
+                {
+                    name: 'Remember',
+                    value: 'Take time to reflect on this advice and how it applies to your life.',
+                    inline: false
+                }
+            )
+            .setFooter({
+                text: 'Guardian Bot • Daily Wisdom',
+                iconURL: interaction.client.user?.displayAvatarURL()
+            })
+            .setTimestamp();
+
+        await interaction.reply({ embeds: [embed] });
     },
 };
