@@ -1,8 +1,73 @@
-import { Client, ActivityType, Guild } from 'discord.js';
+import { Client, ActivityType, Guild, EmbedBuilder, TextChannel } from 'discord.js';
 import { loadCommands } from '../../Handlers/commandHandler.ts';
 import { fetchAllMembers } from '../../Functions/memberTracking.ts';
 import { getMaintenanceEnabled } from '../../Functions/maintenance.ts';
 import { server } from '../../index.ts';
+
+/**
+ * Sends a startup notification to the specified channel
+ * @param {Client} client
+ */
+async function sendStartupNotification(client: Client) {
+    try {
+        const channelId = '1471691901324361971';
+        const channel = await client.channels.fetch(channelId).catch(() => null);
+
+        if (!channel || !(channel instanceof TextChannel)) {
+            console.log(`Could not find startup notification channel: ${channelId}`);
+            return;
+        }
+
+        if (!client.user) {
+            console.log('Client user is not available');
+            return;
+        }
+
+        const totalMembers = client.guilds.cache.reduce((acc: number, guild: Guild) => acc + guild.memberCount, 0);
+        const totalServers = client.guilds.cache.size;
+
+        const startupEmbed = new EmbedBuilder()
+            .setColor(0x00FF00)
+            .setTitle('🤖 Guardian Bot Online')
+            .setDescription('**Guardian has successfully started and is now online!**')
+            .setThumbnail(client.user.displayAvatarURL({ size: 256 }))
+            .addFields(
+                {
+                    name: '📊 Statistics',
+                    value: [
+                        `**Servers:** ${totalServers}`,
+                        `**Total Members:** ${totalMembers.toLocaleString()}`,
+                        `**Uptime:** <t:${Math.floor(Date.now() / 1000)}:R>`
+                    ].join('\n'),
+                    inline: true
+                },
+                {
+                    name: '⚡ Status',
+                    value: [
+                        `**Status:** 🟢 Online`,
+                        `**Version:** 1.7.0`,
+                        `**Node.js:** ${process.version}`
+                    ].join('\n'),
+                    inline: true
+                },
+                {
+                    name: '🛡️ Features Ready',
+                    value: '• Auto-moderation systems active\n• Cross-server raid protection\n',
+                    inline: false
+                }
+            )
+            .setFooter({
+                text: 'Guardian Bot • Advanced Protection System',
+                iconURL: client.user.displayAvatarURL()
+            })
+            .setTimestamp();
+
+        await channel.send({ embeds: [startupEmbed] });
+        console.log(`Startup notification sent to channel: ${channelId}`);
+    } catch (error) {
+        console.error('Failed to send startup notification:', error);
+    }
+}
 
 export default {
     name: 'clientReady',
@@ -62,5 +127,8 @@ export default {
         }, 15000); // Rotate every 15 seconds
 
         await fetchAllMembers(client);
+
+        // Send startup notification to specified channel
+        await sendStartupNotification(client);
     },
 };
