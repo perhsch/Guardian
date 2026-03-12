@@ -36,7 +36,7 @@ const SETUP_STEPS: SetupStep[] = [
         id: 2,
         label: 'Basic log channel',
         warningOnFailure: false,
-        check: (g) => !!g?.logs?.basic,
+        check: (g) => !!g?.logs?.basic_logs,
     },
     {
         id: 3,
@@ -262,7 +262,7 @@ function generateEmbed(count: number, completed: number[], dbGuild: any) {
 
 function getSetupComponents(dbGuild: any): ActionRowBuilder<ButtonBuilder>[] {
     const needsLogging =
-        !dbGuild?.logs?.basic ||
+        !dbGuild?.logs?.basic_logs ||
         !dbGuild?.logs?.moderator ||
         !dbGuild?.logs?.suggestionsChannel ||
         !dbGuild?.logs?.announcementChannel ||
