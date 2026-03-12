@@ -12,80 +12,83 @@ export default {
     enabled: true,
     data: new SlashCommandBuilder()
         .setName('privacy')
-        .setDescription('View our privacy policy')
+        .setDescription('View our comprehensive privacy policy')
         .setDMPermission(true),
 
     async execute(interaction: ChatInputCommandInteraction, _client: Client) {
         const privacyEmbed = new EmbedBuilder()
-            .setColor(0x5865f2)
+            .setColor('#2b2d31')
             .setTitle('🔒 Guardian Bot Privacy Policy')
             .setDescription(
-                'Your privacy is important to us. This policy explains what data we collect and how we use it.'
+                'Your privacy is our top priority. This policy outlines exactly what data we collect, why we collect it, and how we protect it.'
             )
+            .setThumbnail(interaction.client.user!.displayAvatarURL({ size: 256 }))
             .addFields(
                 {
-                    name: '📊 Data Collection',
-                    value: '• **User IDs**: For moderation and user management\n• **Guild IDs**: To store server-specific settings\n• **Moderation Data**: Infractions, bans, kicks with timestamps\n• **Message Content**: Only when necessary for moderation features\n• **Command Usage**: Anonymous usage statistics for improvement',
-                    inline: false,
+                    name: '📊 **Data We Collect**',
+                    value: '```prolog\n• User IDs & Usernames\n• Server (Guild) IDs & Names\n• Moderation Actions (bans, kicks, warns)\n• Command Usage Statistics\n• Message Content (moderation only)\n• Server Configuration Settings\n```',
+                    inline: false
                 },
                 {
-                    name: '🔐 Data Storage & Security',
-                    value: '• All data is stored securely in MongoDB databases\n• Sensitive information is encrypted when possible\n• Database access is restricted and monitored\n• Regular backups are performed to prevent data loss',
-                    inline: false,
+                    name: '🔐 **How We Protect Your Data**',
+                    value: '```diff\n+ Encrypted database connections\n+ Restricted admin access only\n+ Regular security audits\n+ Secure MongoDB clusters\n+ No plaintext sensitive data\n+ Limited data retention periods\n```',
+                    inline: false
                 },
                 {
-                    name: '🎯 Data Usage',
-                    value: '• **Moderation**: To enforce server rules and maintain safety\n• **Features**: To provide bot functionality and customization\n• **Analytics**: To improve performance and user experience\n• **Support**: To troubleshoot issues and provide assistance',
-                    inline: false,
+                    name: '🎯 **Why We Use Your Data**',
+                    value: '```css\n{ Moderation: "Enforce server rules safely" }\n{ Features: "Provide personalized bot experience" }\n{ Analytics: "Improve performance & reliability" }\n{ Support: "Troubleshoot issues effectively" }\n```',
+                    inline: false
                 },
                 {
-                    name: '👤 User Rights',
-                    value: '• **Right to Access**: Request a copy of your data\n• **Right to Deletion**: Request removal of your personal data\n• **Right to Correction**: Request correction of inaccurate data\n• **Right to Opt-out**: Disable data collection where possible',
-                    inline: false,
+                    name: '👤 **Your Rights & Control**',
+                    value: '🔹 **Data Access** - Request your personal data anytime\n🔹 **Data Deletion** - We remove your data on request\n🔹 **Data Correction** - Fix inaccurate information\n🔹 **Opt-Out Options** - Disable non-essential tracking\n🔹 **Export Options** - Download your server data',
+                    inline: false
                 },
                 {
-                    name: '🤝 Data Sharing',
-                    value: '• We **never sell** your personal data to third parties\n• Data is only shared with trusted service providers (MongoDB)\n• Law enforcement requests are handled according to legal requirements\n• No data is shared with advertisers or marketing companies',
-                    inline: false,
+                    name: '🤝 **Data Sharing Policy**',
+                    value: '❌ **Never sell** personal data to third parties\n✅ **Only share** with essential services (MongoDB)\n✅ **Legal compliance** for law enforcement requests\n❌ **No sharing** with advertisers or data brokers',
+                    inline: false
                 },
                 {
-                    name: '⏰ Data Retention',
-                    value: '• **Active Data**: Kept as long as necessary for service provision\n• **Moderation Logs**: Typically retained for 6-12 months\n• **Inactive Server Data**: Removed after 12 months of inactivity\n• **User Data**: Deleted upon account deletion or request',
-                    inline: false,
+                    name: '⏰ **Data Retention Schedule**',
+                    value: '📅 **Active Data**: Kept as long as needed\n📅 **Moderation Logs**: 6-12 months\n📅 **Inactive Servers**: Removed after 12 months\n📅 **User Data**: Deleted on request\n📅 **Command Logs**: 30 days rolling window',
+                    inline: false
                 },
                 {
-                    name: '🔧 Cookies & Tracking',
-                    value: '• We do not use tracking cookies or pixels\n• Web dashboard may use essential cookies for functionality\n• No third-party analytics or tracking services are used\n• All tracking is opt-in and transparent',
-                    inline: false,
+                    name: '🍪 **Cookies & Tracking**',
+                    value: '🚫 **No tracking pixels** or analytics cookies\n🚫 **No third-party** tracking services\n✅ **Essential cookies only** for dashboard functionality\n✅ **Full transparency** about all data collection',
+                    inline: false
                 },
                 {
-                    name: '📧 Contact & Questions',
-                    value: '• **Support Server**: [Join our Discord](https://discord.gg/5nWZ8BJae4)\n• **GitHub**: [View our source code](https://github.com/Guardians-Stuff/Guardian)\n• **Data Requests**: Contact server administrators or join our support server\n• **Policy Updates**: Changes will be announced in our support server',
-                    inline: false,
+                    name: '� **Contact & Support**',
+                    value: '💬 **Support Server**: [Join Discord](https://discord.gg/5nWZ8BJae4)\n🔍 **Source Code**: [View on GitHub](https://github.com/Guardians-Stuff/Guardian)\n📧 **Data Requests**: Contact server admins\n📢 **Policy Updates**: Announced in support server',
+                    inline: false
                 },
                 {
-                    name: '📅 Last Updated',
-                    value: 'February 19, 2026\n\n*This policy may be updated periodically. Continued use of the bot constitutes acceptance of any changes.*',
-                    inline: false,
+                    name: '📅 **Policy Information**',
+                    value: '🗓️ **Last Updated**: February 19, 2026\n🔄 **Update Frequency**: Reviewed quarterly\n⚖️ **Governing Law**: GDPR & CCPA compliant\n⚠️ **Acceptance**: Continued use = policy acceptance',
+                    inline: false
                 }
             )
             .setFooter({
-                text: 'Guardian Bot • Protecting your privacy',
+                text: 'Guardian Bot • Your Privacy, Our Responsibility',
                 iconURL: interaction.client.user!.displayAvatarURL(),
             })
             .setTimestamp();
 
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
-                .setLabel('Support Server')
+                .setLabel('🎮 Join Support Server')
                 .setStyle(ButtonStyle.Link)
-                .setURL('https://discord.gg/5nWZ8BJae4'),
+                .setURL('https://discord.gg/5nWZ8BJae4')
+                .setEmoji('🎮'),
             new ButtonBuilder()
-                .setLabel('GitHub')
+                .setLabel('📚 View Source Code')
                 .setStyle(ButtonStyle.Link)
                 .setURL('https://github.com/Guardians-Stuff/Guardian')
+                .setEmoji('📚')
         );
 
-        return { embeds: [privacyEmbed], components: [row], ephemeral: true };
+        return { embeds: [privacyEmbed], components: [actionRow], ephemeral: true };
     },
 };
