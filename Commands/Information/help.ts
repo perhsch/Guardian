@@ -106,7 +106,6 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
                         'information',
                         'public',
                         'utility',
-                        'developer',
                     ];
                     const aIndex = priority.indexOf(a);
                     const bIndex = priority.indexOf(b);
@@ -145,7 +144,6 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
         'information',
         'public',
         'utility',
-        'developer',
     ];
     const sortedCategories = Array.from(commandsByCategory.entries()).sort(([a], [b]) => {
         const aIndex = categoryOrder.indexOf(a);
@@ -215,7 +213,6 @@ export default {
                 .addChoices(
                     { name: 'Administrator', value: 'administrator' },
                     { name: 'Backup', value: 'backup' },
-                    { name: 'Developer', value: 'developer' },
                     { name: 'Information', value: 'information' },
                     { name: 'Moderator', value: 'moderator' },
                     { name: 'Public', value: 'public' },
@@ -377,7 +374,7 @@ export default {
                         ),
                     ],
                 });
-            } catch {}
+            } catch { }
         });
     },
 };
