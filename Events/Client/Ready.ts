@@ -89,7 +89,7 @@ export default {
             );
         }
 
-        server.listen(2054, () => { });
+        //server.listen(2054, () => { });
 
         const maintenanceMode = getMaintenanceEnabled();
         if (maintenanceMode) {

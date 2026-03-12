@@ -3,12 +3,14 @@ import type { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 import Infractions from './Schemas/Infractions.ts';
 import type { GuardianClient } from './types.ts';
+import { Time } from '@sapphire/timestamp';
+import { Result } from '@sapphire/result';
 
 export default function createRouter(client: GuardianClient) {
     const router = Router();
 
     const infractionsLimiter = rateLimit({
-        windowMs: 60 * 1000,
+        windowMs: Time.Minute,
         max: 5,
     });
 
@@ -177,9 +179,16 @@ export default function createRouter(client: GuardianClient) {
             return;
         }
 
-        try {
-            const infraction = await Infractions.findById(id);
-            if (!infraction) {
+        const infractionResult = await Result.fromAsync(Infractions.findById(id))
+
+        if (infractionResult.isErr()) {
+            res.sendStatus(400);
+            return
+        }
+
+        const infraction = infractionResult.unwrap()
+
+        if (!infraction) {
                 res.sendStatus(404);
                 return;
             }
@@ -213,9 +222,6 @@ export default function createRouter(client: GuardianClient) {
             } else {
                 res.sendStatus(400);
             }
-        } catch {
-            res.sendStatus(400);
-        }
     });
 
     return router;

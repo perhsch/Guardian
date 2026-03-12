@@ -3,11 +3,17 @@ import Moment from 'moment';
 import ms from 'ms';
 import { translateResponse, translateText } from './translate.ts';
 
+const COLORS = {
+    success: 'Green',
+    error: 'Red',
+    info: 'Blue'
+} as const;
+
 /**
  * @param description 
  */
 export function basicEmbed(description?: string): EmbedBuilder {
-    const embed = new EmbedBuilder().setColor('Green');
+    const embed = new EmbedBuilder().setColor(COLORS.success);
     if (description) embed.setDescription(description);
 
     return embed;
@@ -17,7 +23,7 @@ export function basicEmbed(description?: string): EmbedBuilder {
  * @param description 
  */
 export function errorEmbed(description: string = 'There was an error.'): EmbedBuilder {
-    return new EmbedBuilder().setColor('Red').setDescription(description);
+    return new EmbedBuilder().setColor(COLORS.error).setDescription(description);
 }
 
 /**
@@ -45,13 +51,13 @@ export function infractionEmbed(
         } else {
             durationString = ms(duration, { long: true });
             if (expires !== null) {
-                expiresString = `<t:${Moment(expires).unix()}:R>(<t:${Moment(expires).unix()}:f>)`;
+                expiresString = `<t:${Math.floor(expires / 1000)}:R>(<t:${Moment(expires).unix()}:f>)`;
             }
         }
     }
 
     return new EmbedBuilder()
-        .setColor('Blue')
+        .setColor(COLORS.info)
         .setTitle(`${type} | Infraction`)
         .setThumbnail(guild.iconURL())
         .setDescription(
