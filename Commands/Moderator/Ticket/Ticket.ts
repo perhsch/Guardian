@@ -19,5 +19,12 @@ export default {
         .addSubcommand(TicketViewPrevious.data)
         .addSubcommand(TicketAddUser.data)
         .addSubcommand(TicketRemoveUser.data),
-    subCommands: [TicketClose, TicketBlock, TicketUnblock, TicketViewPrevious, TicketAddUser, TicketRemoveUser],
+    subCommands: [
+        TicketClose,
+        TicketBlock,
+        TicketUnblock,
+        TicketViewPrevious,
+        TicketAddUser,
+        TicketRemoveUser,
+    ],
 };

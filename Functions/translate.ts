@@ -11,7 +11,7 @@ interface MaskResult {
  */
 function maskSlashCommands(text: string): MaskResult {
     const cmdPattern = /\/[\w-]+/g;
-    const commands = [...new Set((text.match(cmdPattern) || []))];
+    const commands = [...new Set(text.match(cmdPattern) || [])];
     let masked = text;
     commands.forEach((cmd, i) => {
         const escaped = cmd.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -36,7 +36,10 @@ function unmaskSlashCommands(text: string, commands: string[]): string {
 /**
  * Translates text to the target language.
  */
-export async function translateText(text: string | null | undefined, targetLang: string | null | undefined): Promise<string> {
+export async function translateText(
+    text: string | null | undefined,
+    targetLang: string | null | undefined
+): Promise<string> {
     if (!text || typeof text !== 'string' || !targetLang || targetLang.toLowerCase() === 'en') {
         return text || '';
     }
@@ -52,7 +55,10 @@ export async function translateText(text: string | null | undefined, targetLang:
 /**
  * Translates response content and embeds to the user's language.
  */
-export async function translateResponse(response: any, targetLang: string | null | undefined): Promise<any> {
+export async function translateResponse(
+    response: any,
+    targetLang: string | null | undefined
+): Promise<any> {
     if (!response || !targetLang || targetLang.toLowerCase() === 'en') return response;
 
     try {
@@ -72,10 +78,16 @@ export async function translateResponse(response: any, targetLang: string | null
                 const data: any = embed.data || {};
 
                 const translations = await Promise.all([
-                    data.description ? translateText(data.description, targetLang) : Promise.resolve(null),
+                    data.description
+                        ? translateText(data.description, targetLang)
+                        : Promise.resolve(null),
                     data.title ? translateText(data.title, targetLang) : Promise.resolve(null),
-                    data.author?.name ? translateText(data.author.name, targetLang) : Promise.resolve(null),
-                    data.footer?.text ? translateText(data.footer.text, targetLang) : Promise.resolve(null)
+                    data.author?.name
+                        ? translateText(data.author.name, targetLang)
+                        : Promise.resolve(null),
+                    data.footer?.text
+                        ? translateText(data.footer.text, targetLang)
+                        : Promise.resolve(null),
                 ]);
 
                 if (translations[0]) embed.setDescription(translations[0]);

@@ -140,12 +140,12 @@ export default {
                         action,
                         successCount,
                         failCount,
-                        lockdown: guild.antiraid.lockdown.enabled
+                        lockdown: guild.antiraid.lockdown.enabled,
                     };
 
-                    const raiders = recentJoiners.map(userId => ({
+                    const raiders = recentJoiners.map((userId) => ({
                         userId,
-                        timestamp: Date.now()
+                        timestamp: Date.now(),
                     }));
 
                     await broadcastRaidAlert(member.guild, client, raidData, raiders);
@@ -247,7 +247,9 @@ export default {
                             iconURL: member.displayAvatarURL({ forceStatic: false }),
                         })
                         .setColor(color)
-                        .setThumbnail(member.user.displayAvatarURL({ forceStatic: false, size: 256 }))
+                        .setThumbnail(
+                            member.user.displayAvatarURL({ forceStatic: false, size: 256 })
+                        )
                         .setDescription(
                             [
                                 `• User: ${member.user}`,

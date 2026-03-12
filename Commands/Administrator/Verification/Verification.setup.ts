@@ -7,7 +7,7 @@ import {
     ButtonBuilder,
     ButtonStyle,
     TextChannel,
-    Role
+    Role,
 } from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../../Functions/modLog.ts';
@@ -33,12 +33,16 @@ export default {
         .addRoleOption((option) =>
             option
                 .setName('role')
-                .setDescription('Role to give when verification is completed. (Will be created if unspecified)')
+                .setDescription(
+                    'Role to give when verification is completed. (Will be created if unspecified)'
+                )
         )
         .addChannelOption((option) =>
             option
                 .setName('channel')
-                .setDescription('Channel used for unverified members. (Will be created if unspecified)')
+                .setDescription(
+                    'Channel used for unverified members. (Will be created if unspecified)'
+                )
                 .addChannelTypes(ChannelType.GuildText)
         ),
 
@@ -52,63 +56,85 @@ export default {
         await interaction.deferReply();
 
         if (!verificationRole) {
-            verificationRole = await interaction.guild.roles.create({
-                name: 'Verified',
+            verificationRole = await interaction.guild.roles
+                .create({
+                    name: 'Verified',
+                    color: '#000001',
+                    hoist: false,
+                    mentionable: false,
+                    permissions: [],
+                    position: 0,
+                })
+                .catch(() => null);
+
+            if (!verificationRole) {
+                return interaction.editReply({
+                    embeds: [
+                        EmbedGenerator.errorEmbed(':x: | Failed to create a verification role'),
+                    ],
+                });
+            }
+        }
+
+        const unverifiedRole = await interaction.guild.roles
+            .create({
+                name: 'unverified',
                 color: '#000001',
                 hoist: false,
                 mentionable: false,
                 permissions: [],
                 position: 0,
-            }).catch(() => null);
-
-            if (!verificationRole) {
-                return interaction.editReply({ embeds: [EmbedGenerator.errorEmbed(':x: | Failed to create a verification role')] });
-            }
-        }
-
-        const unverifiedRole = await interaction.guild.roles.create({
-            name: 'unverified',
-            color: '#000001',
-            hoist: false,
-            mentionable: false,
-            permissions: [],
-            position: 0,
-        }).catch(() => null);
+            })
+            .catch(() => null);
 
         if (!unverifiedRole) {
-            return interaction.editReply({ embeds: [EmbedGenerator.errorEmbed(':x: | Failed to create the unverified role')] });
+            return interaction.editReply({
+                embeds: [EmbedGenerator.errorEmbed(':x: | Failed to create the unverified role')],
+            });
         }
 
         if (!channel) {
-            channel = await interaction.guild.channels.create({
-                name: 'verification',
-                type: ChannelType.GuildText,
-                permissionOverwrites: [
-                    {
-                        id: unverifiedRole.id,
-                        allow: ['ViewChannel', 'ReadMessageHistory'],
-                    },
-                    {
-                        id: interaction.guild.roles.everyone.id,
-                        deny: ['ViewChannel', 'SendMessages'],
-                    },
-                ],
-            }).catch(() => null) as TextChannel | null;
+            channel = (await interaction.guild.channels
+                .create({
+                    name: 'verification',
+                    type: ChannelType.GuildText,
+                    permissionOverwrites: [
+                        {
+                            id: unverifiedRole.id,
+                            allow: ['ViewChannel', 'ReadMessageHistory'],
+                        },
+                        {
+                            id: interaction.guild.roles.everyone.id,
+                            deny: ['ViewChannel', 'SendMessages'],
+                        },
+                    ],
+                })
+                .catch(() => null)) as TextChannel | null;
 
             if (!channel) {
-                return interaction.editReply({ embeds: [EmbedGenerator.errorEmbed(':x: | Failed to create a verification channel')] });
+                return interaction.editReply({
+                    embeds: [
+                        EmbedGenerator.errorEmbed(':x: | Failed to create a verification channel'),
+                    ],
+                });
             }
 
             for (const c of (await interaction.guild.channels.fetch()).values()) {
                 if (c && channel.id !== c.id) {
-                    await c.permissionOverwrites.create(unverifiedRole.id, { ViewChannel: false }).catch(() => null);
+                    await c.permissionOverwrites
+                        .create(unverifiedRole.id, { ViewChannel: false })
+                        .catch(() => null);
                 }
             }
         } else {
-            await channel.permissionOverwrites.edit(unverifiedRole.id, { ViewChannel: true, ReadMessageHistory: true }).catch(() => null);
+            await channel.permissionOverwrites
+                .edit(unverifiedRole.id, { ViewChannel: true, ReadMessageHistory: true })
+                .catch(() => null);
             for (const c of (await interaction.guild.channels.fetch()).values()) {
                 if (c && channel.id !== c.id) {
-                    await c.permissionOverwrites.create(unverifiedRole.id, { ViewChannel: false }).catch(() => null);
+                    await c.permissionOverwrites
+                        .create(unverifiedRole.id, { ViewChannel: false })
+                        .catch(() => null);
                 }
             }
         }
@@ -128,7 +154,10 @@ export default {
                             "This server uses Guardian's Verification System.",
                             'To complete verification please press the verify button.',
                         ].join('\n')
-                    ).setAuthor({ name: client.user!.tag, iconURL: client.user!.displayAvatarURL() }),
+                    ).setAuthor({
+                        name: client.user!.tag,
+                        iconURL: client.user!.displayAvatarURL(),
+                    }),
                 ],
                 components: [buttonRow],
             });
@@ -140,7 +169,10 @@ export default {
                             "This server uses Guardian's Verification System.",
                             'To complete verification please use the `/verify` command.',
                         ].join('\n')
-                    ).setAuthor({ name: client.user!.tag, iconURL: client.user!.displayAvatarURL() }),
+                    ).setAuthor({
+                        name: client.user!.tag,
+                        iconURL: client.user!.displayAvatarURL(),
+                    }),
                 ],
             });
         }
@@ -161,6 +193,8 @@ export default {
         ).setTitle('/verification setup command used');
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-        return interaction.editReply({ embeds: [EmbedGenerator.basicEmbed('🔒 | Member verification has been enabled.')] });
+        return interaction.editReply({
+            embeds: [EmbedGenerator.basicEmbed('🔒 | Member verification has been enabled.')],
+        });
     },
 };

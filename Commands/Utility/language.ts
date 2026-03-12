@@ -14,23 +14,32 @@ export default {
                 .setRequired(true)
         ),
 
-    async execute(interaction: ChatInputCommandInteraction, _client: Client, _dbGuild: any, dbUser: any) {
+    async execute(
+        interaction: ChatInputCommandInteraction,
+        _client: Client,
+        _dbGuild: any,
+        dbUser: any
+    ) {
         const input = interaction.options.getString('language', true).trim();
 
         if (['en', 'english', 'reset'].includes(input.toLowerCase())) {
             dbUser.language = 'en';
             return {
-                embeds: [EmbedGenerator.basicEmbed(
-                    "Your language has been set to **English**. Use `/language <language>` to change it again."
-                )]
+                embeds: [
+                    EmbedGenerator.basicEmbed(
+                        'Your language has been set to **English**. Use `/language <language>` to change it again.'
+                    ),
+                ],
             };
         }
 
         dbUser.language = input;
         return {
-            embeds: [EmbedGenerator.basicEmbed(
-                `Your language has been set to **${input}**. All bot responses will now be translated for you. Use \`/language en\` or \`/language reset\` to switch back to English.`
-            )]
+            embeds: [
+                EmbedGenerator.basicEmbed(
+                    `Your language has been set to **${input}**. All bot responses will now be translated for you. Use \`/language en\` or \`/language reset\` to switch back to English.`
+                ),
+            ],
         };
     },
 };

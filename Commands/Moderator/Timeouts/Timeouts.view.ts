@@ -1,4 +1,9 @@
-import Discord, { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client, EmbedBuilder } from 'discord.js';
+import Discord, {
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+    EmbedBuilder,
+} from 'discord.js';
 import moment from 'moment';
 import ms from 'ms';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
@@ -13,7 +18,12 @@ export default {
             option.setName('user').setDescription("The user you'd like to view.").setRequired(true)
         ),
 
-    async execute(interaction: ChatInputCommandInteraction, _client: Client, _dbGuild: any, dbUser: any) {
+    async execute(
+        interaction: ChatInputCommandInteraction,
+        _client: Client,
+        _dbGuild: any,
+        dbUser: any
+    ) {
         if (!interaction.guild) return;
 
         const user = interaction.options.getUser('user', true);

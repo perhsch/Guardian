@@ -34,9 +34,11 @@ export default {
             }
         });
 
-        const successfulInvites = userInvites.reduce((total, invite) => total + (invite.uses || 0), 0) - fakeInvites;
+        const successfulInvites =
+            userInvites.reduce((total, invite) => total + (invite.uses || 0), 0) - fakeInvites;
         const totalUses = userInvites.reduce((total, invite) => total + (invite.uses || 0), 1);
-        const successRate = userInvites.size > 0 ? Math.round((successfulInvites / totalUses) * 100) : 0;
+        const successRate =
+            userInvites.size > 0 ? Math.round((successfulInvites / totalUses) * 100) : 0;
 
         const embed = new EmbedBuilder()
             .setColor('#5865F2')
@@ -52,9 +54,21 @@ export default {
             )
             .setThumbnail(inviter.displayAvatarURL({ size: 256 }))
             .addFields(
-                { name: '🎯 Total Invites', value: `\`\`\`${userInvites.size}\`\`\``, inline: true },
-                { name: '⏳ Unused Invites', value: `\`\`\`${remainingInvites}\`\`\``, inline: true },
-                { name: '✅ Successful Joins', value: `\`\`\`${successfulInvites}\`\`\``, inline: true },
+                {
+                    name: '🎯 Total Invites',
+                    value: `\`\`\`${userInvites.size}\`\`\``,
+                    inline: true,
+                },
+                {
+                    name: '⏳ Unused Invites',
+                    value: `\`\`\`${remainingInvites}\`\`\``,
+                    inline: true,
+                },
+                {
+                    name: '✅ Successful Joins',
+                    value: `\`\`\`${successfulInvites}\`\`\``,
+                    inline: true,
+                },
                 { name: '❌ Left/Invalid', value: `\`\`\`${fakeInvites}\`\`\``, inline: true },
                 { name: '📈 Success Rate', value: `\`\`\`${successRate}%\`\`\``, inline: true },
                 {

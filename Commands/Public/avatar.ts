@@ -19,15 +19,17 @@ export default {
             .setTitle(`🖼️ ${user.username}'s Avatar`)
             .setDescription(
                 `**User Information:**\n` +
-                `🏷️ **Tag:** \`${user.tag}\`\n` +
-                `🆔 **ID:** \`${user.id}\`\n` +
-                `📅 **Created:** <t:${Math.floor(user.createdTimestamp / 1000)}:R>\n` +
-                (member ? `🎯 **Joined:** <t:${Math.floor((member.joinedTimestamp ?? 0) / 1000)}:R>\n` : '') +
-                (member?.nickname ? `🔖 **Nickname:** \`${member.nickname}\`\n` : '') +
-                `\n**Avatar Links:**\n` +
-                `🔗 [Full Size (4096x4096)](${user.displayAvatarURL({ size: 4096, extension: 'png' })})\n` +
-                `🔗 [Medium Size (1024x1024)](${user.displayAvatarURL({ size: 1024, extension: 'png' })})\n` +
-                `🔗 [Small Size (256x256)](${user.displayAvatarURL({ size: 256, extension: 'png' })})`
+                    `🏷️ **Tag:** \`${user.tag}\`\n` +
+                    `🆔 **ID:** \`${user.id}\`\n` +
+                    `📅 **Created:** <t:${Math.floor(user.createdTimestamp / 1000)}:R>\n` +
+                    (member
+                        ? `🎯 **Joined:** <t:${Math.floor((member.joinedTimestamp ?? 0) / 1000)}:R>\n`
+                        : '') +
+                    (member?.nickname ? `🔖 **Nickname:** \`${member.nickname}\`\n` : '') +
+                    `\n**Avatar Links:**\n` +
+                    `🔗 [Full Size (4096x4096)](${user.displayAvatarURL({ size: 4096, extension: 'png' })})\n` +
+                    `🔗 [Medium Size (1024x1024)](${user.displayAvatarURL({ size: 1024, extension: 'png' })})\n` +
+                    `🔗 [Small Size (256x256)](${user.displayAvatarURL({ size: 256, extension: 'png' })})`
             )
             .setImage(user.displayAvatarURL({ size: 1024, extension: 'png' }))
             .setThumbnail(user.displayAvatarURL({ size: 256, extension: 'png' }))

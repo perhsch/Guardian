@@ -1,4 +1,9 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, AuditLogEvent } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    AuditLogEvent,
+} from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 
 export default {
@@ -14,7 +19,10 @@ export default {
                 { name: 'unban', value: AuditLogEvent.MemberBanRemove.toString() },
                 { name: 'kick', value: AuditLogEvent.MemberKick.toString() },
                 { name: 'message-delete', value: AuditLogEvent.MessageDelete.toString() },
-                { name: 'message-delete-bulk', value: AuditLogEvent.MessageBulkDelete.toString() },
+                {
+                    name: 'message-delete-bulk',
+                    value: AuditLogEvent.MessageBulkDelete.toString(),
+                },
                 { name: 'role-create', value: AuditLogEvent.RoleCreate.toString() },
                 { name: 'role-delete', value: AuditLogEvent.RoleDelete.toString() },
                 { name: 'role-update', value: AuditLogEvent.RoleUpdate.toString() },
@@ -37,7 +45,10 @@ export default {
             option.setName('user').setDescription('The user to filter the audit log for')
         )
         .addIntegerOption((option) =>
-            option.setName('limit').setDescription('The amount of audit logs to display').setMaxValue(5)
+            option
+                .setName('limit')
+                .setDescription('The amount of audit logs to display')
+                .setMaxValue(5)
         ),
 
     async execute(interaction: ChatInputCommandInteraction) {
@@ -49,7 +60,7 @@ export default {
 
         const auditLogs = await interaction.guild.fetchAuditLogs({
             limit,
-            type: typeStr ? parseInt(typeStr) as AuditLogEvent : undefined,
+            type: typeStr ? (parseInt(typeStr) as AuditLogEvent) : undefined,
             user: user ?? undefined,
         } as any);
 
@@ -69,8 +80,8 @@ export default {
             embeds: [
                 EmbedGenerator.basicEmbed(description.join('\n'))
                     .setAuthor({ name: 'Audit Logs' })
-                    .setTimestamp()
-            ]
+                    .setTimestamp(),
+            ],
         };
     },
 };

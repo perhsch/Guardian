@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import dns from 'dns';
-dns.setDefaultResultOrder("ipv4first");
+dns.setDefaultResultOrder('ipv4first');
 import {
     Client,
     GatewayIntentBits,
@@ -11,7 +11,7 @@ import {
     ButtonBuilder,
     ButtonStyle,
     Message,
-    TextChannel
+    TextChannel,
 } from 'discord.js';
 import Mongoose from 'mongoose';
 import Moment from 'moment';
@@ -33,7 +33,6 @@ import createRouter from './server.ts';
 import { processErrorHandler } from './Handlers/errorHandler.ts';
 import { buildHelpEmbeds } from './Commands/Information/help.ts';
 
-
 import Infractions from './Schemas/Infractions.ts';
 import type { IInfraction } from './Schemas/Infractions.ts';
 import Giveaways from './Schemas/Giveaways.ts';
@@ -43,8 +42,6 @@ import type { IReminder } from './Schemas/Reminders.ts';
 
 import type { GuardianClient } from './types.ts';
 
-
-
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -53,14 +50,8 @@ const client = new Client({
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent,
     ],
-    partials: [
-        Partials.Message,
-        Partials.GuildMember,
-        Partials.ThreadMember,
-        Partials.Reaction,
-    ],
+    partials: [Partials.Message, Partials.GuildMember, Partials.ThreadMember, Partials.Reaction],
 }) as GuardianClient;
-
 
 client.setMaxListeners(20);
 processErrorHandler();
@@ -74,11 +65,11 @@ client.expiringDocumentsManager = {
         'expires',
         async (infraction) => {
             if (infraction.type === 'ban') {
-                const guild = await client.guilds
-                    .fetch(infraction.guild)
-                    .catch(() => null);
+                const guild = await client.guilds.fetch(infraction.guild).catch(() => null);
                 if (guild)
-                    await guild.members.unban(infraction.user, 'Temporary ban expired').catch(() => null);
+                    await guild.members
+                        .unban(infraction.user, 'Temporary ban expired')
+                        .catch(() => null);
             }
 
             infraction.active = false;
@@ -100,10 +91,7 @@ client.expiringDocumentsManager = {
                         .fetch(giveaway.giveaway)
                         .catch(() => null);
                     if (message && message.embeds[0]) {
-                        const winners = pickUnique(
-                            giveaway.entries,
-                            giveaway.winners
-                        );
+                        const winners = pickUnique(giveaway.entries, giveaway.winners);
 
                         const embed = new EmbedBuilder(message.embeds[0].data);
                         embed.setDescription(
@@ -154,7 +142,8 @@ client.expiringDocumentsManager = {
             if (reminder.repeating) {
                 const ends = Moment().add(reminder.duration);
                 embed.setDescription(
-                    `${embed.data.description
+                    `${
+                        embed.data.description
                     }\n\nYou will be reminded again in <t:${ends.unix()}:R>(<t:${ends.unix()}:f>)`
                 );
             }
@@ -177,7 +166,6 @@ const app = Express();
 let server: any;
 
 if (process.env['LIVE'] === 'true') {
-
     server = https.createServer(
         {
             key: fs.readFileSync(`${__dirname}/data/server/privkey.pem`),
@@ -190,7 +178,6 @@ if (process.env['LIVE'] === 'true') {
 }
 
 app.use((_req, res, next) => {
-
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,POST');
     next();
@@ -245,8 +232,8 @@ client.on('messageCreate', async (message: Message) => {
             .setStyle(ButtonStyle.Link)
             .setURL(
                 'https://discord.com/oauth2/authorize?client_id=' +
-                client.user.id +
-                '&permissions=68479744&scope=bot%20applications.commands'
+                    client.user.id +
+                    '&permissions=68479744&scope=bot%20applications.commands'
             ),
         new ButtonBuilder()
             .setLabel('Support')
@@ -348,15 +335,17 @@ client.on('messageCreate', async (message: Message) => {
 
 Mongoose.set('strictQuery', false);
 if (process.env['MONGODB_URL']) {
-    Mongoose.connect(process.env['MONGODB_URL']).then(async () => {
-        console.log('Client is connected to the database.');
+    Mongoose.connect(process.env['MONGODB_URL'])
+        .then(async () => {
+            console.log('Client is connected to the database.');
 
-        await loadEvents(client);
-        client.login(process.env['DISCORD_TOKEN']).then(() => { });
-    }).catch((error) => {
-        console.error('Failed to connect to MongoDB:', error);
-        process.exit(1);
-    });
+            await loadEvents(client);
+            client.login(process.env['DISCORD_TOKEN']).then(() => {});
+        })
+        .catch((error) => {
+            console.error('Failed to connect to MongoDB:', error);
+            process.exit(1);
+        });
 } else {
     console.error('MONGODB_URL is not defined in .env');
     process.exit(1);

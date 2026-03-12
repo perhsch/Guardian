@@ -17,6 +17,8 @@ export default {
         const userId = interaction.options.getString('user-id', true);
         const bannedUsers = await interaction.guild.bans.fetch();
         const isBanned = bannedUsers.has(userId);
-        return interaction.reply(`User with ID ${userId} is ${isBanned ? 'banned' : 'not banned'}.`);
+        return interaction.reply(
+            `User with ID ${userId} is ${isBanned ? 'banned' : 'not banned'}.`
+        );
     },
 };

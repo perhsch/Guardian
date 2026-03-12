@@ -9,7 +9,12 @@ export default {
         .setName('list')
         .setDescription('View your reminders.'),
 
-    async execute(interaction: ChatInputCommandInteraction, client: Client, _dbGuild: any, dbUser: any) {
+    async execute(
+        interaction: ChatInputCommandInteraction,
+        client: Client,
+        _dbGuild: any,
+        dbUser: any
+    ) {
         const reminders = await Reminders.find({ user: interaction.user.id }).sort({ expires: 1 });
 
         if (reminders.length === 0) {
@@ -22,10 +27,12 @@ export default {
             const embed = EmbedGenerator.basicEmbed()
                 .setAuthor({ name: 'Guardian Reminders', iconURL: client.user!.displayAvatarURL() })
                 .setDescription(
-                    remindersSlice.map((reminder, index) => {
-                        const ends = Moment(reminder.expires);
-                        return `**${i + index + 1}** • <t:${ends.unix()}:R>(<t:${ends.unix()}:f>) • ${reminder.reminder}`;
-                    }).join('\n')
+                    remindersSlice
+                        .map((reminder, index) => {
+                            const ends = Moment(reminder.expires);
+                            return `**${i + index + 1}** • <t:${ends.unix()}:R>(<t:${ends.unix()}:f>) • ${reminder.reminder}`;
+                        })
+                        .join('\n')
                 );
             embeds.push(embed);
         }

@@ -6,7 +6,7 @@ import {
     Client,
     Message,
     MessageReaction,
-    User
+    User,
 } from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
@@ -142,7 +142,8 @@ export default {
                 const totalVotes = Object.values(votes).reduce((a, b) => a + b, 0);
                 allOptions.forEach((option, index) => {
                     const voteCount = votes[index] || 0;
-                    const percentage = totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0';
+                    const percentage =
+                        totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0';
                     const filledBars = Math.round((parseFloat(percentage) / 100) * 20);
                     const emptyBars = 20 - filledBars;
                     const bar = '▮'.repeat(filledBars) + '▯'.repeat(emptyBars);
@@ -157,24 +158,27 @@ export default {
 
             embed.addFields({
                 name: '⏱️ Duration',
-                value: duration ? `${duration} minute${duration > 1 ? 's' : ''}` : `∞ Unlimited (Never ends)`,
+                value: duration
+                    ? `${duration} minute${duration > 1 ? 's' : ''}`
+                    : `∞ Unlimited (Never ends)`,
                 inline: true,
             });
 
-            embed.setFooter({
-                text: votes
-                    ? `Poll Ended • ${Object.values(votes).reduce((a, b) => a + b, 0)} total votes`
-                    : 'React to vote!',
-            })
-            .setTimestamp();
+            embed
+                .setFooter({
+                    text: votes
+                        ? `Poll Ended • ${Object.values(votes).reduce((a, b) => a + b, 0)} total votes`
+                        : 'React to vote!',
+                })
+                .setTimestamp();
 
             return embed;
         };
 
-        const pollMessage = await interaction.reply({
+        const pollMessage = (await interaction.reply({
             embeds: [buildPollEmbed()],
             fetchReply: true,
-        }) as Message;
+        })) as Message;
 
         const logEmbed = EmbedGenerator.basicEmbed(
             [
@@ -274,7 +278,8 @@ export default {
 
                     allOptions.forEach((option, index) => {
                         const voteCount = votes[index] || 0;
-                        const percentage = totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0';
+                        const percentage =
+                            totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0';
                         const filledBars = Math.round((parseFloat(percentage) / 100) * 20);
                         const emptyBars = 20 - filledBars;
                         const bar = '▮'.repeat(filledBars) + '▯'.repeat(emptyBars);
@@ -289,7 +294,10 @@ export default {
                     resultsEmbed
                         .addFields({
                             name: '🏆 Winner',
-                            value: totalVotes > 0 ? `**${winner}** with ${maxVotes} vote${maxVotes !== 1 ? 's' : ''}` : 'No votes cast',
+                            value:
+                                totalVotes > 0
+                                    ? `**${winner}** with ${maxVotes} vote${maxVotes !== 1 ? 's' : ''}`
+                                    : 'No votes cast',
                             inline: false,
                         })
                         .setFooter({

@@ -1,4 +1,10 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, GuildMember } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    GuildMember,
+} from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { broadcastRaidAlert } from '../../Functions/crossServerRaidAlert.ts';
 
@@ -28,19 +34,35 @@ export default {
         }
 
         if (!isAuthorized) {
-            isAuthorized = (interaction.member as GuildMember).permissions.has(PermissionFlagsBits.Administrator);
+            isAuthorized = (interaction.member as GuildMember).permissions.has(
+                PermissionFlagsBits.Administrator
+            );
         }
 
         if (!isAuthorized) {
-            return interaction.editReply({ embeds: [EmbedGenerator.errorEmbed('This command is restricted to the developer, bot owner, or server administrators.')] });
+            return interaction.editReply({
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'This command is restricted to the developer, bot owner, or server administrators.'
+                    ),
+                ],
+            });
         }
 
         try {
-            const mockRaidData = { joinCount: 15, joinWithin: 30, action: 'ban', successCount: 12, failCount: 3, lockdown: true, isTest: true };
+            const mockRaidData = {
+                joinCount: 15,
+                joinWithin: 30,
+                action: 'ban',
+                successCount: 12,
+                failCount: 3,
+                lockdown: true,
+                isTest: true,
+            };
             const mockRaiders = [
                 { userId: '123456789012345678', timestamp: Date.now() },
                 { userId: '234567890123456789', timestamp: Date.now() },
-                { userId: '345678901234567890', timestamp: Date.now() }
+                { userId: '345678901234567890', timestamp: Date.now() },
             ];
 
             await broadcastRaidAlert(interaction.guild, client, mockRaidData, mockRaiders);
@@ -48,9 +70,15 @@ export default {
             const successEmbed = EmbedGenerator.basicEmbed('✅ Test raid alert sent successfully!')
                 .setTitle('Cross-Server Raid Alert Test')
                 .setColor('Green')
-                .setDescription('A mock raid alert has been broadcast to all guilds with global logging enabled.')
+                .setDescription(
+                    'A mock raid alert has been broadcast to all guilds with global logging enabled.'
+                )
                 .addFields(
-                    { name: 'Test Data', value: '15 joins in 30 seconds\nAction: Ban\nLockdown: Enabled\n**TEST MODE**', inline: true },
+                    {
+                        name: 'Test Data',
+                        value: '15 joins in 30 seconds\nAction: Ban\nLockdown: Enabled\n**TEST MODE**',
+                        inline: true,
+                    },
                     { name: 'Mock Raiders', value: '3 test users included', inline: true }
                 )
                 .setFooter({ text: 'This was only a test - no real raid occurred' });
@@ -58,7 +86,13 @@ export default {
             return interaction.editReply({ embeds: [successEmbed] });
         } catch (error) {
             console.error('Error testing raid alert:', error);
-            return interaction.editReply({ embeds: [EmbedGenerator.errorEmbed('Failed to send test raid alert. Check console for details.')] });
+            return interaction.editReply({
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'Failed to send test raid alert. Check console for details.'
+                    ),
+                ],
+            });
         }
     },
 };

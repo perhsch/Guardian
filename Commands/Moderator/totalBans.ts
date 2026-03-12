@@ -11,6 +11,8 @@ export default {
         if (!interaction.guild) return;
 
         const bannedUsers = await interaction.guild.bans.fetch();
-        return interaction.reply(`There are currently ${bannedUsers.size} banned users in this server.`);
+        return interaction.reply(
+            `There are currently ${bannedUsers.size} banned users in this server.`
+        );
     },
 };

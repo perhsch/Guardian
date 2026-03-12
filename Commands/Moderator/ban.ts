@@ -1,4 +1,9 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 import ms from 'ms';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
@@ -88,7 +93,10 @@ export default {
 
             await interaction.reply({ embeds: [infractionEmbed] });
         } catch {
-            await interaction.reply({ embeds: [EmbedGenerator.errorEmbed('Failed to ban the user.')], ephemeral: true });
+            await interaction.reply({
+                embeds: [EmbedGenerator.errorEmbed('Failed to ban the user.')],
+                ephemeral: true,
+            });
         }
     },
 };

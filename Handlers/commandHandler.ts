@@ -45,12 +45,16 @@ export async function loadCommands(client: GuardianClient): Promise<void> {
             const command = (await import(`file://${file}`)).default;
 
             const categoryMatch = file.match(/[/\\]Commands[/\\](.*?)[/\\]/);
-            const category = categoryMatch && categoryMatch[1] ? categoryMatch[1].toLowerCase() : 'unknown';
+            const category =
+                categoryMatch && categoryMatch[1] ? categoryMatch[1].toLowerCase() : 'unknown';
             command.category = category;
 
             if (command.subCommands) {
                 for (const subcommand of command.subCommands) {
-                    client.subCommands.set(`${command.data.name}.${subcommand.data.name}`, subcommand);
+                    client.subCommands.set(
+                        `${command.data.name}.${subcommand.data.name}`,
+                        subcommand
+                    );
                 }
             }
 
@@ -84,18 +88,26 @@ export async function loadCommands(client: GuardianClient): Promise<void> {
             const lastCommand = commandsArray[commandsArray.length - 1];
             if (lastCommand) {
                 if (lastCommand.description && lastCommand.description.length > 130) {
-                    console.error(`Main command description: "${lastCommand.description}" (${lastCommand.description.length} chars) - TOO LONG`);
+                    console.error(
+                        `Main command description: "${lastCommand.description}" (${lastCommand.description.length} chars) - TOO LONG`
+                    );
                 } else if (lastCommand.description) {
-                    console.error(`Main command description: "${lastCommand.description}" (${lastCommand.description.length} chars) - OK`);
+                    console.error(
+                        `Main command description: "${lastCommand.description}" (${lastCommand.description.length} chars) - OK`
+                    );
                 }
 
                 if (lastCommand.options) {
                     console.error('Checking option descriptions:');
                     lastCommand.options.forEach((opt: any, index: number) => {
                         if (opt.description && opt.description.length > 130) {
-                            console.error(`Option ${index} "${opt.name}": "${opt.description}" (${opt.description.length} chars) - TOO LONG`);
+                            console.error(
+                                `Option ${index} "${opt.name}": "${opt.description}" (${opt.description.length} chars) - TOO LONG`
+                            );
                         } else if (opt.description) {
-                            console.error(`Option ${index} "${opt.name}": "${opt.description}" (${opt.description.length} chars) - OK`);
+                            console.error(
+                                `Option ${index} "${opt.name}": "${opt.description}" (${opt.description.length} chars) - OK`
+                            );
                         }
                     });
                 }
@@ -110,7 +122,10 @@ export async function loadCommands(client: GuardianClient): Promise<void> {
     const total = successCount + errorCount;
     const successRate = total > 0 ? ((successCount / total) * 100).toFixed(1) : '0';
 
-    styledLog(`✅ ${successCount} loaded │ ❌ ${errorCount} failed │ 📊 ${successRate}% │ 🎯 ${client.commands.size} cmds │ 🔧 ${client.subCommands.size} subcmds`, '\x1b[36m');
+    styledLog(
+        `✅ ${successCount} loaded │ ❌ ${errorCount} failed │ 📊 ${successRate}% │ 🎯 ${client.commands.size} cmds │ 🔧 ${client.subCommands.size} subcmds`,
+        '\x1b[36m'
+    );
 
     if (errorCount === 0) {
         styledLog('🎉 All commands loaded!', '\x1b[92m');
@@ -121,17 +136,17 @@ export async function loadCommands(client: GuardianClient): Promise<void> {
 
 function getCategoryEmoji(category: string): string {
     const emojis: { [key: string]: string } = {
-        'administrator': '👑',
-        'moderator': '🛡️',
-        'information': 'ℹ️',
-        'utility': '🔧',
-        'fun': '🎮',
-        'developer': '👨‍💻',
-        'music': '🎵',
-        'economy': '💰',
-        'giveaway': '🎉',
-        'setup': '⚙️',
-        'unknown': '❓'
+        administrator: '👑',
+        moderator: '🛡️',
+        information: 'ℹ️',
+        utility: '🔧',
+        fun: '🎮',
+        developer: '👨‍💻',
+        music: '🎵',
+        economy: '💰',
+        giveaway: '🎉',
+        setup: '⚙️',
+        unknown: '❓',
     };
     return emojis[category] || '📁';
 }

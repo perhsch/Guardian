@@ -11,9 +11,9 @@ export default {
     async execute(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any) {
         if (!interaction.guild) return;
 
-        const logEmbed = EmbedGenerator.basicEmbed(
-            `- Moderator: ${interaction.user.tag}`
-        ).setTitle('/ticketadmin disable command used');
+        const logEmbed = EmbedGenerator.basicEmbed(`- Moderator: ${interaction.user.tag}`).setTitle(
+            '/ticketadmin disable command used'
+        );
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         dbGuild.tickets.enabled = false;

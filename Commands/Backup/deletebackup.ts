@@ -1,4 +1,9 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 // @ts-ignore — Backup schema may not have types
 import backupSchema from '../../Schemas/Backup.ts';
 
@@ -27,6 +32,9 @@ export default {
         }
 
         await backupSchema.deleteOne({ id: backupId, guildId: interaction.guild.id });
-        return interaction.reply({ content: `Backup with ID ${backupId} has been deleted.`, ephemeral: true });
+        return interaction.reply({
+            content: `Backup with ID ${backupId} has been deleted.`,
+            ephemeral: true,
+        });
     },
 };

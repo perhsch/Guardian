@@ -1,4 +1,10 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, GuildMember } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    GuildMember,
+} from 'discord.js';
 
 export default {
     enabled: true,

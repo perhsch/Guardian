@@ -6,7 +6,7 @@ import {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
-    TextChannel
+    TextChannel,
 } from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 
@@ -18,7 +18,9 @@ export default {
         .addChannelOption((option) =>
             option
                 .setName('channel')
-                .setDescription('Channel to send the panel to (default: current ticket panel channel)')
+                .setDescription(
+                    'Channel to send the panel to (default: current ticket panel channel)'
+                )
                 .addChannelTypes(ChannelType.GuildText)
         ),
 
@@ -27,21 +29,31 @@ export default {
 
         if (!dbGuild?.tickets?.enabled) {
             return {
-                embeds: [EmbedGenerator.errorEmbed('Ticket system is not enabled. Use /ticket_admin setup first.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'Ticket system is not enabled. Use /ticket_admin setup first.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
 
         const channelOption = interaction.options.getChannel('channel') as TextChannel | null;
-        const channel: TextChannel | null = channelOption || (
-            dbGuild.tickets.channel
-                ? await interaction.guild.channels.fetch(dbGuild.tickets.channel).catch(() => null) as TextChannel | null
-                : null
-        );
+        const channel: TextChannel | null =
+            channelOption ||
+            (dbGuild.tickets.channel
+                ? ((await interaction.guild.channels
+                      .fetch(dbGuild.tickets.channel)
+                      .catch(() => null)) as TextChannel | null)
+                : null);
 
         if (!channel || channel.type !== ChannelType.GuildText) {
             return {
-                embeds: [EmbedGenerator.errorEmbed('No valid channel. Specify a channel or run /ticket_admin setup to set the ticket channel.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'No valid channel. Specify a channel or run /ticket_admin setup to set the ticket channel.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
@@ -49,7 +61,9 @@ export default {
         try {
             await channel.send({
                 embeds: [
-                    EmbedGenerator.basicEmbed('Please press the button to create a ticket.').setAuthor({
+                    EmbedGenerator.basicEmbed(
+                        'Please press the button to create a ticket.'
+                    ).setAuthor({
                         name: `Create a Ticket | ${client.user!.username}`,
                         iconURL: client.user!.displayAvatarURL(),
                     }),
@@ -66,7 +80,11 @@ export default {
             });
         } catch {
             return {
-                embeds: [EmbedGenerator.errorEmbed('Could not send the panel to that channel. Check bot permissions.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'Could not send the panel to that channel. Check bot permissions.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }

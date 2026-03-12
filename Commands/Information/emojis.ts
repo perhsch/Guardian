@@ -1,4 +1,10 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Client, GuildEmoji, Collection } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+    GuildEmoji,
+    Collection,
+} from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 
 export default {
@@ -8,7 +14,8 @@ export default {
         .setDescription('Displays comprehensive emoji statistics and showcases all server emojis.')
         .setDMPermission(false)
         .addStringOption((option) =>
-            option.setName('type')
+            option
+                .setName('type')
                 .setDescription('Filter emojis by type')
                 .addChoices(
                     { name: '🎬 Animated Only', value: 'animated' },
@@ -47,14 +54,16 @@ export default {
         }
 
         const premiumTier = interaction.guild.premiumTier;
-        const totalSlots = premiumTier === 3 ? 250 : premiumTier === 2 ? 150 : premiumTier === 1 ? 100 : 50;
+        const totalSlots =
+            premiumTier === 3 ? 250 : premiumTier === 2 ? 150 : premiumTier === 1 ? 100 : 50;
         const usedSlots = emojis.size;
         const availableSlots = totalSlots - usedSlots;
         const usagePercentage = Math.round((usedSlots / totalSlots) * 100);
 
-        const emojiList = displayEmojis.size > 0
-            ? displayEmojis.map(emoji => `${emoji} \`:${emoji.name}:\``).join(' ')
-            : `*No ${typeName.toLowerCase()} emojis found*`;
+        const emojiList =
+            displayEmojis.size > 0
+                ? displayEmojis.map((emoji) => `${emoji} \`:${emoji.name}:\``).join(' ')
+                : `*No ${typeName.toLowerCase()} emojis found*`;
 
         const embed = EmbedGenerator.basicEmbed()
             .setTitle(`${emojiIcon} ${interaction.guild.name} Emoji Collection`)
@@ -65,27 +74,31 @@ export default {
                 {
                     name: '📊 Emoji Statistics',
                     value: `🎬 **Animated:** ${animatedEmojis.size}\n🖼️ **Static:** ${staticEmojis.size}\n🎯 **Total:** ${emojis.size}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '💾 Server Limits',
                     value: `📦 **Used:** ${usedSlots}/${totalSlots}\n✨ **Available:** ${availableSlots}\n📈 **Usage:** ${usagePercentage}%`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '⭐ Boost Tier',
                     value: `Tier ${premiumTier} • ${totalSlots} slots`,
-                    inline: false
+                    inline: false,
                 }
             )
             .setFooter({
                 text: `Requested by ${interaction.user.tag} • Use /emojiinfo for details`,
-                iconURL: interaction.user.displayAvatarURL({ size: 256 } as any)
+                iconURL: interaction.user.displayAvatarURL({ size: 256 } as any),
             })
             .setTimestamp();
 
         if (displayEmojis.size > 50) {
-            embed.addFields({ name: '💡 Tip', value: `Showing ${displayEmojis.size} emojis.`, inline: false });
+            embed.addFields({
+                name: '💡 Tip',
+                value: `Showing ${displayEmojis.size} emojis.`,
+                inline: false,
+            });
         }
 
         return { embeds: [embed] };

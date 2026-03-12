@@ -1,4 +1,10 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, EmbedBuilder } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    EmbedBuilder,
+} from 'discord.js';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
 import Infractions from '../../Schemas/Infractions.ts';
@@ -77,9 +83,7 @@ export default {
                 {
                     name: '🔍 Member Details',
                     value: `• **Joined Server**: <t:${Math.floor(member.joinedTimestamp! / 1000)}:R>\n• **Account Created**: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>\n• **Roles**: ${
-                        member.roles.cache
-                            .first(3)
-                            .join(' ') || 'None'
+                        member.roles.cache.first(3).join(' ') || 'None'
                     }${member.roles.cache.size > 3 ? ` +${member.roles.cache.size - 3} more` : ''}`,
                     inline: true,
                 },

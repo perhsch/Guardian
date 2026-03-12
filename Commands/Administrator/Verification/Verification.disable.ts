@@ -12,12 +12,15 @@ export default {
         if (!interaction.guild) return;
 
         if (!dbGuild.verification.enabled) {
-            return { embeds: [EmbedGenerator.errorEmbed('The verification system is not enabled!')], ephemeral: true };
+            return {
+                embeds: [EmbedGenerator.errorEmbed('The verification system is not enabled!')],
+                ephemeral: true,
+            };
         }
 
-        const logEmbed = EmbedGenerator.basicEmbed(
-            `- Moderator: ${interaction.user.tag}`
-        ).setTitle('/verification disable command used');
+        const logEmbed = EmbedGenerator.basicEmbed(`- Moderator: ${interaction.user.tag}`).setTitle(
+            '/verification disable command used'
+        );
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         dbGuild.verification.enabled = false;
@@ -26,6 +29,8 @@ export default {
         dbGuild.verification.role = null;
         dbGuild.verification.unverifiedRole = null;
 
-        return { embeds: [EmbedGenerator.basicEmbed('🔓 | Member verification has been disabled.')] };
+        return {
+            embeds: [EmbedGenerator.basicEmbed('🔓 | Member verification has been disabled.')],
+        };
     },
 };

@@ -172,23 +172,26 @@ export default function createRouter(client: GuardianClient) {
         });
     });
 
-    router.get('/infractions/:id/inactive', infractionsLimiter, async (req: Request, res: Response) => {
-        const id = req.params['id'] as string;
-        if (!id) {
-            res.sendStatus(400);
-            return;
-        }
+    router.get(
+        '/infractions/:id/inactive',
+        infractionsLimiter,
+        async (req: Request, res: Response) => {
+            const id = req.params['id'] as string;
+            if (!id) {
+                res.sendStatus(400);
+                return;
+            }
 
-        const infractionResult = await Result.fromAsync(Infractions.findById(id))
+            const infractionResult = await Result.fromAsync(Infractions.findById(id));
 
-        if (infractionResult.isErr()) {
-            res.sendStatus(400);
-            return
-        }
+            if (infractionResult.isErr()) {
+                res.sendStatus(400);
+                return;
+            }
 
-        const infraction = infractionResult.unwrap()
+            const infraction = infractionResult.unwrap();
 
-        if (!infraction) {
+            if (!infraction) {
                 res.sendStatus(404);
                 return;
             }
@@ -222,7 +225,8 @@ export default function createRouter(client: GuardianClient) {
             } else {
                 res.sendStatus(400);
             }
-    });
+        }
+    );
 
     return router;
 }

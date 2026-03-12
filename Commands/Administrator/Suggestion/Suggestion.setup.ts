@@ -20,9 +20,11 @@ export default {
 
         if (!dbGuild.suggestion.channel) {
             return {
-                embeds: [EmbedGenerator.errorEmbed(
-                    'Suggestion channel is not set. Please set the suggestion channel in the main admin setup command first.'
-                )],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'Suggestion channel is not set. Please set the suggestion channel in the main admin setup command first.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }

@@ -93,9 +93,10 @@ class GuildsManagerLogs {
 
     set basic_logs(basic_logs: string | null) {
         this.parent.document!.logs.basic_logs = basic_logs;
-        Guilds.updateOne({ guild: this.parent.id }, { $set: { 'logs.basic_logs': basic_logs } }).then(
-            () => null
-        );
+        Guilds.updateOne(
+            { guild: this.parent.id },
+            { $set: { 'logs.basic_logs': basic_logs } }
+        ).then(() => null);
     }
 
     get moderator(): string | null {

@@ -13,10 +13,16 @@ export default {
      * @param {Discord.User} user
      * @param {Discord.Client} client
      */
-    async execute(reaction: Discord.MessageReaction | Discord.PartialMessageReaction, user: Discord.User | Discord.PartialUser, client: Discord.Client) {
+    async execute(
+        reaction: Discord.MessageReaction | Discord.PartialMessageReaction,
+        user: Discord.User | Discord.PartialUser,
+        client: Discord.Client
+    ) {
         if (user.bot) return;
 
-        const message = reaction.message.partial ? await reaction.message.fetch() : reaction.message;
+        const message = reaction.message.partial
+            ? await reaction.message.fetch()
+            : reaction.message;
         if (!message.guild) return;
 
         const reactionRole = await ReactionRoles.findOne({
@@ -32,7 +38,9 @@ export default {
 
             const emojiName = reaction.emoji.name;
             if (emojiName) {
-                const index = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'].indexOf(emojiName);
+                const index = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'].indexOf(
+                    emojiName
+                );
                 if (index !== -1 && reactionRole.roles[index]) {
                     const role = await message.guild.roles
                         .fetch(reactionRole.roles[index])
@@ -48,7 +56,10 @@ export default {
     },
 };
 
-async function updateSuggestionEmbedReactions(reaction: Discord.MessageReaction, client: Discord.Client) {
+async function updateSuggestionEmbedReactions(
+    reaction: Discord.MessageReaction,
+    client: Discord.Client
+) {
     try {
         const msg = reaction.message.partial ? await reaction.message.fetch() : reaction.message;
         if (!msg.guild) return;

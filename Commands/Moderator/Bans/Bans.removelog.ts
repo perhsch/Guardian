@@ -1,4 +1,8 @@
-import Discord, { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client } from 'discord.js';
+import Discord, {
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import Infractions from '../../../Schemas/Infractions.ts';
 
@@ -34,7 +38,10 @@ export default {
                 active: false,
             });
 
-            return { embeds: [EmbedGenerator.basicEmbed('All inactive bans removed')], ephemeral: true };
+            return {
+                embeds: [EmbedGenerator.basicEmbed('All inactive bans removed')],
+                ephemeral: true,
+            };
         }
 
         const bans = await Infractions.find({

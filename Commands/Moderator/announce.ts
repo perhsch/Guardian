@@ -4,7 +4,7 @@ import {
     ChatInputCommandInteraction,
     Client,
     ChannelType,
-    TextChannel
+    TextChannel,
 } from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
@@ -22,7 +22,9 @@ export default {
         .addChannelOption((option) =>
             option
                 .setName('channel')
-                .setDescription('Channel to announce in (optional if default set via /logging setup)')
+                .setDescription(
+                    'Channel to announce in (optional if default set via /logging setup)'
+                )
                 .setRequired(false)
                 .addChannelTypes(ChannelType.GuildText)
         ),
@@ -32,21 +34,35 @@ export default {
 
         let channel = interaction.options.getChannel('channel') as TextChannel | null;
         if (!channel && dbGuild.logs?.announcementChannel) {
-            channel = await interaction.guild.channels.fetch(dbGuild.logs.announcementChannel).catch(() => null) as TextChannel | null;
+            channel = (await interaction.guild.channels
+                .fetch(dbGuild.logs.announcementChannel)
+                .catch(() => null)) as TextChannel | null;
         }
 
         if (!channel || !(channel instanceof TextChannel)) {
             return {
-                embeds: [EmbedGenerator.errorEmbed('No channel specified. Provide a channel option or set a default announcement channel via `/logging setup`.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'No channel specified. Provide a channel option or set a default announcement channel via `/logging setup`.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
 
         const message = interaction.options.getString('message', true);
 
-        if (!channel.permissionsFor(interaction.guild.members.me!)?.has(PermissionFlagsBits.SendMessages)) {
+        if (
+            !channel
+                .permissionsFor(interaction.guild.members.me!)
+                ?.has(PermissionFlagsBits.SendMessages)
+        ) {
             return {
-                embeds: [EmbedGenerator.errorEmbed(':x: | I do not have permissions to send messages in this channel!')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        ':x: | I do not have permissions to send messages in this channel!'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
@@ -55,20 +71,36 @@ export default {
             .setColor(0xf1c40f)
             .setTitle('📢 Server Announcement')
             .setDescription(message)
-            .setAuthor({ name: interaction.user.displayName, iconURL: interaction.user.displayAvatarURL({ size: 256 }) })
-            .setFooter({ text: `${interaction.guild.name} • Announcement`, iconURL: interaction.guild.iconURL({ size: 64 }) ?? undefined })
+            .setAuthor({
+                name: interaction.user.displayName,
+                iconURL: interaction.user.displayAvatarURL({ size: 256 }),
+            })
+            .setFooter({
+                text: `${interaction.guild.name} • Announcement`,
+                iconURL: interaction.guild.iconURL({ size: 64 }) ?? undefined,
+            })
             .setTimestamp();
 
         const channelRef = channel;
-        channel.send({ embeds: [announcementEmbed] })
+        channel
+            .send({ embeds: [announcementEmbed] })
             .then(async () => {
                 const logEmbed = EmbedGenerator.basicEmbed(
-                    [`- Moderator: ${interaction.user.tag}`, `- Channel: <#${channelRef.id}>`, `- Message: ${message.substring(0, 500)}${message.length > 500 ? '...' : ''}`].join('\n')
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Channel: <#${channelRef.id}>`,
+                        `- Message: ${message.substring(0, 500)}${message.length > 500 ? '...' : ''}`,
+                    ].join('\n')
                 ).setTitle('/announce command used');
                 await sendModLog(interaction.guild!, dbGuild, logEmbed);
-                return interaction.reply({ embeds: [EmbedGenerator.basicEmbed(':mega: | Announced message successfully!')], ephemeral: true });
+                return interaction.reply({
+                    embeds: [EmbedGenerator.basicEmbed(':mega: | Announced message successfully!')],
+                    ephemeral: true,
+                });
             })
-            .catch(() => interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true }));
+            .catch(() =>
+                interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true })
+            );
 
         return;
     },

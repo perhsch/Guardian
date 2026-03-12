@@ -8,7 +8,9 @@ export const SUGGESTION_EMOJIS = ['✅', '❌'];
  * @param {Discord.Message} message
  * @returns {Promise<{ yes: number, no: number }>}
  */
-export async function getSuggestionReactionCounts(message: Discord.Message): Promise<{ yes: number; no: number }> {
+export async function getSuggestionReactionCounts(
+    message: Discord.Message
+): Promise<{ yes: number; no: number }> {
     const msg = message.partial ? await message.fetch() : message;
     let yes = 0;
     let no = 0;
@@ -49,7 +51,8 @@ export async function getSuggestionPercentageString(message: Discord.Message): P
  * @returns {boolean}
  */
 export function isSuggestionMessage(message: Discord.Message, dbGuild: GuildsManager): boolean {
-    if (!message.guild || !dbGuild?.suggestion?.enabled || !dbGuild.suggestion.reactions) return false;
+    if (!message.guild || !dbGuild?.suggestion?.enabled || !dbGuild.suggestion.reactions)
+        return false;
     if (message.channel.id !== dbGuild.suggestion.channel) return false;
     if (message.author?.id !== message.client?.user?.id) return false;
     if (!message.embeds?.[0]) return false;

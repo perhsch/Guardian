@@ -1,4 +1,10 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    ChatInputCommandInteraction,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+} from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 
 export default {
@@ -21,7 +27,10 @@ export default {
             .setDescription(
                 'Search results for your query are available in the Discord.js official documentation. Click the button below to view detailed information, code examples, and usage patterns.'
             )
-            .setFooter({ text: 'Discord.js Documentation', iconURL: interaction.client.user!.displayAvatarURL() })
+            .setFooter({
+                text: 'Discord.js Documentation',
+                iconURL: interaction.client.user!.displayAvatarURL(),
+            })
             .setTimestamp();
 
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(

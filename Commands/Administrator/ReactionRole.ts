@@ -1,12 +1,12 @@
-import { 
-    SlashCommandBuilder, 
-    PermissionFlagsBits, 
-    ChatInputCommandInteraction, 
-    Client, 
-    TextChannel, 
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    TextChannel,
     Message,
     Role,
-    Guild
+    Guild,
 } from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
@@ -60,11 +60,24 @@ export default {
             const sent = await (interaction.channel as TextChannel).send({
                 embeds: [
                     EmbedGenerator.basicEmbed(
-                        roles.map((role, index) => {
-                            const emoji = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'][index];
-                            const memberCount = role.members.size;
-                            return `${emoji} **${role.name}** \`${role.id}\`\n   └─ *${memberCount} member${memberCount !== 1 ? 's' : ''} currently has this role*`;
-                        }).join('\n\n')
+                        roles
+                            .map((role, index) => {
+                                const emoji = [
+                                    '1️⃣',
+                                    '2️⃣',
+                                    '3️⃣',
+                                    '4️⃣',
+                                    '5️⃣',
+                                    '6️⃣',
+                                    '7️⃣',
+                                    '8️⃣',
+                                    '9️⃣',
+                                    '🔟',
+                                ][index];
+                                const memberCount = role.members.size;
+                                return `${emoji} **${role.name}** \`${role.id}\`\n   └─ *${memberCount} member${memberCount !== 1 ? 's' : ''} currently has this role*`;
+                            })
+                            .join('\n\n')
                     ).setTitle(`${title} | Reaction Roles`),
                 ],
             });
@@ -100,7 +113,9 @@ export default {
             });
         } catch (error) {
             console.error(error);
-            await interaction.editReply({ embeds: [EmbedGenerator.errorEmbed('Failed to create reaction role message.')] });
+            await interaction.editReply({
+                embeds: [EmbedGenerator.errorEmbed('Failed to create reaction role message.')],
+            });
         }
     },
 };
@@ -117,29 +132,35 @@ function startRoleCountUpdate(guild: Guild, messageId: string) {
                 return;
             }
 
-            const channel = await guild.channels.fetch(reactionRoleData.channel).catch(() => null) as TextChannel | null;
+            const channel = (await guild.channels
+                .fetch(reactionRoleData.channel)
+                .catch(() => null)) as TextChannel | null;
             if (!channel) {
                 clearInterval(updateInterval);
                 return;
             }
 
-            const message = await channel.messages.fetch(messageId).catch(() => null) as Message | null;
+            const message = (await channel.messages
+                .fetch(messageId)
+                .catch(() => null)) as Message | null;
             if (!message) {
                 clearInterval(updateInterval);
                 return;
             }
 
             const freshRoles = reactionRoleData.roles
-                .map(roleId => guild.roles.cache.get(roleId))
+                .map((roleId) => guild.roles.cache.get(roleId))
                 .filter((role): role is Role => !!role);
 
             const emojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
             const updatedEmbed = EmbedGenerator.basicEmbed(
-                freshRoles.map((role, index) => {
-                    const emoji = emojis[index];
-                    const memberCount = role.members.size;
-                    return `${emoji} **${role.name}** \`${role.id}\`\n   └─ *${memberCount} member${memberCount !== 1 ? 's' : ''} currently has this role*`;
-                }).join('\n\n')
+                freshRoles
+                    .map((role, index) => {
+                        const emoji = emojis[index];
+                        const memberCount = role.members.size;
+                        return `${emoji} **${role.name}** \`${role.id}\`\n   └─ *${memberCount} member${memberCount !== 1 ? 's' : ''} currently has this role*`;
+                    })
+                    .join('\n\n')
             ).setTitle(`${reactionRoleData.title} | Reaction Roles`);
 
             await message.edit({ embeds: [updatedEmbed] });

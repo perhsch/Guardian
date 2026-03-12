@@ -13,12 +13,12 @@ export default {
 
         let giveaway = await Giveaways.findOne({ giveaway: interaction.message.id });
         if (!giveaway) {
-            return interaction.reply({ 
+            return interaction.reply({
                 embeds: [EmbedGenerator.errorEmbed('Giveaway not found.')],
-                ephemeral: true 
+                ephemeral: true,
             });
         }
-        
+
         if (!giveaway.active) {
             await (interaction.message as Discord.Message).edit({ components: [] });
             return interaction.reply({

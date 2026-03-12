@@ -19,7 +19,9 @@ export default {
         // Double-check developer permission for additional security
         if (interaction.user.id !== '1447738202600505407') {
             return {
-                embeds: [EmbedGenerator.errorEmbed('This command is only available to the developer.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed('This command is only available to the developer.'),
+                ],
                 ephemeral: true,
             };
         }
@@ -36,21 +38,31 @@ export default {
                 if (command.data.name !== 'maintenance') command.enabled = false;
             });
             return {
-                embeds: [EmbedGenerator.basicEmbed('Maintenance mode **enabled**. Status set to "In Maintenance", all commands (except this one) are disabled.')],
+                embeds: [
+                    EmbedGenerator.basicEmbed(
+                        'Maintenance mode **enabled**. Status set to "In Maintenance", all commands (except this one) are disabled.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
 
         setMaintenanceEnabled(false);
         client.user?.setPresence({
-            activities: [{ name: `${client.guilds.cache.size} servers!`, type: ActivityType.Watching }],
+            activities: [
+                { name: `${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
+            ],
             status: 'online',
         });
         client.commands?.forEach((command: any) => {
             command.enabled = true;
         });
         return {
-            embeds: [EmbedGenerator.basicEmbed('Maintenance mode **disabled**. Status restored, all commands re-enabled.')],
+            embeds: [
+                EmbedGenerator.basicEmbed(
+                    'Maintenance mode **disabled**. Status restored, all commands re-enabled.'
+                ),
+            ],
             ephemeral: true,
         };
     },

@@ -36,6 +36,7 @@
         "moment": "^2.29.4",
         "mongoose": "^6.8.1",
         "node-fetch": "^3.3.1",
+        "prettier": "^3.8.1",
         "statcord.js": "^3.4.3",
         "urban": "^0.3.4",
         "weather-js": "^2.0.0"

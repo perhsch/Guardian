@@ -1,4 +1,13 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    EmbedBuilder,
+} from 'discord.js';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import Guilds from '../../Schemas/Guilds.ts';
 
@@ -23,7 +32,10 @@ function isAutomodEnabled(doc: any, feature: string): boolean {
     return (val?.enabled ?? defaultEnabled) === true;
 }
 
-function buildAutomodEmbed(dbGuild: any, interaction: ChatInputCommandInteraction | null = null): EmbedBuilder {
+function buildAutomodEmbed(
+    dbGuild: any,
+    interaction: ChatInputCommandInteraction | null = null
+): EmbedBuilder {
     const doc = dbGuild?.document || {};
     const antiraid = doc.antiraid || {};
     const automod = doc.automod || {};

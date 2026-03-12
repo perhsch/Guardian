@@ -33,6 +33,7 @@ const TicketSchema = new Schema<ITicket>({
     active: { type: Boolean, default: true },
 });
 
-const Tickets: Model<ITicket> = Mongoose.models.Tickets || Mongoose.model<ITicket>('Tickets', TicketSchema);
+const Tickets: Model<ITicket> =
+    Mongoose.models.Tickets || Mongoose.model<ITicket>('Tickets', TicketSchema);
 
 export default Tickets;

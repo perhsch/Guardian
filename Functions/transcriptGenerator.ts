@@ -18,17 +18,21 @@ function escapeHtml(unsafe: string | undefined | null): string {
  */
 export async function generateTranscript(
     messages: Discord.Collection<string, Discord.Message> | Discord.Message[],
-    channel: Discord.TextChannel | Discord.ThreadChannel | Discord.VoiceChannel | Discord.StageChannel | Discord.DMChannel
+    channel:
+        | Discord.TextChannel
+        | Discord.ThreadChannel
+        | Discord.VoiceChannel
+        | Discord.StageChannel
+        | Discord.DMChannel
 ): Promise<Discord.AttachmentBuilder> {
     try {
         const msgs = Array.isArray(messages) ? messages.slice() : Array.from(messages.values());
         msgs.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 
         const guildName = (channel as any).guild ? (channel as any).guild.name : 'Direct Message';
-        const channelName =
-             (channel as any).name
-                ? (channel as any).name
-                : String(channel && channel.id ? channel.id : 'unknown');
+        const channelName = (channel as any).name
+            ? (channel as any).name
+            : String(channel && channel.id ? channel.id : 'unknown');
 
         let html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Transcript - ${escapeHtml(guildName)} / #${escapeHtml(channelName)}</title><style>
     body{font-family:Arial,Helvetica,sans-serif;background:#f6f6f8;color:#111;margin:0;padding:0}

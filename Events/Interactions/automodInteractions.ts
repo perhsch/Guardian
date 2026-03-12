@@ -37,8 +37,8 @@ function buildAntiraidModal(dbGuild: any): Discord.ModalBuilder {
                         ? `yes, ${ar.channel}`
                         : 'yes'
                     : ar.channel
-                        ? ar.channel
-                        : 'no'
+                      ? ar.channel
+                      : 'no'
             )
         );
 }
@@ -245,58 +245,61 @@ export default {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
                     embeds: [
-                        EmbedGenerator.errorEmbed('Only members with Manage Server permission can configure automod.'),
+                        EmbedGenerator.errorEmbed(
+                            'Only members with Manage Server permission can configure automod.'
+                        ),
                     ],
                     ephemeral: true,
                 });
             }
-            const selectRow = new Discord.ActionRowBuilder<Discord.StringSelectMenuBuilder>().addComponents(
-                new Discord.StringSelectMenuBuilder()
-                    .setCustomId('automod_settings_select')
-                    .setPlaceholder('⚙️ Choose a system to configure...')
-                    .addOptions(
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Raid')
-                            .setValue('antiraid')
-                            .setDescription('Mass join protection')
-                            .setEmoji('🛡️'),
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Zalgo')
-                            .setValue('antizalgo')
-                            .setDescription('Block corrupted/glitchy text')
-                            .setEmoji('🔤'),
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Badwords')
-                            .setValue('antibadwords')
-                            .setDescription('Filter bad words')
-                            .setEmoji('🚫'),
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Nuke')
-                            .setValue('antinuke')
-                            .setDescription('Prevent mass channel/role deletion')
-                            .setEmoji('💣'),
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Advertisement')
-                            .setValue('antiad')
-                            .setDescription('Block Discord invite links')
-                            .setEmoji('📢'),
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Caps')
-                            .setValue('anticaps')
-                            .setDescription('Detect excessive capitalization')
-                            .setEmoji('🔠'),
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Mention Spam')
-                            .setValue('antimentionspam')
-                            .setDescription('Limit mass mentions')
-                            .setEmoji('🏷️'),
-                        new Discord.StringSelectMenuOptionBuilder()
-                            .setLabel('Anti Spam')
-                            .setValue('antispam')
-                            .setDescription('Detect rapid message sending')
-                            .setEmoji('📧')
-                    )
-            );
+            const selectRow =
+                new Discord.ActionRowBuilder<Discord.StringSelectMenuBuilder>().addComponents(
+                    new Discord.StringSelectMenuBuilder()
+                        .setCustomId('automod_settings_select')
+                        .setPlaceholder('⚙️ Choose a system to configure...')
+                        .addOptions(
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Raid')
+                                .setValue('antiraid')
+                                .setDescription('Mass join protection')
+                                .setEmoji('🛡️'),
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Zalgo')
+                                .setValue('antizalgo')
+                                .setDescription('Block corrupted/glitchy text')
+                                .setEmoji('🔤'),
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Badwords')
+                                .setValue('antibadwords')
+                                .setDescription('Filter bad words')
+                                .setEmoji('🚫'),
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Nuke')
+                                .setValue('antinuke')
+                                .setDescription('Prevent mass channel/role deletion')
+                                .setEmoji('💣'),
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Advertisement')
+                                .setValue('antiad')
+                                .setDescription('Block Discord invite links')
+                                .setEmoji('📢'),
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Caps')
+                                .setValue('anticaps')
+                                .setDescription('Detect excessive capitalization')
+                                .setEmoji('🔠'),
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Mention Spam')
+                                .setValue('antimentionspam')
+                                .setDescription('Limit mass mentions')
+                                .setEmoji('🏷️'),
+                            new Discord.StringSelectMenuOptionBuilder()
+                                .setLabel('Anti Spam')
+                                .setValue('antispam')
+                                .setDescription('Detect rapid message sending')
+                                .setEmoji('📧')
+                        )
+                );
             return interaction.reply({
                 components: [selectRow],
                 ephemeral: true,
@@ -310,7 +313,9 @@ export default {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
                     embeds: [
-                        EmbedGenerator.errorEmbed('Only members with Manage Server permission can configure automod.'),
+                        EmbedGenerator.errorEmbed(
+                            'Only members with Manage Server permission can configure automod.'
+                        ),
                     ],
                     ephemeral: true,
                 });
@@ -335,7 +340,9 @@ export default {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
                     embeds: [
-                        EmbedGenerator.errorEmbed('Only members with Manage Server permission can configure automod.'),
+                        EmbedGenerator.errorEmbed(
+                            'Only members with Manage Server permission can configure automod.'
+                        ),
                     ],
                     ephemeral: true,
                 });
@@ -436,7 +443,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch { }
+                } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Zalgo settings saved!')],
                     ephemeral: true,
@@ -468,8 +475,7 @@ export default {
                     }
                 );
                 if (!dbGuild.automod) dbGuild.automod = {};
-                if (!dbGuild.automod.antiBadwords)
-                    dbGuild.automod.antiBadwords = {};
+                if (!dbGuild.automod.antiBadwords) dbGuild.automod.antiBadwords = {};
                 dbGuild.automod.antiBadwords.enabled = enabled;
                 dbGuild.automod.antiBadwords.words = words;
                 dbGuild.automod.antiBadwords.action = action;
@@ -486,7 +492,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch { }
+                } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Badwords settings saved!')],
                     ephemeral: true,
@@ -534,7 +540,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch { }
+                } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Nuke settings saved!')],
                     ephemeral: true,
@@ -566,8 +572,7 @@ export default {
                     }
                 );
                 if (!dbGuild.automod) dbGuild.automod = {};
-                if (!dbGuild.automod.antiAdvertisement)
-                    dbGuild.automod.antiAdvertisement = {};
+                if (!dbGuild.automod.antiAdvertisement) dbGuild.automod.antiAdvertisement = {};
                 dbGuild.automod.antiAdvertisement.enabled = enabled;
                 dbGuild.automod.antiAdvertisement.whitelistChannels = whitelistChannels;
                 dbGuild.automod.antiAdvertisement.action = action;
@@ -584,7 +589,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch { }
+                } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Advertisement settings saved!')],
                     ephemeral: true,
@@ -634,7 +639,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch { }
+                } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Caps settings saved!')],
                     ephemeral: true,
@@ -667,8 +672,7 @@ export default {
                     }
                 );
                 if (!dbGuild.automod) dbGuild.automod = {};
-                if (!dbGuild.automod.antiMentionSpam)
-                    dbGuild.automod.antiMentionSpam = {};
+                if (!dbGuild.automod.antiMentionSpam) dbGuild.automod.antiMentionSpam = {};
                 dbGuild.automod.antiMentionSpam.enabled = enabled;
                 dbGuild.automod.antiMentionSpam.maxMentions = Math.max(1, maxMentions);
                 dbGuild.automod.antiMentionSpam.checkEveryone = checkEveryone;
@@ -686,7 +690,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch { }
+                } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Mention Spam settings saved!')],
                     ephemeral: true,
@@ -740,7 +744,7 @@ export default {
                         const components = automodCommand.getAutomodComponents(dbGuild);
                         await msg.edit({ embeds: [embed], components });
                     }
-                } catch { }
+                } catch {}
                 return interaction.reply({
                     embeds: [EmbedGenerator.basicEmbed('🔒 | Anti Spam settings saved!')],
                     ephemeral: true,

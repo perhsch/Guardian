@@ -10,7 +10,7 @@ export default {
         .addStringOption((option) =>
             option
                 .setName('reminder')
-                .setDescription("The reminder you'd like to remove, alternatively \"all\".")
+                .setDescription('The reminder you\'d like to remove, alternatively "all".')
                 .setRequired(true)
         ),
 
@@ -19,7 +19,10 @@ export default {
 
         if (reminderArg === 'all') {
             await Reminders.deleteMany({ user: interaction.user.id });
-            return { embeds: [EmbedGenerator.basicEmbed('All reminders deleted.')], ephemeral: true };
+            return {
+                embeds: [EmbedGenerator.basicEmbed('All reminders deleted.')],
+                ephemeral: true,
+            };
         }
 
         const reminders = await Reminders.find({ user: interaction.user.id }).sort({ expires: 1 });

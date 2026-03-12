@@ -1,4 +1,9 @@
-import { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client, ChannelType } from 'discord.js';
+import {
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+    ChannelType,
+} from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../../Functions/modLog.ts';
 import Guilds from '../../../Schemas/Guilds.ts';
@@ -82,7 +87,12 @@ export default {
         if (suggestionsChannel) {
             await Guilds.updateOne(
                 { guild: interaction.guildId },
-                { $set: { 'suggestion.channel': suggestionsChannel.id, 'suggestion.enabled': true } }
+                {
+                    $set: {
+                        'suggestion.channel': suggestionsChannel.id,
+                        'suggestion.enabled': true,
+                    },
+                }
             );
         }
 
@@ -96,7 +106,9 @@ export default {
             giveawayChannel ? `- Giveaway channel: <#${giveawayChannel.id}>` : null,
         ].filter(Boolean) as string[];
 
-        const logEmbed = EmbedGenerator.basicEmbed(lines.join('\n')).setTitle('/logging setup command used');
+        const logEmbed = EmbedGenerator.basicEmbed(lines.join('\n')).setTitle(
+            '/logging setup command used'
+        );
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         const replyLines = [

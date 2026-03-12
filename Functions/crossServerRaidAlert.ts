@@ -10,117 +10,133 @@ import { getRecentJoiners } from '../Functions/antiRaidTracking.ts';
  * @param {any} raidData - Information about the raid
  * @param {any[]} raiders - Array of raider user IDs
  */
-export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Discord.Client, raidData: any, raiders: any[]): Promise<void> {
+export async function broadcastRaidAlert(
+    raidedGuild: Discord.Guild,
+    client: Discord.Client,
+    raidData: any,
+    raiders: any[]
+): Promise<void> {
     try {
         // For test mode, get ALL guilds with global logging channels (ignore anti-raid requirement)
         const guildsWithGlobalLogging = await Guilds.find({
             'logs.enabled': true,
-            'logs.global': { $exists: true, $ne: null }
+            'logs.global': { $exists: true, $ne: null },
         });
 
         // For real raids, require anti-raid to be enabled
         const eligibleGuilds = raidData.isTest
             ? guildsWithGlobalLogging
-            : guildsWithGlobalLogging.filter(guild => guild.antiraid?.enabled);
+            : guildsWithGlobalLogging.filter((guild) => guild.antiraid?.enabled);
 
         if (eligibleGuilds.length === 0) {
-            console.log(`❌ No guilds available for ${raidData.isTest ? 'test' : 'real'} raid alerts`);
+            console.log(
+                `❌ No guilds available for ${raidData.isTest ? 'test' : 'real'} raid alerts`
+            );
             return;
         }
 
-        console.log(`📡 Broadcasting ${raidData.isTest ? 'TEST' : 'REAL'} raid alert to ${eligibleGuilds.length} guilds`);
+        console.log(
+            `📡 Broadcasting ${raidData.isTest ? 'TEST' : 'REAL'} raid alert to ${eligibleGuilds.length} guilds`
+        );
 
         // Create the raid alert embed
         const raidEmbed = new Discord.EmbedBuilder()
             .setColor(raidData.isTest ? 'Orange' : 'Red')
-            .setTitle(`${raidData.isTest ? '🧪' : '🚨'} Cross-Server Raid Alert${raidData.isTest ? ' (TEST)' : ''}`)
+            .setTitle(
+                `${raidData.isTest ? '🧪' : '🚨'} Cross-Server Raid Alert${raidData.isTest ? ' (TEST)' : ''}`
+            )
             .setThumbnail(raidedGuild.iconURL({ forceStatic: false, size: 256 }))
             .setAuthor({
                 name: 'Guardian',
                 iconURL: client.user?.displayAvatarURL({ forceStatic: false }),
-                url: 'https://discord.gg/5nWZ8BJae4'
+                url: 'https://discord.gg/5nWZ8BJae4',
             })
             .setDescription(
                 `${raidData.isTest ? '## 🧪 **TEST MODE**\nThis is a test alert to verify the cross-server protection system.\n\n' : '## 🚨 **IMMEDIATE THREAT DETECTED**\n'}` +
-                `**${raidData.isTest ? 'Mock raid' : 'Coordinated raid'} detected in another Guardian-protected server!**\n\n` +
-                `>>> **🏰 Target Server:** ${raidedGuild.name}\n` +
-                `**🆔 Server ID:** \`${raidedGuild.id}\`\n` +
-                `**👥 Raider Count:** **${raiders.length}** users\n` +
-                `**⚡ Detection Rate:** **${raidData.joinCount}** joins in **${raidData.joinWithin}** seconds\n` +
-                `**⚖️ Action Taken:** **${raidData.action === 'ban' ? 'BANNED' : 'KICKED'}**\n` +
-                `**🕐 Detection Time:** <t:${Math.floor(Date.now() / 1000)}:R>`
+                    `**${raidData.isTest ? 'Mock raid' : 'Coordinated raid'} detected in another Guardian-protected server!**\n\n` +
+                    `>>> **🏰 Target Server:** ${raidedGuild.name}\n` +
+                    `**🆔 Server ID:** \`${raidedGuild.id}\`\n` +
+                    `**👥 Raider Count:** **${raiders.length}** users\n` +
+                    `**⚡ Detection Rate:** **${raidData.joinCount}** joins in **${raidData.joinWithin}** seconds\n` +
+                    `**⚖️ Action Taken:** **${raidData.action === 'ban' ? 'BANNED' : 'KICKED'}**\n` +
+                    `**🕐 Detection Time:** <t:${Math.floor(Date.now() / 1000)}:R>`
             )
             .addFields(
                 {
                     name: '🛡️ **Your Protection Status**',
                     value: `✅ **Anti-Raid:** Enabled in your server\n🔒 **Global Logging:** Active\n🚨 **Cross-Server Defense:** Operational`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '⚠️ **Recommended Actions**',
                     value: raidData.isTest
                         ? '🧪 **Test Mode:** No action needed\n✅ **System Verified:** Working correctly'
                         : '🔒 **Enable Lockdown:** Temporary protection\n📈 **Increase Verification:** Strengthen security\n👀 **Monitor Activity:** Watch for suspicious behavior',
-                    inline: true
+                    inline: true,
                 }
             )
-            .addFields(
-                {
-                    name: `📊 **Threat Analysis**`,
-                    value: `**Severity Level:** ${raidData.joinCount >= 20 ? '🔴 **CRITICAL**' : raidData.joinCount >= 10 ? '🟡 **HIGH**' : '🟠 **ELEVATED**'}\n` +
-                        `**Attack Pattern:** ${raidData.joinWithin <= 10 ? '⚡ **Lightning Fast**' : raidData.joinWithin <= 30 ? '🚀 **Rapid**' : '📈 **Sustained**'}\n` +
-                        `**Response Time:** **Instant**\n` +
-                        `**Network Defense:** **Active**`,
-                    inline: false
-                }
+            .addFields({
+                name: `📊 **Threat Analysis**`,
+                value:
+                    `**Severity Level:** ${raidData.joinCount >= 20 ? '🔴 **CRITICAL**' : raidData.joinCount >= 10 ? '🟡 **HIGH**' : '🟠 **ELEVATED**'}\n` +
+                    `**Attack Pattern:** ${raidData.joinWithin <= 10 ? '⚡ **Lightning Fast**' : raidData.joinWithin <= 30 ? '🚀 **Rapid**' : '📈 **Sustained**'}\n` +
+                    `**Response Time:** **Instant**\n` +
+                    `**Network Defense:** **Active**`,
+                inline: false,
+            })
+            .setImage(
+                'https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png'
             )
-            .setImage('https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png')
             .setFooter({
                 text: `Guardian Cross-Server Protection${raidData.isTest ? ' • TEST MODE' : ''} • Defending ${client.guilds.cache.size} servers`,
-                iconURL: client.user?.displayAvatarURL()
+                iconURL: client.user?.displayAvatarURL(),
             })
             .setTimestamp();
 
         // Add raider intelligence (limit to first 10 to avoid embed size limits)
         if (raiders.length > 0) {
-            const raiderList = raiders.slice(0, 10).map((raider, index) => {
-                const user = client.users.cache.get(raider.userId || raider);
-                return `${index + 1}. ${user ? user.tag : `Unknown User (${raider.userId || raider})`}`;
-            }).join('\n');
+            const raiderList = raiders
+                .slice(0, 10)
+                .map((raider, index) => {
+                    const user = client.users.cache.get(raider.userId || raider);
+                    return `${index + 1}. ${user ? user.tag : `Unknown User (${raider.userId || raider})`}`;
+                })
+                .join('\n');
 
             raidEmbed.addFields({
                 name: `🎭 **Known Raiders${raiders.length > 10 ? ` (First ${Math.min(raiders.length, 10)} shown)` : ''}**`,
-                value: raiderList || 'No raider data available'
+                value: raiderList || 'No raider data available',
             });
 
             if (raiders.length > 10) {
                 raidEmbed.addFields({
                     name: ' **Additional Intelligence**',
-                    value: `...and **${raiders.length - 10}** more raiders detected in the attack wave`
+                    value: `...and **${raiders.length - 10}** more raiders detected in the attack wave`,
                 });
             }
         }
 
         // Create tactical action buttons
-        const actionRow = new Discord.ActionRowBuilder<Discord.ButtonBuilder>()
-            .addComponents(
-                new Discord.ButtonBuilder()
-                    .setCustomId(`raid_ban_${raidedGuild.id}`)
-                    .setLabel(raidData.isTest ? '🧪 Test Defense' : '🔨 Preemptive Ban')
-                    .setStyle(raidData.isTest ? Discord.ButtonStyle.Primary : Discord.ButtonStyle.Danger)
-                    .setEmoji(raidData.isTest ? '🧪' : '🔨')
-                    .setDisabled(raidData.isTest),
-                new Discord.ButtonBuilder()
-                    .setCustomId(`raid_info_${raidedGuild.id}`)
-                    .setLabel('📊 Threat Intel')
-                    .setStyle(Discord.ButtonStyle.Primary)
-                    .setEmoji('📊'),
-                new Discord.ButtonBuilder()
-                    .setCustomId(`raid_dismiss_${raidedGuild.id}`)
-                    .setLabel('✅ Acknowledge')
-                    .setStyle(Discord.ButtonStyle.Secondary)
-                    .setEmoji('✅')
-            );
+        const actionRow = new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(
+            new Discord.ButtonBuilder()
+                .setCustomId(`raid_ban_${raidedGuild.id}`)
+                .setLabel(raidData.isTest ? '🧪 Test Defense' : '🔨 Preemptive Ban')
+                .setStyle(
+                    raidData.isTest ? Discord.ButtonStyle.Primary : Discord.ButtonStyle.Danger
+                )
+                .setEmoji(raidData.isTest ? '🧪' : '🔨')
+                .setDisabled(raidData.isTest),
+            new Discord.ButtonBuilder()
+                .setCustomId(`raid_info_${raidedGuild.id}`)
+                .setLabel('📊 Threat Intel')
+                .setStyle(Discord.ButtonStyle.Primary)
+                .setEmoji('📊'),
+            new Discord.ButtonBuilder()
+                .setCustomId(`raid_dismiss_${raidedGuild.id}`)
+                .setLabel('✅ Acknowledge')
+                .setStyle(Discord.ButtonStyle.Secondary)
+                .setEmoji('✅')
+        );
 
         // Send to all eligible guilds
         const sentGuilds: string[] = [];
@@ -130,32 +146,54 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
             try {
                 // Skip the raided guild itself for real alerts, but allow it for test mode
                 if (guildDoc.guild === raidedGuild.id && !raidData.isTest) {
-                    skippedGuilds.push({ name: raidedGuild.name, reason: 'Raided guild (skipped)' });
+                    skippedGuilds.push({
+                        name: raidedGuild.name,
+                        reason: 'Raided guild (skipped)',
+                    });
                     continue;
                 }
 
                 const guild = client.guilds.cache.get(guildDoc.guild);
                 if (!guild) {
-                    skippedGuilds.push({ name: guildDoc.guild, reason: 'Guild not found in cache' });
+                    skippedGuilds.push({
+                        name: guildDoc.guild,
+                        reason: 'Guild not found in cache',
+                    });
                     continue;
                 }
 
                 const globalChannel = guild.channels.cache.get(guildDoc.logs.global!);
                 if (!globalChannel || !globalChannel.isTextBased()) {
-                    skippedGuilds.push({ name: guild.name, reason: 'Global channel not found or not text-based' });
+                    skippedGuilds.push({
+                        name: guild.name,
+                        reason: 'Global channel not found or not text-based',
+                    });
                     continue;
                 }
 
                 // Check if bot has permission to send messages
-                if (!client.user || !(globalChannel as Discord.TextChannel).permissionsFor(client.user)?.has([Discord.PermissionFlagsBits.SendMessages, Discord.PermissionFlagsBits.EmbedLinks])) {
-                    skippedGuilds.push({ name: guild.name, reason: 'Missing permissions (SendMessages/EmbedLinks)' });
+                if (
+                    !client.user ||
+                    !(globalChannel as Discord.TextChannel)
+                        .permissionsFor(client.user)
+                        ?.has([
+                            Discord.PermissionFlagsBits.SendMessages,
+                            Discord.PermissionFlagsBits.EmbedLinks,
+                        ])
+                ) {
+                    skippedGuilds.push({
+                        name: guild.name,
+                        reason: 'Missing permissions (SendMessages/EmbedLinks)',
+                    });
                     continue;
                 }
 
-                console.log(`📤 Sending ${raidData.isTest ? 'TEST' : 'REAL'} raid alert to ${guild.name} in channel ${(globalChannel as any).name}`);
+                console.log(
+                    `📤 Sending ${raidData.isTest ? 'TEST' : 'REAL'} raid alert to ${guild.name} in channel ${(globalChannel as any).name}`
+                );
                 await (globalChannel as Discord.TextChannel).send({
                     embeds: [raidEmbed],
-                    components: [actionRow]
+                    components: [actionRow],
                 });
 
                 sentGuilds.push(guild.name);
@@ -165,15 +203,16 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
             }
         }
 
-        console.log(`🚨 Cross-server raid alert (${raidData.isTest ? 'TEST' : 'REAL'}) sent to ${sentGuilds.length} guilds: ${sentGuilds.join(', ')}`);
+        console.log(
+            `🚨 Cross-server raid alert (${raidData.isTest ? 'TEST' : 'REAL'}) sent to ${sentGuilds.length} guilds: ${sentGuilds.join(', ')}`
+        );
 
         if (skippedGuilds.length > 0) {
             console.log(`⚠️ Skipped ${skippedGuilds.length} guilds:`);
-            skippedGuilds.forEach(skipped => {
+            skippedGuilds.forEach((skipped) => {
                 console.log(`   - ${skipped.name}: ${skipped.reason}`);
             });
         }
-
     } catch (error) {
         console.error('Error in broadcastRaidAlert:', error);
     }
@@ -184,7 +223,10 @@ export async function broadcastRaidAlert(raidedGuild: Discord.Guild, client: Dis
  * @param {Discord.ButtonInteraction} interaction - The button interaction
  * @param {Discord.Client} client - The bot client
  */
-export async function handleRaidButtonInteraction(interaction: Discord.ButtonInteraction, client: Discord.Client): Promise<void> {
+export async function handleRaidButtonInteraction(
+    interaction: Discord.ButtonInteraction,
+    client: Discord.Client
+): Promise<void> {
     const customId = interaction.customId;
 
     if (!customId.startsWith('raid_')) return;
@@ -198,7 +240,7 @@ export async function handleRaidButtonInteraction(interaction: Discord.ButtonInt
         const raidedGuildDoc = await Guilds.findOne({ guild: raidedGuildId });
         if (!raidedGuildDoc) {
             await interaction.editReply({
-                embeds: [EmbedGenerator.errorEmbed('Unable to find raided guild information.')]
+                embeds: [EmbedGenerator.errorEmbed('Unable to find raided guild information.')],
             });
             return;
         }
@@ -206,7 +248,7 @@ export async function handleRaidButtonInteraction(interaction: Discord.ButtonInt
         const raidedGuild = client.guilds.cache.get(raidedGuildId!);
         if (!raidedGuild) {
             await interaction.editReply({
-                embeds: [EmbedGenerator.errorEmbed('Raided guild is no longer available.')]
+                embeds: [EmbedGenerator.errorEmbed('Raided guild is no longer available.')],
             });
             return;
         }
@@ -220,14 +262,14 @@ export async function handleRaidButtonInteraction(interaction: Discord.ButtonInt
                 break;
             case 'dismiss':
                 await interaction.editReply({
-                    embeds: [EmbedGenerator.basicEmbed('✅ Raid alert dismissed.')]
+                    embeds: [EmbedGenerator.basicEmbed('✅ Raid alert dismissed.')],
                 });
                 break;
         }
     } catch (error) {
         console.error('Error handling raid button interaction:', error);
         await interaction.editReply({
-            embeds: [EmbedGenerator.errorEmbed('Failed to process your request.')]
+            embeds: [EmbedGenerator.errorEmbed('Failed to process your request.')],
         });
     }
 }
@@ -235,14 +277,19 @@ export async function handleRaidButtonInteraction(interaction: Discord.ButtonInt
 /**
  * Handles banning raiders from the user's guild
  */
-async function handleBanRaiders(interaction: Discord.ButtonInteraction, _client: Discord.Client, raidedGuild: Discord.Guild, _raidedGuildDoc: any): Promise<void> {
+async function handleBanRaiders(
+    interaction: Discord.ButtonInteraction,
+    _client: Discord.Client,
+    raidedGuild: Discord.Guild,
+    _raidedGuildDoc: any
+): Promise<void> {
     try {
         // Get recent joiners from the raided guild (last 5 minutes)
         const recentJoiners = getRecentJoiners(raidedGuild.id, 300000); // 5 minutes
 
         if (recentJoiners.length === 0) {
             await interaction.editReply({
-                embeds: [EmbedGenerator.basicEmbed('No recent raiders found to ban.')]
+                embeds: [EmbedGenerator.basicEmbed('No recent raiders found to ban.')],
             });
             return;
         }
@@ -264,16 +311,18 @@ async function handleBanRaiders(interaction: Discord.ButtonInteraction, _client:
                 }
 
                 // Don't ban if they're the server owner or have moderation permissions
-                if (member.id === userGuild.ownerId ||
+                if (
+                    member.id === userGuild.ownerId ||
                     member.permissions.has(Discord.PermissionFlagsBits.ManageGuild) ||
                     member.permissions.has(Discord.PermissionFlagsBits.BanMembers) ||
-                    member.permissions.has(Discord.PermissionFlagsBits.KickMembers)) {
+                    member.permissions.has(Discord.PermissionFlagsBits.KickMembers)
+                ) {
                     failedCount++;
                     continue;
                 }
 
                 await member.ban({
-                    reason: `Cross-server raid protection - Preemptive ban from raid in ${raidedGuild.name}`
+                    reason: `Cross-server raid protection - Preemptive ban from raid in ${raidedGuild.name}`,
                 });
                 bannedCount++;
             } catch (error) {
@@ -283,21 +332,20 @@ async function handleBanRaiders(interaction: Discord.ButtonInteraction, _client:
 
         const resultEmbed = EmbedGenerator.basicEmbed(
             `**Cross-Server Raid Protection Complete**\n\n` +
-            `🔨 **Banned:** ${bannedCount} raiders\n` +
-            `❌ **Failed:** ${failedCount} raiders\n` +
-            `👻 **Not Found:** ${notFoundCount} raiders\n\n` +
-            `Your server is now protected from the raiders that attacked **${raidedGuild.name}**!`
+                `🔨 **Banned:** ${bannedCount} raiders\n` +
+                `❌ **Failed:** ${failedCount} raiders\n` +
+                `👻 **Not Found:** ${notFoundCount} raiders\n\n` +
+                `Your server is now protected from the raiders that attacked **${raidedGuild.name}**!`
         )
             .setColor(Discord.Colors.Green)
             .setTitle('✅ Preemptive Ban Complete')
             .setFooter({ text: 'Guardian Cross-Server Protection' });
 
         await interaction.editReply({ embeds: [resultEmbed] });
-
     } catch (error) {
         console.error('Error in handleBanRaiders:', error);
         await interaction.editReply({
-            embeds: [EmbedGenerator.errorEmbed('Failed to ban raiders. Please check permissions.')]
+            embeds: [EmbedGenerator.errorEmbed('Failed to ban raiders. Please check permissions.')],
         });
     }
 }
@@ -305,7 +353,12 @@ async function handleBanRaiders(interaction: Discord.ButtonInteraction, _client:
 /**
  * Shows detailed information about the raid
  */
-async function handleRaidInfo(interaction: Discord.ButtonInteraction, client: Discord.Client, raidedGuild: Discord.Guild, raidedGuildDoc: any): Promise<void> {
+async function handleRaidInfo(
+    interaction: Discord.ButtonInteraction,
+    client: Discord.Client,
+    raidedGuild: Discord.Guild,
+    raidedGuildDoc: any
+): Promise<void> {
     try {
         const recentJoiners = getRecentJoiners(raidedGuild.id, 300000);
 
@@ -315,31 +368,45 @@ async function handleRaidInfo(interaction: Discord.ButtonInteraction, client: Di
             .setThumbnail(raidedGuild.iconURL({ forceStatic: false }))
             .setDescription(`Detailed information about the raid in **${raidedGuild.name}**`)
             .addFields(
-                { name: '🏰 Server Info', value: `Name: ${raidedGuild.name}\nID: ${raidedGuild.id}\nMembers: ${raidedGuild.memberCount}`, inline: true },
-                { name: '🛡️ Protection Settings', value: `Enabled: ✅\nAction: ${raidedGuildDoc.antiraid.action}\nThreshold: ${raidedGuildDoc.antiraid.joinAmount} joins/${raidedGuildDoc.antiraid.joinWithin}s`, inline: true },
-                { name: '👥 Raider Count', value: `${recentJoiners.length} users detected`, inline: true }
+                {
+                    name: '🏰 Server Info',
+                    value: `Name: ${raidedGuild.name}\nID: ${raidedGuild.id}\nMembers: ${raidedGuild.memberCount}`,
+                    inline: true,
+                },
+                {
+                    name: '🛡️ Protection Settings',
+                    value: `Enabled: ✅\nAction: ${raidedGuildDoc.antiraid.action}\nThreshold: ${raidedGuildDoc.antiraid.joinAmount} joins/${raidedGuildDoc.antiraid.joinWithin}s`,
+                    inline: true,
+                },
+                {
+                    name: '👥 Raider Count',
+                    value: `${recentJoiners.length} users detected`,
+                    inline: true,
+                }
             )
             .setFooter({ text: 'Guardian Cross-Server Protection' })
             .setTimestamp();
 
         if (recentJoiners.length > 0) {
-            const raiderDetails = recentJoiners.slice(0, 15).map((raiderId, index) => {
-                const user = client.users.cache.get(raiderId);
-                return `${index + 1}. ${user ? user.tag : `Unknown (${raiderId})`}`;
-            }).join('\n');
+            const raiderDetails = recentJoiners
+                .slice(0, 15)
+                .map((raiderId, index) => {
+                    const user = client.users.cache.get(raiderId);
+                    return `${index + 1}. ${user ? user.tag : `Unknown (${raiderId})`}`;
+                })
+                .join('\n');
 
             infoEmbed.addFields({
                 name: `🎭 Recent Raiders (${Math.min(recentJoiners.length, 15)} shown)`,
-                value: raiderDetails || 'No data available'
+                value: raiderDetails || 'No data available',
             });
         }
 
         await interaction.editReply({ embeds: [infoEmbed] });
-
     } catch (error) {
         console.error('Error in handleRaidInfo:', error);
         await interaction.editReply({
-            embeds: [EmbedGenerator.errorEmbed('Failed to fetch raid details.')]
+            embeds: [EmbedGenerator.errorEmbed('Failed to fetch raid details.')],
         });
     }
 }

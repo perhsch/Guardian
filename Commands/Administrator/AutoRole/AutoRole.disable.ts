@@ -12,18 +12,23 @@ export default {
         if (!interaction.guild) return;
 
         if (!dbGuild.autorole.enabled) {
-            return { embeds: [EmbedGenerator.errorEmbed('The Auto-Role system is not enabled!')], ephemeral: true };
+            return {
+                embeds: [EmbedGenerator.errorEmbed('The Auto-Role system is not enabled!')],
+                ephemeral: true,
+            };
         }
 
-        const logEmbed = EmbedGenerator.basicEmbed(
-            `- Moderator: ${interaction.user.tag}`
-        ).setTitle('/autorole disable command used');
+        const logEmbed = EmbedGenerator.basicEmbed(`- Moderator: ${interaction.user.tag}`).setTitle(
+            '/autorole disable command used'
+        );
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         dbGuild.autorole.enabled = false;
         dbGuild.autorole.member = null;
         dbGuild.autorole.bot = null;
 
-        return { embeds: [EmbedGenerator.basicEmbed('🔓 | The Auto-Role system has been disabled!')] };
+        return {
+            embeds: [EmbedGenerator.basicEmbed('🔓 | The Auto-Role system has been disabled!')],
+        };
     },
 };

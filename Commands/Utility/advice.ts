@@ -44,19 +44,17 @@ export default {
         const advice = lifeAdvices[Math.floor(Math.random() * lifeAdvices.length)];
 
         const embed = new EmbedBuilder()
-            .setColor(0x00FF00)
+            .setColor(0x00ff00)
             .setTitle('💡 Life Advice')
             .setDescription(advice!)
-            .addFields(
-                {
-                    name: 'Remember',
-                    value: 'Take time to reflect on this advice and how it applies to your life.',
-                    inline: false
-                }
-            )
+            .addFields({
+                name: 'Remember',
+                value: 'Take time to reflect on this advice and how it applies to your life.',
+                inline: false,
+            })
             .setFooter({
                 text: 'Guardian Bot • Daily Wisdom',
-                iconURL: interaction.client.user?.displayAvatarURL()
+                iconURL: interaction.client.user?.displayAvatarURL(),
             })
             .setTimestamp();
 

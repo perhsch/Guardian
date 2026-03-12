@@ -1,4 +1,11 @@
-import { SlashCommandBuilder, PermissionsBitField, ChatInputCommandInteraction, Client, TextChannel, GuildMember } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionsBitField,
+    ChatInputCommandInteraction,
+    Client,
+    TextChannel,
+    GuildMember,
+} from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
 
@@ -12,8 +19,15 @@ export default {
     async execute(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any) {
         if (!interaction.guild || !interaction.channel || !interaction.member) return;
 
-        if (!(interaction.member as GuildMember).permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
+        if (
+            !(interaction.member as GuildMember).permissions.has(
+                PermissionsBitField.Flags.ManageMessages
+            )
+        ) {
+            return interaction.reply({
+                content: 'You do not have permission to use this command.',
+                ephemeral: true,
+            });
         }
 
         await interaction.deferReply({ ephemeral: true });
@@ -30,10 +44,16 @@ export default {
         }
 
         const logEmbed = EmbedGenerator.basicEmbed(
-            [`- Moderator: ${interaction.user.tag}`, `- Channel: <#${channel.id}>`, `- Messages deleted: ${deletedSize}`].join('\n')
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Channel: <#${channel.id}>`,
+                `- Messages deleted: ${deletedSize}`,
+            ].join('\n')
         ).setTitle('/clearchannel command used');
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-        return interaction.followUp({ content: `Successfully deleted **${deletedSize}** messages in this channel.` });
+        return interaction.followUp({
+            content: `Successfully deleted **${deletedSize}** messages in this channel.`,
+        });
     },
 };

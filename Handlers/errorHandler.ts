@@ -1,46 +1,47 @@
 import { EmbedBuilder } from 'discord.js';
 
-const ERROR_WEBHOOK_URL = 'https://canary.discord.com/api/webhooks/1481136328627458130/nHwx_90d33US20nb6wMtleY-ZBx3BvnxuwsRQ9tcXYcsTUITxMoJHx7HNXPO55s7ELeb';
+const ERROR_WEBHOOK_URL =
+    'https://canary.discord.com/api/webhooks/1481136328627458130/nHwx_90d33US20nb6wMtleY-ZBx3BvnxuwsRQ9tcXYcsTUITxMoJHx7HNXPO55s7ELeb';
 
 async function sendErrorToWebhook(error: Error, errorType: string): Promise<void> {
     try {
         const embed = new EmbedBuilder()
             .setTitle('🚨 Bot Error Occurred')
-            .setColor(0xFF0000)
+            .setColor(0xff0000)
             .addFields(
                 {
                     name: 'Error Type',
                     value: `\`${errorType}\``,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: 'Timestamp',
                     value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: 'Error Message',
                     value: `\`\`\`${error.message}\`\`\``,
-                    inline: false
+                    inline: false,
                 }
             )
             .setTimestamp();
 
         if (error.stack) {
-            const stackTrace = error.stack.length > 1000
-                ? error.stack.substring(0, 1000) + '...'
-                : error.stack;
+            const stackTrace =
+                error.stack.length > 1000 ? error.stack.substring(0, 1000) + '...' : error.stack;
             embed.addFields({
                 name: 'Stack Trace',
                 value: `\`\`\`${stackTrace}\`\`\``,
-                inline: false
+                inline: false,
             });
         }
 
         const payload = {
             embeds: [embed.toJSON()],
             username: 'Guardian Error Logger',
-            avatar_url: 'https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png'
+            avatar_url:
+                'https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png',
         };
 
         const response = await fetch(ERROR_WEBHOOK_URL, {
@@ -48,7 +49,7 @@ async function sendErrorToWebhook(error: Error, errorType: string): Promise<void
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
         });
 
         if (!response.ok) {

@@ -20,14 +20,21 @@ export default {
 
         if (!dbGuild.verification.enabled) {
             return {
-                embeds: [EmbedGenerator.errorEmbed("This guild doesn't have the Verification system enabled.")],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        "This guild doesn't have the Verification system enabled."
+                    ),
+                ],
                 ephemeral: true,
             };
         }
 
         const member = interaction.member as GuildMember;
 
-        if (!dbGuild.verification.unverifiedRole || !member.roles.cache.has(dbGuild.verification.unverifiedRole)) {
+        if (
+            !dbGuild.verification.unverifiedRole ||
+            !member.roles.cache.has(dbGuild.verification.unverifiedRole)
+        ) {
             return {
                 embeds: [EmbedGenerator.errorEmbed('You are already verified.')],
                 ephemeral: true,
@@ -43,7 +50,11 @@ export default {
 
         if (dbGuild.verification.version === 'captcha') {
             return {
-                embeds: [EmbedGenerator.errorEmbed('This guild uses a button for captcha verification. Please use the verify button in the verification channel.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'This guild uses a button for captcha verification. Please use the verify button in the verification channel.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
@@ -53,7 +64,9 @@ export default {
                 .remove(dbGuild.verification.unverifiedRole, 'Verification completed')
                 .then(() => {
                     if (dbGuild.verification.role) {
-                        member.roles.add(dbGuild.verification.role, 'Verification completed').catch(() => null);
+                        member.roles
+                            .add(dbGuild.verification.role, 'Verification completed')
+                            .catch(() => null);
                     }
                     interaction.reply({
                         embeds: [EmbedGenerator.basicEmbed('Verification completed.')],

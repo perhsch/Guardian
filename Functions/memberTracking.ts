@@ -47,7 +47,6 @@ export async function addGuild(guild: Discord.Guild, retries = 0): Promise<void>
 
     const dbGuild = await GuildsManager.fetch(guild.id);
     dbGuild.members = [...members.keys()];
-
 }
 
 /**
@@ -62,21 +61,23 @@ export async function removeGuild(guild: Discord.Guild): Promise<void> {
 /**
  * @param {Discord.GuildMember | Discord.PartialGuildMember} member
  */
-export async function addMember(member: Discord.GuildMember | Discord.PartialGuildMember): Promise<void> {
+export async function addMember(
+    member: Discord.GuildMember | Discord.PartialGuildMember
+): Promise<void> {
     const dbGuild = await GuildsManager.fetch(member.guild.id);
     if (!dbGuild.members.includes(member.id)) {
         const members = dbGuild.members;
         members.push(member.id);
         dbGuild.members = members;
     }
-
 }
 
 /**
  * @param {Discord.GuildMember | Discord.PartialGuildMember} member
  */
-export async function removeMember(member: Discord.GuildMember | Discord.PartialGuildMember): Promise<void> {
+export async function removeMember(
+    member: Discord.GuildMember | Discord.PartialGuildMember
+): Promise<void> {
     const dbGuild = await GuildsManager.fetch(member.guild.id);
     dbGuild.members = dbGuild.members.filter((id) => id !== member.id);
-
 }

@@ -10,9 +10,11 @@ export default {
 
     execute(_interaction: ChatInputCommandInteraction, _client: Client) {
         return {
-            embeds: [EmbedGenerator.basicEmbed(
-                `[Click me for the invite to the bot!](https://discord.com/oauth2/authorize?client_id=1469385720270426358&scope=bot)`
-            )],
+            embeds: [
+                EmbedGenerator.basicEmbed(
+                    `[Click me for the invite to the bot!](https://discord.com/oauth2/authorize?client_id=1469385720270426358&scope=bot)`
+                ),
+            ],
         };
     },
 };

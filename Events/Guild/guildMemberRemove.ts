@@ -8,7 +8,10 @@ export default {
      * @param {Discord.GuildMember | Discord.PartialGuildMember} member
      * @param {Discord.Client} client
      */
-    async execute(member: Discord.GuildMember | Discord.PartialGuildMember, client: Discord.Client) {
+    async execute(
+        member: Discord.GuildMember | Discord.PartialGuildMember,
+        client: Discord.Client
+    ) {
         const guild = await GuildsManager.fetch(member.guild.id);
         if (!guild) return;
 
@@ -16,7 +19,9 @@ export default {
             const logChannel = await member.guild.channels.fetch(guild.logs.basic_logs!);
             if (!logChannel || !(logChannel instanceof Discord.TextChannel)) return;
 
-            const accountCreation = member.user ? Math.floor(member.user.createdTimestamp / 1000) : 0;
+            const accountCreation = member.user
+                ? Math.floor(member.user.createdTimestamp / 1000)
+                : 0;
 
             logChannel.send({
                 embeds: [

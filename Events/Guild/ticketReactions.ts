@@ -3,7 +3,10 @@ import { ticketMenuData, TICKET_OPTIONS, createTicketWithType } from './ticketBu
 
 export default {
     name: 'messageReactionAdd',
-    async execute(reaction: Discord.MessageReaction | Discord.PartialMessageReaction, user: Discord.User | Discord.PartialUser) {
+    async execute(
+        reaction: Discord.MessageReaction | Discord.PartialMessageReaction,
+        user: Discord.User | Discord.PartialUser
+    ) {
         if (user.bot) return;
 
         const message = reaction.message;

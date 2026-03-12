@@ -24,11 +24,14 @@ async function sendStartupNotification(client: Client) {
             return;
         }
 
-        const totalMembers = client.guilds.cache.reduce((acc: number, guild: Guild) => acc + guild.memberCount, 0);
+        const totalMembers = client.guilds.cache.reduce(
+            (acc: number, guild: Guild) => acc + guild.memberCount,
+            0
+        );
         const totalServers = client.guilds.cache.size;
 
         const startupEmbed = new EmbedBuilder()
-            .setColor(0x00FF00)
+            .setColor(0x00ff00)
             .setTitle('🤖 Guardian Bot Online')
             .setDescription('**Guardian has successfully started and is now online!**')
             .setThumbnail(client.user.displayAvatarURL({ size: 256 }))
@@ -38,28 +41,28 @@ async function sendStartupNotification(client: Client) {
                     value: [
                         `**Servers:** ${totalServers}`,
                         `**Total Members:** ${totalMembers.toLocaleString()}`,
-                        `**Uptime:** <t:${Math.floor(Date.now() / 1000)}:R>`
+                        `**Uptime:** <t:${Math.floor(Date.now() / 1000)}:R>`,
                     ].join('\n'),
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '⚡ Status',
                     value: [
                         `**Status:** 🟢 Online`,
                         `**Version:** 1.7.0`,
-                        `**Node.js:** ${process.version}`
+                        `**Node.js:** ${process.version}`,
                     ].join('\n'),
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '🛡️ Features Ready',
                     value: '• Auto-moderation systems active\n• Cross-server raid protection\n',
-                    inline: false
+                    inline: false,
                 }
             )
             .setFooter({
                 text: 'Guardian Bot • Advanced Protection System',
-                iconURL: client.user.displayAvatarURL()
+                iconURL: client.user.displayAvatarURL(),
             })
             .setTimestamp();
 
@@ -83,7 +86,9 @@ export default {
         await client.expiringDocumentsManager.reminders.init();
 
         if (process.env['LIVE'] === 'true') {
-            process.on('uncaughtException', async (e: any) => console.log(e.stack || 'Unknown Error'));
+            process.on('uncaughtException', async (e: any) =>
+                console.log(e.stack || 'Unknown Error')
+            );
             process.on('unhandledRejection', async (e: any) =>
                 console.log(e.stack || 'Unknown Rejection')
             );
@@ -103,7 +108,10 @@ export default {
             return;
         }
 
-        const totalMembers = client.guilds.cache.reduce((acc: number, guild: Guild) => acc + guild.memberCount, 0);
+        const totalMembers = client.guilds.cache.reduce(
+            (acc: number, guild: Guild) => acc + guild.memberCount,
+            0
+        );
         const statuses = [
             { name: `Serving ${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
             { name: `${totalMembers} members!`, type: ActivityType.Watching },

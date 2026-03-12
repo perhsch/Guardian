@@ -1,4 +1,9 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 // @ts-ignore — Backup schema may not have types
 import backupSchema from '../../Schemas/Backup.ts';
 import mongoose from 'mongoose';
@@ -33,7 +38,12 @@ export default {
         };
 
         const newBackup = await new backupSchema(backup).save();
-        await interaction.user.send(`Backup created with name ${backup.name} and ID ${newBackup.backupId}`);
-        return interaction.reply({ content: `Backup created successfully! Details sent to your DMs.`, ephemeral: true });
+        await interaction.user.send(
+            `Backup created with name ${backup.name} and ID ${newBackup.backupId}`
+        );
+        return interaction.reply({
+            content: `Backup created successfully! Details sent to your DMs.`,
+            ephemeral: true,
+        });
     },
 };

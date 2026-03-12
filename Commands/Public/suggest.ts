@@ -22,7 +22,9 @@ export default {
 
         if (!dbGuild.suggestion.enabled) {
             return {
-                embeds: [EmbedGenerator.errorEmbed('This guild has not enabled the Suggestion system.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed('This guild has not enabled the Suggestion system.'),
+                ],
                 ephemeral: true,
             };
         }
@@ -43,13 +45,17 @@ export default {
             embed.setFooter({ text: '✅ 0% | ❌ 0%' });
         }
 
-        channel.send({ embeds: [embed] })
+        channel
+            .send({ embeds: [embed] })
             .then(async (sent) => {
                 if (dbGuild.suggestion.reactions) {
                     await sent.react('✅');
                     await sent.react('❌');
                 }
-                interaction.reply({ embeds: [EmbedGenerator.basicEmbed('Suggested.')], ephemeral: true });
+                interaction.reply({
+                    embeds: [EmbedGenerator.basicEmbed('Suggested.')],
+                    ephemeral: true,
+                });
             })
             .catch(() => {
                 interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true });

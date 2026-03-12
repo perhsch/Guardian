@@ -60,7 +60,7 @@ export async function loadEvents(client: Client) {
 
             const fileName = file.split(/[/\\]/).pop() || 'unknown';
             const eventName = event.name || fileName.replace('.js', '').replace('.ts', '');
-            const eventType = event.rest ? 'REST' : (event.once ? 'ONCE' : 'REPEATING');
+            const eventType = event.rest ? 'REST' : event.once ? 'ONCE' : 'REPEATING';
             const eventEmoji = getEventEmoji(fileName.toLowerCase());
 
             if (event.rest) {
@@ -93,7 +93,10 @@ export async function loadEvents(client: Client) {
     const total = successCount + errorCount;
     const successRate = total > 0 ? ((successCount / total) * 100).toFixed(1) : '0';
 
-    styledLog(`✅ ${successCount} loaded │ ❌ ${errorCount} failed │ 📊 ${successRate}% │ 🎯 ${successCount} events`, '\x1b[36m');
+    styledLog(
+        `✅ ${successCount} loaded │ ❌ ${errorCount} failed │ 📊 ${successRate}% │ 🎯 ${successCount} events`,
+        '\x1b[36m'
+    );
 
     if (errorCount === 0) {
         styledLog('🎉 All events loaded! ⚡ Ready!', '\x1b[92m');

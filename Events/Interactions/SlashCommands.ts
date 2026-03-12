@@ -9,7 +9,10 @@ import { translateResponse, translateText } from '../../Functions/translate.ts';
  * @param {Discord.ChatInputCommandInteraction} interaction
  * @param {string | null} userLang
  */
-function wrapInteractionForTranslation(interaction: Discord.ChatInputCommandInteraction, userLang: string | null) {
+function wrapInteractionForTranslation(
+    interaction: Discord.ChatInputCommandInteraction,
+    userLang: string | null
+) {
     const originalReply = interaction.reply.bind(interaction);
     const originalEditReply = interaction.editReply.bind(interaction);
     const originalFollowUp = interaction.followUp.bind(interaction);
@@ -67,7 +70,7 @@ function wrapInteractionForTranslation(interaction: Discord.ChatInputCommandInte
             }
         }
     };
-    
+
     // @ts-ignore
     interaction.editReply = async (options: any) => {
         const fallback = typeof options === 'string' ? { content: options } : options;
@@ -78,7 +81,7 @@ function wrapInteractionForTranslation(interaction: Discord.ChatInputCommandInte
             return await originalEditReply(fallback);
         }
     };
-    
+
     // @ts-ignore
     interaction.followUp = async (options: any) => {
         const fallback = typeof options === 'string' ? { content: options } : options;
@@ -126,7 +129,7 @@ export default {
                 ),
                 ephemeral: true,
             });
-            
+
         executeFunction = command.execute;
 
         if (command.developer && interaction.user.id !== '1447738202600505407') {
@@ -161,7 +164,8 @@ export default {
         // Allow setup and help commands to run even if not set up
         if (
             interaction.guild &&
-            dbGuild && !dbGuild.setup &&
+            dbGuild &&
+            !dbGuild.setup &&
             interaction.commandName !== 'setup' &&
             interaction.commandName !== 'help'
         ) {
@@ -175,7 +179,7 @@ export default {
 
         const needsTranslation = userLang && userLang.toLowerCase() !== 'en';
         if (needsTranslation && interaction.deferReply) {
-            await interaction.deferReply({ ephemeral: true }).catch(() => { });
+            await interaction.deferReply({ ephemeral: true }).catch(() => {});
         }
 
         const { originalReply, originalEditReply } = wrapInteractionForTranslation(

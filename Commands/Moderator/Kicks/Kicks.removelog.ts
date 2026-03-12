@@ -1,4 +1,8 @@
-import Discord, { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client } from 'discord.js';
+import Discord, {
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import Infractions from '../../../Schemas/Infractions.ts';
 

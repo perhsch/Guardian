@@ -11,12 +11,11 @@ const baseUrl = () =>
  * @param {Discord.Client} client - Bot client to resolve user tags
  * @returns {Promise<string>}
  */
-export async function buildTranscriptText(ticket: ITicket, client: Discord.Client): Promise<string> {
-    const lines = [
-        `Ticket ${ticket._id} | Guild ${ticket.guild}`,
-        '---',
-        '',
-    ];
+export async function buildTranscriptText(
+    ticket: ITicket,
+    client: Discord.Client
+): Promise<string> {
+    const lines = [`Ticket ${ticket._id} | Guild ${ticket.guild}`, '---', ''];
     for (const m of ticket.messages || []) {
         const user = await client.users.fetch(m.user).catch(() => null);
         const tag = user ? user.tag : `User ${m.user}`;
@@ -93,9 +92,12 @@ export async function closeTicketChannel(
     if (logChannelId && transcriptText) {
         const logChannel = await guild.channels.fetch(logChannelId).catch(() => null);
         if (logChannel && logChannel.isTextBased()) {
-            const logAttachment = new Discord.AttachmentBuilder(Buffer.from(transcriptText, 'utf8'), {
-                name: `ticket-${ticket._id}.txt`,
-            });
+            const logAttachment = new Discord.AttachmentBuilder(
+                Buffer.from(transcriptText, 'utf8'),
+                {
+                    name: `ticket-${ticket._id}.txt`,
+                }
+            );
             const logEmbed = EmbedGenerator.basicEmbed(
                 `Ticket **${channel.name}** closed by <@${closedByUserId}>.\nTranscript attached.`
             )

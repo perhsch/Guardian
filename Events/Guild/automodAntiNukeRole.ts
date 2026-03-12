@@ -38,7 +38,7 @@ export default {
 
         const executor = await role.guild.members.fetch(executorId).catch(() => null);
         if (!executor) return;
-        
+
         if (executor.id === client.user?.id) {
             return;
         }
@@ -49,15 +49,18 @@ export default {
             const actionText = action === 'ban' ? 'banned' : 'kicked';
             const dmEmbed = EmbedGenerator.basicEmbed(
                 `**Automod Action: Anti-Nuke**\n\n` +
-                `You have been ${actionText} from **${role.guild.name}** by the automoderation system.\n\n` +
-                `**Reason:** ${reason}\n` +
-                `**System:** Anti Nuke Protection\n` +
-                `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
-                `Mass deletion of roles is not allowed and triggers automatic protection measures.`
+                    `You have been ${actionText} from **${role.guild.name}** by the automoderation system.\n\n` +
+                    `**Reason:** ${reason}\n` +
+                    `**System:** Anti Nuke Protection\n` +
+                    `**Action Taken:** ${action === 'ban' ? 'Ban' : 'Kick'}\n\n` +
+                    `Mass deletion of roles is not allowed and triggers automatic protection measures.`
             )
                 .setColor(Discord.Colors.Red)
                 .setTitle(`Automod: ${action === 'ban' ? 'Banned' : 'Kicked'}`)
-                .setFooter({ text: `${role.guild.name}`, iconURL: role.guild.iconURL() || undefined })
+                .setFooter({
+                    text: `${role.guild.name}`,
+                    iconURL: role.guild.iconURL() || undefined,
+                })
                 .setTimestamp();
             await executor.send({ embeds: [dmEmbed] }).catch(() => null);
             try {
@@ -68,9 +71,9 @@ export default {
                 }
                 const logEmbed = EmbedGenerator.basicEmbed(
                     `**Anti Nuke Triggered**\n` +
-                    `${executor} (${executor.user.tag}) was ${action === 'ban' ? 'banned' : 'kicked'}.\n` +
-                    `**Reason:** Deleted ${count} roles within 1 minute.\n` +
-                    `**Role:** ${role.name || 'Unknown'} (${role.id})`
+                        `${executor} (${executor.user.tag}) was ${action === 'ban' ? 'banned' : 'kicked'}.\n` +
+                        `**Reason:** Deleted ${count} roles within 1 minute.\n` +
+                        `**Role:** ${role.name || 'Unknown'} (${role.id})`
                 )
                     .setColor(Discord.Colors.Red)
                     .setTitle('Automod: Anti Nuke')
@@ -80,8 +83,8 @@ export default {
                 console.error('Anti-nuke role action failed:', err);
                 const errorEmbed = EmbedGenerator.basicEmbed(
                     `**Anti Nuke Action Failed**\n` +
-                    `Failed to ${action} ${executor} (${executor.user.tag}) for deleting ${count} roles.\n` +
-                    `**Error:** ${err.message || 'Unknown error'}`
+                        `Failed to ${action} ${executor} (${executor.user.tag}) for deleting ${count} roles.\n` +
+                        `**Error:** ${err.message || 'Unknown error'}`
                 )
                     .setColor(Discord.Colors.Red)
                     .setTitle('Automod: Anti Nuke Error');

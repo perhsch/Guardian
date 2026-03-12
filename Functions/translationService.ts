@@ -81,7 +81,7 @@ class TranslationService {
 
         this.cache.set(key, {
             text: translatedText,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         });
     }
 
@@ -111,7 +111,7 @@ class TranslationService {
                 targetLang,
                 resolve,
                 reject,
-                timestamp: Date.now()
+                timestamp: Date.now(),
             };
 
             this.queue.push(queueItem);

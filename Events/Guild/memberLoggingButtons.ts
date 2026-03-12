@@ -16,23 +16,39 @@ export default {
 
         const memberId = splitArray[2];
         const member = await interaction.guild.members.fetch(memberId).catch(() => null);
-        
+
         const errorArray: string[] = [];
         const action = splitArray[1];
 
         if (action === 'Ban') {
-            if (!(interaction.member as Discord.GuildMember).permissions.has(Discord.PermissionFlagsBits.BanMembers))
+            if (
+                !(interaction.member as Discord.GuildMember).permissions.has(
+                    Discord.PermissionFlagsBits.BanMembers
+                )
+            )
                 errorArray.push('You do not have the required permissions for this action.');
-            if (!interaction.guild.members.me?.permissions.has(Discord.PermissionFlagsBits.BanMembers))
+            if (
+                !interaction.guild.members.me?.permissions.has(
+                    Discord.PermissionFlagsBits.BanMembers
+                )
+            )
                 errorArray.push('Bot does not have Ban Members permission.');
         }
         if (action === 'Kick') {
-            if (!(interaction.member as Discord.GuildMember).permissions.has(Discord.PermissionFlagsBits.KickMembers))
+            if (
+                !(interaction.member as Discord.GuildMember).permissions.has(
+                    Discord.PermissionFlagsBits.KickMembers
+                )
+            )
                 errorArray.push('You do not have the required permissions for this action.');
-            if (!interaction.guild.members.me?.permissions.has(Discord.PermissionFlagsBits.KickMembers))
+            if (
+                !interaction.guild.members.me?.permissions.has(
+                    Discord.PermissionFlagsBits.KickMembers
+                )
+            )
                 errorArray.push('Bot does not have Kick Members permission.');
         }
-        
+
         if (!member) {
             errorArray.push('This user is no longer in this server.');
         } else if (!member.moderatable) {

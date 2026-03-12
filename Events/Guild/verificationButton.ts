@@ -39,9 +39,14 @@ export default {
             // Handle button version
             if (guild.verification.version === 'button') {
                 try {
-                    await member.roles.remove(guild.verification.unverifiedRole, 'Verification completed');
+                    await member.roles.remove(
+                        guild.verification.unverifiedRole,
+                        'Verification completed'
+                    );
                     if (guild.verification.role) {
-                        await member.roles.add(guild.verification.role, 'Verification completed').catch(() => null);
+                        await member.roles
+                            .add(guild.verification.role, 'Verification completed')
+                            .catch(() => null);
                     }
 
                     return interaction.reply({
@@ -75,7 +80,9 @@ export default {
                             }),
                     ],
                     files: [
-                        new Discord.AttachmentBuilder(generatedCaptcha.JPEGStream, { name: 'captcha.jpg' }),
+                        new Discord.AttachmentBuilder(generatedCaptcha.JPEGStream, {
+                            name: 'captcha.jpg',
+                        }),
                     ],
                     components: [
                         new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents([
@@ -117,7 +124,10 @@ export default {
                 .setMaxLength(6)
                 .setRequired(true);
 
-            const actionRow = new Discord.ActionRowBuilder<Discord.TextInputBuilder>().addComponents(captchaInput);
+            const actionRow =
+                new Discord.ActionRowBuilder<Discord.TextInputBuilder>().addComponents(
+                    captchaInput
+                );
             modal.addComponents(actionRow);
 
             return interaction.showModal(modal);
@@ -158,9 +168,14 @@ export default {
 
             if (captchaInput.toUpperCase() === dbUser.captcha) {
                 try {
-                    await member.roles.remove(guild.verification.unverifiedRole, 'Verification completed');
+                    await member.roles.remove(
+                        guild.verification.unverifiedRole,
+                        'Verification completed'
+                    );
                     if (guild.verification.role) {
-                        await member.roles.add(guild.verification.role, 'Verification completed').catch(() => null);
+                        await member.roles
+                            .add(guild.verification.role, 'Verification completed')
+                            .catch(() => null);
                     }
 
                     dbUser.captcha = null; // Clear captcha after successful verification

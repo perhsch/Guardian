@@ -1,4 +1,9 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
 import Infractions from '../../Schemas/Infractions.ts';
@@ -67,7 +72,10 @@ export default {
 
             await interaction.reply({ embeds: [infractionEmbed] });
         } catch {
-            await interaction.reply({ embeds: [EmbedGenerator.errorEmbed('Failed to kick the user.')], ephemeral: true });
+            await interaction.reply({
+                embeds: [EmbedGenerator.errorEmbed('Failed to kick the user.')],
+                ephemeral: true,
+            });
         }
     },
 };

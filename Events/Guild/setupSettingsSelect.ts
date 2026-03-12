@@ -26,7 +26,9 @@ function buildSetupSelectOptions(dbGuild: any): Discord.StringSelectMenuOptionBu
             new Discord.StringSelectMenuOptionBuilder()
                 .setLabel('Logging & Channels')
                 .setValue('logging')
-                .setDescription('Configure log, mod log, suggestions, announcement & giveaway channels')
+                .setDescription(
+                    'Configure log, mod log, suggestions, announcement & giveaway channels'
+                )
                 .setEmoji('📋')
         );
     if (needsSuggestion)
@@ -88,7 +90,11 @@ function buildLoggingModal(dbGuild: any): Discord.ModalBuilder {
                 'Suggestions Channel ID',
                 dbGuild?.logs?.suggestionsChannel || dbGuild?.suggestion?.channel
             ),
-            optional('announcement_channel', 'Announcement Channel ID', dbGuild?.logs?.announcementChannel),
+            optional(
+                'announcement_channel',
+                'Announcement Channel ID',
+                dbGuild?.logs?.announcementChannel
+            ),
             optional('giveaway_channel', 'Giveaway Channel ID', dbGuild?.logs?.giveawayChannel)
         );
 }
@@ -102,8 +108,7 @@ function buildSuggestionModal(dbGuild: any): Discord.ModalBuilder {
         .setRequired(true)
         .setMinLength(17)
         .setMaxLength(20);
-    const channelVal =
-        dbGuild?.suggestion?.channel || dbGuild?.logs?.suggestionsChannel;
+    const channelVal = dbGuild?.suggestion?.channel || dbGuild?.logs?.suggestionsChannel;
     if (channelVal) channelInput.setValue(channelVal);
 
     const reactionsInput = new Discord.TextInputBuilder()
@@ -165,7 +170,11 @@ export default {
         if (interaction.isButton() && interaction.customId === 'setup_settings_button') {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only members with Manage Server permission can use setup.')],
+                    embeds: [
+                        EmbedGenerator.errorEmbed(
+                            'Only members with Manage Server permission can use setup.'
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -177,12 +186,13 @@ export default {
                     ephemeral: true,
                 });
             }
-            const selectRow = new Discord.ActionRowBuilder<Discord.StringSelectMenuBuilder>().addComponents(
-                new Discord.StringSelectMenuBuilder()
-                    .setCustomId('setup_settings_select')
-                    .setPlaceholder('⚙️ Choose a feature to configure...')
-                    .addOptions(options)
-            );
+            const selectRow =
+                new Discord.ActionRowBuilder<Discord.StringSelectMenuBuilder>().addComponents(
+                    new Discord.StringSelectMenuBuilder()
+                        .setCustomId('setup_settings_select')
+                        .setPlaceholder('⚙️ Choose a feature to configure...')
+                        .addOptions(options)
+                );
             return interaction.update({
                 components: [selectRow],
             });
@@ -191,7 +201,11 @@ export default {
         if (interaction.isStringSelectMenu() && interaction.customId === 'setup_settings_select') {
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only members with Manage Server permission can use setup.')],
+                    embeds: [
+                        EmbedGenerator.errorEmbed(
+                            'Only members with Manage Server permission can use setup.'
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -220,7 +234,11 @@ export default {
 
             if (!interaction.memberPermissions?.has(Discord.PermissionFlagsBits.ManageGuild)) {
                 return interaction.reply({
-                    embeds: [EmbedGenerator.errorEmbed('Only members with Manage Server permission can use setup.')],
+                    embeds: [
+                        EmbedGenerator.errorEmbed(
+                            'Only members with Manage Server permission can use setup.'
+                        ),
+                    ],
                     ephemeral: true,
                 });
             }
@@ -229,7 +247,9 @@ export default {
 
             if (customId === 'setup_modal_logging') {
                 const logChannelId = interaction.fields.getTextInputValue('basic_logs').trim();
-                const modLogId = parseIdInput(interaction.fields.getTextInputValue('modlog_channel'));
+                const modLogId = parseIdInput(
+                    interaction.fields.getTextInputValue('modlog_channel')
+                );
                 const suggestionsId = parseIdInput(
                     interaction.fields.getTextInputValue('suggestions_channel')
                 );
@@ -261,8 +281,12 @@ export default {
                 };
 
                 const modLogValid = modLogId ? await validateChannel(modLogId) : null;
-                const suggestionsValid = suggestionsId ? await validateChannel(suggestionsId) : null;
-                const announcementValid = announcementId ? await validateChannel(announcementId) : null;
+                const suggestionsValid = suggestionsId
+                    ? await validateChannel(suggestionsId)
+                    : null;
+                const announcementValid = announcementId
+                    ? await validateChannel(announcementId)
+                    : null;
                 const giveawayValid = giveawayId ? await validateChannel(giveawayId) : null;
 
                 if (modLogId && !modLogValid) {

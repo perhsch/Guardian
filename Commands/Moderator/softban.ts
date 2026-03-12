@@ -1,4 +1,9 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 import ms from 'ms';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
@@ -15,7 +20,8 @@ export default {
             option.setName('user').setDescription("The user you'd like to ban.").setRequired(true)
         )
         .addStringOption((option) =>
-            option.setName('delete_messages')
+            option
+                .setName('delete_messages')
                 .setDescription('How much of their recent message history to delete.')
                 .addChoices(
                     { name: "Don't delete any", value: '0s' },
@@ -43,24 +49,54 @@ export default {
         if (!member) return { content: 'That user is no longer in the server.', ephemeral: true };
         if (!member.bannable) return { content: 'User cannot be banned.', ephemeral: true };
 
-        const infractionEmbed = EmbedGenerator.infractionEmbed(interaction.guild, interaction.user.id, 'Soft-Ban', 0, Date.now(), reason);
+        const infractionEmbed = EmbedGenerator.infractionEmbed(
+            interaction.guild,
+            interaction.user.id,
+            'Soft-Ban',
+            0,
+            Date.now(),
+            reason
+        );
         await member.send({ embeds: [infractionEmbed] }).catch(() => null);
 
-        member.ban({ reason, deleteMessageSeconds: ms(deleteMessages) / 1000 })
+        member
+            .ban({ reason, deleteMessageSeconds: ms(deleteMessages) / 1000 })
             .then(async () => {
-                await Infractions.create({ guild: interaction.guild!.id, user: member.id, issuer: interaction.user.id, type: 'ban', reason, duration: 0, active: false });
+                await Infractions.create({
+                    guild: interaction.guild!.id,
+                    user: member.id,
+                    issuer: interaction.user.id,
+                    type: 'ban',
+                    reason,
+                    duration: 0,
+                    active: false,
+                });
 
                 const logEmbed = EmbedGenerator.basicEmbed(
-                    [`- Moderator: ${interaction.user.tag}`, `- Target: ${member.user.tag} (${member.id})`, `- Delete messages: ${deleteMessages}`, `- Reason: ${reason}`].join('\n')
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Target: ${member.user.tag} (${member.id})`,
+                        `- Delete messages: ${deleteMessages}`,
+                        `- Reason: ${reason}`,
+                    ].join('\n')
                 ).setTitle('/softban command used');
                 await sendModLog(interaction.guild!, dbGuild, logEmbed);
 
-                await interaction.guild!.members.unban(user.id)
+                await interaction
+                    .guild!.members.unban(user.id)
                     .then(() => interaction.reply({ embeds: [infractionEmbed] }))
-                    .catch(() => interaction.reply({
-                        embeds: [EmbedGenerator.errorEmbed(`There was an error while un-banning the user\nPlease manually run \`/unban ${user.id}\``)]
-                    }));
+                    .catch(() =>
+                        interaction.reply({
+                            embeds: [
+                                EmbedGenerator.errorEmbed(
+                                    `There was an error while un-banning the user\nPlease manually run \`/unban ${user.id}\``
+                                ),
+                            ],
+                        })
+                    );
             })
-            .catch(() => interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true }));
+            .catch(() =>
+                interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true })
+            );
     },
 };

@@ -1,4 +1,10 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, TextChannel } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    TextChannel,
+} from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
 
@@ -23,10 +29,16 @@ export default {
             .edit(interaction.guild.roles.everyone, { SendMessages: false })
             .then(async () => {
                 const logEmbed = EmbedGenerator.basicEmbed(
-                    [`- Moderator: ${interaction.user.tag}`, `- Channel: <#${channel.id}>`, `- Reason: ${reason}`].join('\n')
+                    [
+                        `- Moderator: ${interaction.user.tag}`,
+                        `- Channel: <#${channel.id}>`,
+                        `- Reason: ${reason}`,
+                    ].join('\n')
                 ).setTitle('/lockdown command used');
                 await sendModLog(interaction.guild!, dbGuild, logEmbed);
-                interaction.reply({ embeds: [EmbedGenerator.basicEmbed(`This channel has been locked | ${reason}`)] });
+                interaction.reply({
+                    embeds: [EmbedGenerator.basicEmbed(`This channel has been locked | ${reason}`)],
+                });
             })
             .catch(() => {
                 interaction.reply({ embeds: [EmbedGenerator.errorEmbed()], ephemeral: true });

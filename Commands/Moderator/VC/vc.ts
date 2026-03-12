@@ -1,4 +1,11 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, EmbedBuilder, GuildMember } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    EmbedBuilder,
+    GuildMember,
+} from 'discord.js';
 import EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../../Functions/modLog.ts';
 import Infractions from '../../../Schemas/Infractions.ts';
@@ -44,7 +51,11 @@ export default {
         // Prevent self-moderation
         if (user.id === interaction.user.id) {
             return {
-                embeds: [EmbedGenerator.errorEmbed('You cannot perform voice moderation actions on yourself.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'You cannot perform voice moderation actions on yourself.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
@@ -67,9 +78,16 @@ export default {
 
         // Check permissions hierarchy
         const interactionMember = interaction.member as GuildMember;
-        if (interactionMember.roles.highest.position <= member.roles.highest.position && interaction.user.id !== interaction.guild.ownerId) {
+        if (
+            interactionMember.roles.highest.position <= member.roles.highest.position &&
+            interaction.user.id !== interaction.guild.ownerId
+        ) {
             return {
-                embeds: [EmbedGenerator.errorEmbed('You cannot perform voice moderation actions on someone with an equal or higher role.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'You cannot perform voice moderation actions on someone with an equal or higher role.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
@@ -138,14 +156,20 @@ export default {
         } catch (error: unknown) {
             console.error('Voice moderation error:', error);
             return {
-                embeds: [EmbedGenerator.errorEmbed('Failed to perform voice moderation action. Check my permissions.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'Failed to perform voice moderation action. Check my permissions.'
+                    ),
+                ],
                 ephemeral: true,
             };
         }
 
         if (!success) {
             return {
-                embeds: [EmbedGenerator.errorEmbed('Failed to perform the voice moderation action.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed('Failed to perform the voice moderation action.'),
+                ],
                 ephemeral: true,
             };
         }
@@ -161,11 +185,12 @@ export default {
             .addFields(
                 {
                     name: '🔍 Member Details',
-                    value: `• **Joined Server**: <t:${Math.floor(member.joinedTimestamp! / 1000)}:R>\n• **Account Created**: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>\n• **Current Roles**: ${member.roles.cache
+                    value: `• **Joined Server**: <t:${Math.floor(member.joinedTimestamp! / 1000)}:R>\n• **Account Created**: <t:${Math.floor(member.user.createdTimestamp / 1000)}:R>\n• **Current Roles**: ${
+                        member.roles.cache
                             .map((r) => r)
                             .slice(0, 3)
                             .join(' ') || 'None'
-                        }${member.roles.cache.size > 3 ? ` +${member.roles.cache.size - 3} more` : ''}`,
+                    }${member.roles.cache.size > 3 ? ` +${member.roles.cache.size - 3} more` : ''}`,
                     inline: true,
                 },
                 {

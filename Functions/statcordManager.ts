@@ -34,7 +34,7 @@ export class StatcordManager {
             // console.log('Trying alternative Statcord initialization...');
             this.statcord = new (Statcord as any).Client({
                 key: apiKey,
-                client: this.client
+                client: this.client,
             });
         }
     }
@@ -42,7 +42,7 @@ export class StatcordManager {
     async start(): Promise<void> {
         try {
             // Wait a bit for client to be fully ready
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 2000));
 
             await this.initializeStatcord();
 
@@ -52,9 +52,12 @@ export class StatcordManager {
             await this.postStats();
 
             // Set up automatic posting every 30 minutes
-            setInterval(async () => {
-                await this.postStats();
-            }, 30 * 60 * 1000);
+            setInterval(
+                async () => {
+                    await this.postStats();
+                },
+                30 * 60 * 1000
+            );
 
             // console.log('Statcord integration started successfully');
         } catch (error) {
@@ -73,8 +76,14 @@ export class StatcordManager {
             const stats = {
                 servers: this.client.guilds.cache.size,
                 users: this.client.users.cache.size,
-                members: this.client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0),
-                channels: this.client.guilds.cache.reduce((acc, guild) => acc + guild.channels.cache.size, 0),
+                members: this.client.guilds.cache.reduce(
+                    (acc, guild) => acc + guild.memberCount,
+                    0
+                ),
+                channels: this.client.guilds.cache.reduce(
+                    (acc, guild) => acc + guild.channels.cache.size,
+                    0
+                ),
                 shards: this.client.ws?.shards?.size || 0,
                 voice: 0, // You can add voice connections later if needed
                 playing: this.client.user.presence?.activities?.[0]?.name || 'Guardian Bot',
@@ -82,8 +91,8 @@ export class StatcordManager {
                 memory: {
                     total: os.totalmem(),
                     used: os.totalmem() - os.freemem(),
-                    percentage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100)
-                }
+                    percentage: Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100),
+                },
             };
 
             //console.log('Posting stats to Statcord:', JSON.stringify(stats, null, 2));
@@ -114,7 +123,7 @@ export class StatcordManager {
                 voice: 0,
                 playing: 'Offline',
                 uptime: 0,
-                memory: { total: 0, used: 0, percentage: 0 }
+                memory: { total: 0, used: 0, percentage: 0 },
             });
             // console.log('Statcord stopped');
         } catch (error) {

@@ -1,4 +1,14 @@
-import Discord, { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, Client, User, ChatInputCommandInteraction } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    Collection,
+    Client,
+    User,
+    ChatInputCommandInteraction,
+} from 'discord.js';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { translateText } from '../../Functions/translate.ts';
 // @ts-ignore
@@ -150,7 +160,7 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
         const info = CATEGORY_INFO[category] || {
             emoji: '📋',
             description: 'Commands',
-            color: 0x5865f2
+            color: 0x5865f2,
         };
         const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
 
@@ -212,10 +222,18 @@ export default {
                     { name: 'Utility', value: 'utility' }
                 )
         ),
-    async execute(interaction: ChatInputCommandInteraction, client: Client, _dbGuild: any, dbUser: any) {
+    async execute(
+        interaction: ChatInputCommandInteraction,
+        client: Client,
+        _dbGuild: any,
+        dbUser: any
+    ) {
         let embeds = buildHelpEmbeds(client.commands, client, interaction.user);
         if (embeds.length === 0) {
-            return { embeds: [EmbedGenerator.errorEmbed('No commands available.')], ephemeral: true };
+            return {
+                embeds: [EmbedGenerator.errorEmbed('No commands available.')],
+                ephemeral: true,
+            };
         }
 
         const userLang = dbUser?.language;
@@ -285,11 +303,16 @@ export default {
             ],
         });
 
-        const sent = await interaction.reply({ ...updatePayload(page), ephemeral, fetchReply: true });
+        const sent = await interaction.reply({
+            ...updatePayload(page),
+            ephemeral,
+            fetchReply: true,
+        });
 
         const filter = (i: any) =>
-            ['help_first', 'help_prev', 'help_next', 'help_home', 'help_last'].includes(i.customId) && 
-            i.user.id === interaction.user.id;
+            ['help_first', 'help_prev', 'help_next', 'help_home', 'help_last'].includes(
+                i.customId
+            ) && i.user.id === interaction.user.id;
         const collector = sent.createMessageComponentCollector({ filter, time: 120000 });
 
         collector.on('collect', async (i: any) => {

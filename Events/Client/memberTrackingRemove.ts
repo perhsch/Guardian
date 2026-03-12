@@ -9,7 +9,6 @@ export default {
      * @param {Discord.Client} client
      */
     async execute(guild: Discord.Guild, _client: Discord.Client) {
-
         await removeGuild(guild);
     },
 };

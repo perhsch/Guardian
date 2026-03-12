@@ -9,9 +9,9 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
     private checkTimeout: NodeJS.Timeout | null | Promise<NodeJS.Timeout | null> = null;
 
     /**
-     * @param model 
+     * @param model
      * @param timeField which field of the document to use as expiration time
-     * @param expiredFunction 
+     * @param expiredFunction
      * @param query filter which documents are checked
      */
     constructor(
@@ -56,16 +56,18 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
                     document instanceof Mongoose.Document &&
                     (document.get(this.timeField) as number) > executionTime
             ); // grab any returned documents that have a new expiration date
-            
+
         if (updatedDocuments.length > 0) {
             this.documents.push(...updatedDocuments); // add the updated documents back into the check
-            this.documents.sort((a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number)); // resort with new documents
+            this.documents.sort(
+                (a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number)
+            ); // resort with new documents
         }
 
         if (this.documents[0]) {
             const nextExpiration = this.documents[0].get(this.timeField) as number;
             if (Date.now() >= nextExpiration) return this.checkForExpired(); // some documents expired while we were checking, recheck
-            
+
             const delay = Math.min(2147483647, nextExpiration - Date.now());
             return (this.checkTimeout = setTimeout(() => {
                 this.checkTimeout = this.checkForExpired() as any; // time's up, check em
@@ -89,17 +91,25 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
                 this.checkTimeout = null;
 
                 this.documents.unshift(document);
-                const delay = Math.min(2147483647, (this.documents[0].get(this.timeField) as number) - Date.now());
+                const delay = Math.min(
+                    2147483647,
+                    (this.documents[0].get(this.timeField) as number) - Date.now()
+                );
                 this.checkTimeout = setTimeout(() => {
                     this.checkTimeout = this.checkForExpired() as any; // time's up, check em
                 }, delay); // wait until the next document expires
             } else {
                 this.documents.push(document);
-                this.documents.sort((a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number));
+                this.documents.sort(
+                    (a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number)
+                );
             }
         } else {
             this.documents.push(document);
-            const delay = Math.min(2147483647, (this.documents[0].get(this.timeField) as number) - Date.now());
+            const delay = Math.min(
+                2147483647,
+                (this.documents[0].get(this.timeField) as number) - Date.now()
+            );
             this.checkTimeout = setTimeout(() => {
                 this.checkTimeout = this.checkForExpired() as any; // time's up, check em
             }, delay); // wait until the next document expires
@@ -112,7 +122,7 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
             return this.addNewDocument(document);
 
         this.checkTimeout = await this.checkTimeout; // incase were checking, wait for it to complete
-        
+
         const firstDoc = this.documents[0];
         if (this.checkTimeout && firstDoc) {
             // if we have documents that need to be checked
@@ -125,8 +135,13 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
                     document,
                     ...this.documents.filter((doc) => doc.id !== document.id),
                 ]; // replace the old document with the new one
-                this.documents.sort((a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number));
-                const delay = Math.min(2147483647, (this.documents[0].get(this.timeField) as number) - Date.now());
+                this.documents.sort(
+                    (a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number)
+                );
+                const delay = Math.min(
+                    2147483647,
+                    (this.documents[0].get(this.timeField) as number) - Date.now()
+                );
                 this.checkTimeout = setTimeout(() => {
                     this.checkTimeout = this.checkForExpired() as any; // time's up, check em
                 }, delay); // wait until the next document expires
@@ -135,8 +150,13 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
                     ...this.documents.filter((doc) => doc.id !== document.id),
                     document,
                 ]; // replace the old document with the new one
-                this.documents.sort((a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number));
-                const delay = Math.min(2147483647, (this.documents[0].get(this.timeField) as number) - Date.now());
+                this.documents.sort(
+                    (a, b) => (a.get(this.timeField) as number) - (b.get(this.timeField) as number)
+                );
+                const delay = Math.min(
+                    2147483647,
+                    (this.documents[0].get(this.timeField) as number) - Date.now()
+                );
                 this.checkTimeout = setTimeout(() => {
                     this.checkTimeout = this.checkForExpired() as any; // time's up, check em
                 }, delay); // wait until the next document expires
@@ -144,7 +164,10 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
         } else {
             // we should never reach here(in theory), if were not waiting on any documents then the addNewDocument check earlier would've caught it
             this.documents.push(document);
-            const delay = Math.min(2147483647, (this.documents[0]!.get(this.timeField) as number) - Date.now());
+            const delay = Math.min(
+                2147483647,
+                (this.documents[0]!.get(this.timeField) as number) - Date.now()
+            );
             this.checkTimeout = setTimeout(() => {
                 this.checkTimeout = this.checkForExpired() as any; // time's up, check em
             }, delay); // wait until the next document expires
@@ -162,7 +185,10 @@ export default class ExpiringDocumentManager<T extends Mongoose.Document> {
             clearTimeout(this.checkTimeout as NodeJS.Timeout);
             this.checkTimeout = null;
 
-            const delay = Math.min(2147483647, (this.documents[1].get(this.timeField) as number) - Date.now());
+            const delay = Math.min(
+                2147483647,
+                (this.documents[1].get(this.timeField) as number) - Date.now()
+            );
             this.checkTimeout = setTimeout(() => {
                 this.checkTimeout = this.checkForExpired() as any; // time's up, check em
             }, delay); // wait until the next document expires

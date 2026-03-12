@@ -1,4 +1,8 @@
-import Discord, { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client } from 'discord.js';
+import Discord, {
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+} from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import Infractions from '../../../Schemas/Infractions.ts';
 
@@ -16,7 +20,9 @@ export default {
         .addStringOption((option) =>
             option
                 .setName('timeout')
-                .setDescription('The timeout you\'d like to remove, alternatively "all" or "latest".')
+                .setDescription(
+                    'The timeout you\'d like to remove, alternatively "all" or "latest".'
+                )
                 .setRequired(true)
         ),
 
@@ -54,7 +60,10 @@ export default {
         } else {
             const index = parseInt(timeoutOption);
             if (isNaN(index) || !timeouts[index - 1]) {
-                return { embeds: [EmbedGenerator.errorEmbed('Timeout not found')], ephemeral: true };
+                return {
+                    embeds: [EmbedGenerator.errorEmbed('Timeout not found')],
+                    ephemeral: true,
+                };
             }
 
             const targetTimeout = timeouts[index - 1]!;

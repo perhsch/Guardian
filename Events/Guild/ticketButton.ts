@@ -18,38 +18,39 @@ export interface TicketMenuData {
 export const ticketMenuData = new Map<string, TicketMenuData>();
 
 // Ticket options with emojis and descriptions
-export const TICKET_OPTIONS: Record<string, { title: string; description: string; color: number }> = {
-    '📝': {
-        title: 'General Question',
-        description: 'Ask a general question or get help with basic information',
-        color: 0x00ff00,
-    },
-    '👤': {
-        title: 'Report User',
-        description: 'Report a user for breaking rules or inappropriate behavior',
-        color: 0xff0000,
-    },
-    '🐛': {
-        title: 'Bug Report',
-        description: 'Report a bug or issue with the server/bot',
-        color: 0xff9900,
-    },
-    '🚨': {
-        title: 'Emergency',
-        description: 'Urgent matter requiring immediate staff attention',
-        color: 0xff0000,
-    },
-    '💡': {
-        title: 'Suggestion',
-        description: 'Share your ideas to improve the server',
-        color: 0x0099ff,
-    },
-    '🔒': {
-        title: 'Account Issue',
-        description: 'Problems with your account or permissions',
-        color: 0xff6600,
-    },
-};
+export const TICKET_OPTIONS: Record<string, { title: string; description: string; color: number }> =
+    {
+        '📝': {
+            title: 'General Question',
+            description: 'Ask a general question or get help with basic information',
+            color: 0x00ff00,
+        },
+        '👤': {
+            title: 'Report User',
+            description: 'Report a user for breaking rules or inappropriate behavior',
+            color: 0xff0000,
+        },
+        '🐛': {
+            title: 'Bug Report',
+            description: 'Report a bug or issue with the server/bot',
+            color: 0xff9900,
+        },
+        '🚨': {
+            title: 'Emergency',
+            description: 'Urgent matter requiring immediate staff attention',
+            color: 0xff0000,
+        },
+        '💡': {
+            title: 'Suggestion',
+            description: 'Share your ideas to improve the server',
+            color: 0x0099ff,
+        },
+        '🔒': {
+            title: 'Account Issue',
+            description: 'Problems with your account or permissions',
+            color: 0xff6600,
+        },
+    };
 
 /** Sanitize channel name for Discord (alphanumeric, hyphen, underscore; max 100 chars) */
 function sanitizeTicketChannelName(name: string): string {
@@ -307,14 +308,16 @@ async function handleCloseTicketButton(interaction: Discord.ButtonInteraction) {
         channel: interaction.channel.id,
         active: true,
     })) as ITicket | null;
-    
+
     if (!ticket)
         return interaction.reply({
             embeds: [EmbedGenerator.errorEmbed('This is not an active ticket channel.')],
             ephemeral: true,
         });
 
-    const isStaff = guild.tickets.role && (interaction.member.roles as Discord.GuildMemberRoleManager).cache.has(guild.tickets.role);
+    const isStaff =
+        guild.tickets.role &&
+        (interaction.member.roles as Discord.GuildMemberRoleManager).cache.has(guild.tickets.role);
     const isCreator = ticket.user === interaction.user.id;
     if (!isStaff && !isCreator)
         return interaction.reply({

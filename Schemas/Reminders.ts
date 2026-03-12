@@ -34,6 +34,7 @@ ReminderSchema.virtual('permanent').get(function (this: IReminder) {
     return !isFinite(this.duration);
 });
 
-const Reminders: Model<IReminder> = Mongoose.models.Reminders || Mongoose.model<IReminder>('Reminders', ReminderSchema);
+const Reminders: Model<IReminder> =
+    Mongoose.models.Reminders || Mongoose.model<IReminder>('Reminders', ReminderSchema);
 
 export default Reminders;

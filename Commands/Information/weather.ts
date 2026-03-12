@@ -22,7 +22,11 @@ export default {
 
         weather.find({ search: location, degreeType: 'F' }, async (err: any, result: any[]) => {
             if (err || !result || result.length === 0) {
-                await interaction.editReply(err ? 'There was an error while fetching the weather data.' : `No weather data found for ${location}.`);
+                await interaction.editReply(
+                    err
+                        ? 'There was an error while fetching the weather data.'
+                        : `No weather data found for ${location}.`
+                );
                 return;
             }
 

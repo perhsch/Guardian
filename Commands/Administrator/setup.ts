@@ -1,4 +1,13 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuOptionBuilder } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    StringSelectMenuOptionBuilder,
+} from 'discord.js';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import Guilds from '../../Schemas/Guilds.ts';
 import { GuildsManager } from '../../Classes/GuildsManager.ts';

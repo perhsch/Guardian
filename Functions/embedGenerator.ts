@@ -1,4 +1,13 @@
-import { EmbedBuilder, ChatInputCommandInteraction, MessageComponentInteraction, Guild, ButtonBuilder, ActionRowBuilder, ButtonStyle, TextChannel } from 'discord.js';
+import {
+    EmbedBuilder,
+    ChatInputCommandInteraction,
+    MessageComponentInteraction,
+    Guild,
+    ButtonBuilder,
+    ActionRowBuilder,
+    ButtonStyle,
+    TextChannel,
+} from 'discord.js';
 import Moment from 'moment';
 import ms from 'ms';
 import { translateResponse, translateText } from './translate.ts';
@@ -6,11 +15,11 @@ import { translateResponse, translateText } from './translate.ts';
 const COLORS = {
     success: 'Green',
     error: 'Red',
-    info: 'Blue'
+    info: 'Blue',
 } as const;
 
 /**
- * @param description 
+ * @param description
  */
 export function basicEmbed(description?: string): EmbedBuilder {
     const embed = new EmbedBuilder().setColor(COLORS.success);
@@ -20,19 +29,19 @@ export function basicEmbed(description?: string): EmbedBuilder {
 }
 
 /**
- * @param description 
+ * @param description
  */
 export function errorEmbed(description: string = 'There was an error.'): EmbedBuilder {
     return new EmbedBuilder().setColor(COLORS.error).setDescription(description);
 }
 
 /**
- * @param guild 
- * @param issuer 
- * @param type 
- * @param duration 
- * @param expires 
- * @param reason 
+ * @param guild
+ * @param issuer
+ * @param type
+ * @param duration
+ * @param expires
+ * @param reason
  */
 export function infractionEmbed(
     guild: Guild,
@@ -75,10 +84,10 @@ export function infractionEmbed(
 
 /**
  *
- * @param interaction 
- * @param embeds 
- * @param ephemeral 
- * @param targetLang 
+ * @param interaction
+ * @param embeds
+ * @param ephemeral
+ * @param targetLang
  */
 export async function pagesEmbed(
     interaction: ChatInputCommandInteraction,
@@ -88,7 +97,7 @@ export async function pagesEmbed(
 ) {
     if (embeds.length === 0)
         return interaction.reply({ content: 'There was an error.', ephemeral: true });
-    
+
     if (embeds.length === 1) {
         if (targetLang && targetLang.toLowerCase() !== 'en') {
             await translateResponse({ embeds, ephemeral }, targetLang);
@@ -133,18 +142,20 @@ export async function pagesEmbed(
                 const nonEphemeralPayload = { ...replyPayload };
                 delete nonEphemeralPayload.ephemeral;
                 delete nonEphemeralPayload.fetchReply;
-                sent = await (interaction.channel as TextChannel).send(nonEphemeralPayload).catch(() => null);
+                sent = await (interaction.channel as TextChannel)
+                    .send(nonEphemeralPayload)
+                    .catch(() => null);
             }
         }
     }
 
     if (!sent) return;
-    
+
     const filter = (i: MessageComponentInteraction) =>
         ['previous', 'next'].includes(i.customId) &&
         i.message.id === sent.id &&
         interaction.user.id === i.user.id;
-        
+
     const collector = sent.createMessageComponentCollector({ filter, time: 120000 });
 
     const getFooterText = (p: number) => `Page ${p + 1}/${embeds.length}`;
@@ -170,5 +181,5 @@ export default {
     basicEmbed,
     errorEmbed,
     infractionEmbed,
-    pagesEmbed
-}
+    pagesEmbed,
+};

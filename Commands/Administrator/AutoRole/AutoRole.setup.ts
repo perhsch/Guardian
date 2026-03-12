@@ -1,4 +1,10 @@
-import { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client, EmbedBuilder, Role } from 'discord.js';
+import {
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+    EmbedBuilder,
+    Role,
+} from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../../Functions/modLog.ts';
 
@@ -45,8 +51,8 @@ export default {
                         `• Member Auto-Role Updated: <@&${memberRole.id}>`,
                         `• Bot Auto-Role Updated: ${botRole ? `<@&${botRole.id}>` : 'Not Specified.'}`,
                     ].join('\n')
-                )
-            ]
+                ),
+            ],
         };
     },
 };

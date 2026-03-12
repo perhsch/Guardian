@@ -1,8 +1,19 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, GuildMember, Collection } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    GuildMember,
+    Collection,
+} from 'discord.js';
 import EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../../Functions/modLog.ts';
 
-async function handleGiveRole(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any): Promise<void> {
+async function handleGiveRole(
+    interaction: ChatInputCommandInteraction,
+    _client: Client,
+    dbGuild: any
+): Promise<void> {
     if (!interaction.guild) return;
 
     const user = interaction.options.getUser('user', true);
@@ -14,7 +25,7 @@ async function handleGiveRole(interaction: ChatInputCommandInteraction, _client:
     if (!member) {
         await interaction.reply({
             content: '❌ Unable to find that user in this server.',
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -22,7 +33,7 @@ async function handleGiveRole(interaction: ChatInputCommandInteraction, _client:
     if (member.roles.cache.has(role.id)) {
         await interaction.reply({
             content: `❌ ${user.tag} already has the ${role.name} role.`,
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -30,7 +41,7 @@ async function handleGiveRole(interaction: ChatInputCommandInteraction, _client:
     if (role.position >= interaction.guild.members.me!.roles.highest.position) {
         await interaction.reply({
             content: '❌ I cannot give a role that is higher than or equal to my highest role.',
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -38,32 +49,40 @@ async function handleGiveRole(interaction: ChatInputCommandInteraction, _client:
     try {
         await member.roles.add(role.id);
 
-        const logEmbed = EmbedGenerator.basicEmbed([
-            `**Action:** Role Given`,
-            `**Moderator:** ${interaction.user.tag}`,
-            `**User:** ${user.tag} (${user.id})`,
-            `**Role:** ${role.name} (${role.id})`,
-            `**Reason:** ${reason}`
-        ].join('\n')).setTitle('🔹 Role Management');
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `**Action:** Role Given`,
+                `**Moderator:** ${interaction.user.tag}`,
+                `**User:** ${user.tag} (${user.id})`,
+                `**Role:** ${role.name} (${role.id})`,
+                `**Reason:** ${reason}`,
+            ].join('\n')
+        ).setTitle('🔹 Role Management');
 
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-        const embed = EmbedGenerator.basicEmbed([
-            `✅ Successfully gave **${role.name}** to **${user.tag}**`,
-            `**Reason:** ${reason}`
-        ].join('\n')).setColor('Green');
+        const embed = EmbedGenerator.basicEmbed(
+            [
+                `✅ Successfully gave **${role.name}** to **${user.tag}**`,
+                `**Reason:** ${reason}`,
+            ].join('\n')
+        ).setColor('Green');
 
         await interaction.reply({ embeds: [embed] });
     } catch (error: unknown) {
         console.error('Error giving role:', error);
         await interaction.reply({
             content: '❌ Failed to give the role. Please check my permissions.',
-            ephemeral: true
+            ephemeral: true,
         });
     }
 }
 
-async function handleRemoveRole(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any): Promise<void> {
+async function handleRemoveRole(
+    interaction: ChatInputCommandInteraction,
+    _client: Client,
+    dbGuild: any
+): Promise<void> {
     if (!interaction.guild) return;
 
     const user = interaction.options.getUser('user', true);
@@ -75,7 +94,7 @@ async function handleRemoveRole(interaction: ChatInputCommandInteraction, _clien
     if (!member) {
         await interaction.reply({
             content: '❌ Unable to find that user in this server.',
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -83,7 +102,7 @@ async function handleRemoveRole(interaction: ChatInputCommandInteraction, _clien
     if (!member.roles.cache.has(role.id)) {
         await interaction.reply({
             content: `❌ ${user.tag} does not have the ${role.name} role.`,
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -91,7 +110,7 @@ async function handleRemoveRole(interaction: ChatInputCommandInteraction, _clien
     if (role.position >= interaction.guild.members.me!.roles.highest.position) {
         await interaction.reply({
             content: '❌ I cannot remove a role that is higher than or equal to my highest role.',
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -99,32 +118,40 @@ async function handleRemoveRole(interaction: ChatInputCommandInteraction, _clien
     try {
         await member.roles.remove(role.id);
 
-        const logEmbed = EmbedGenerator.basicEmbed([
-            `**Action:** Role Removed`,
-            `**Moderator:** ${interaction.user.tag}`,
-            `**User:** ${user.tag} (${user.id})`,
-            `**Role:** ${role.name} (${role.id})`,
-            `**Reason:** ${reason}`
-        ].join('\n')).setTitle('🔸 Role Management');
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `**Action:** Role Removed`,
+                `**Moderator:** ${interaction.user.tag}`,
+                `**User:** ${user.tag} (${user.id})`,
+                `**Role:** ${role.name} (${role.id})`,
+                `**Reason:** ${reason}`,
+            ].join('\n')
+        ).setTitle('🔸 Role Management');
 
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-        const embed = EmbedGenerator.basicEmbed([
-            `✅ Successfully removed **${role.name}** from **${user.tag}**`,
-            `**Reason:** ${reason}`
-        ].join('\n')).setColor('Orange');
+        const embed = EmbedGenerator.basicEmbed(
+            [
+                `✅ Successfully removed **${role.name}** from **${user.tag}**`,
+                `**Reason:** ${reason}`,
+            ].join('\n')
+        ).setColor('Orange');
 
         await interaction.reply({ embeds: [embed] });
     } catch (error: unknown) {
         console.error('Error removing role:', error);
         await interaction.reply({
             content: '❌ Failed to remove the role. Please check my permissions.',
-            ephemeral: true
+            ephemeral: true,
         });
     }
 }
 
-async function handleGiveRoleAll(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any): Promise<void> {
+async function handleGiveRoleAll(
+    interaction: ChatInputCommandInteraction,
+    _client: Client,
+    dbGuild: any
+): Promise<void> {
     if (!interaction.guild) return;
 
     const role = interaction.options.getRole('role', true);
@@ -133,7 +160,7 @@ async function handleGiveRoleAll(interaction: ChatInputCommandInteraction, _clie
     if (role.position >= interaction.guild.members.me!.roles.highest.position) {
         await interaction.reply({
             content: '❌ I cannot give a role that is higher than or equal to my highest role.',
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -156,27 +183,37 @@ async function handleGiveRoleAll(interaction: ChatInputCommandInteraction, _clie
         }
     }
 
-    const logEmbed = EmbedGenerator.basicEmbed([
-        `**Action:** Mass Role Given`,
-        `**Moderator:** ${interaction.user.tag}`,
-        `**Role:** ${role.name} (${role.id})`,
-        `**Members affected:** ${successCount}`,
-        `**Failed:** ${failCount}`,
-        `**Reason:** ${reason}`
-    ].join('\n')).setTitle('🔹 Mass Role Management');
+    const logEmbed = EmbedGenerator.basicEmbed(
+        [
+            `**Action:** Mass Role Given`,
+            `**Moderator:** ${interaction.user.tag}`,
+            `**Role:** ${role.name} (${role.id})`,
+            `**Members affected:** ${successCount}`,
+            `**Failed:** ${failCount}`,
+            `**Reason:** ${reason}`,
+        ].join('\n')
+    ).setTitle('🔹 Mass Role Management');
 
     await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-    const embed = EmbedGenerator.basicEmbed([
-        `✅ Successfully gave **${role.name}** to **${successCount}** members`,
-        failCount > 0 ? `❌ Failed to give role to **${failCount}** members` : '',
-        `**Reason:** ${reason}`
-    ].filter(Boolean).join('\n')).setColor('Green');
+    const embed = EmbedGenerator.basicEmbed(
+        [
+            `✅ Successfully gave **${role.name}** to **${successCount}** members`,
+            failCount > 0 ? `❌ Failed to give role to **${failCount}** members` : '',
+            `**Reason:** ${reason}`,
+        ]
+            .filter(Boolean)
+            .join('\n')
+    ).setColor('Green');
 
     await interaction.editReply({ embeds: [embed] });
 }
 
-async function handleRemoveRoleAll(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any): Promise<void> {
+async function handleRemoveRoleAll(
+    interaction: ChatInputCommandInteraction,
+    _client: Client,
+    dbGuild: any
+): Promise<void> {
     if (!interaction.guild) return;
 
     const role = interaction.options.getRole('role', true);
@@ -185,7 +222,7 @@ async function handleRemoveRoleAll(interaction: ChatInputCommandInteraction, _cl
     if (role.position >= interaction.guild.members.me!.roles.highest.position) {
         await interaction.reply({
             content: '❌ I cannot remove a role that is higher than or equal to my highest role.',
-            ephemeral: true
+            ephemeral: true,
         });
         return;
     }
@@ -208,22 +245,28 @@ async function handleRemoveRoleAll(interaction: ChatInputCommandInteraction, _cl
         }
     }
 
-    const logEmbed = EmbedGenerator.basicEmbed([
-        `**Action:** Mass Role Removed`,
-        `**Moderator:** ${interaction.user.tag}`,
-        `**Role:** ${role.name} (${role.id})`,
-        `**Members affected:** ${successCount}`,
-        `**Failed:** ${failCount}`,
-        `**Reason:** ${reason}`
-    ].join('\n')).setTitle('🔸 Mass Role Management');
+    const logEmbed = EmbedGenerator.basicEmbed(
+        [
+            `**Action:** Mass Role Removed`,
+            `**Moderator:** ${interaction.user.tag}`,
+            `**Role:** ${role.name} (${role.id})`,
+            `**Members affected:** ${successCount}`,
+            `**Failed:** ${failCount}`,
+            `**Reason:** ${reason}`,
+        ].join('\n')
+    ).setTitle('🔸 Mass Role Management');
 
     await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-    const embed = EmbedGenerator.basicEmbed([
-        `✅ Successfully removed **${role.name}** from **${successCount}** members`,
-        failCount > 0 ? `❌ Failed to remove role from **${failCount}** members` : '',
-        `**Reason:** ${reason}`
-    ].filter(Boolean).join('\n')).setColor('Orange');
+    const embed = EmbedGenerator.basicEmbed(
+        [
+            `✅ Successfully removed **${role.name}** from **${successCount}** members`,
+            failCount > 0 ? `❌ Failed to remove role from **${failCount}** members` : '',
+            `**Reason:** ${reason}`,
+        ]
+            .filter(Boolean)
+            .join('\n')
+    ).setColor('Orange');
 
     await interaction.editReply({ embeds: [embed] });
 }
@@ -235,80 +278,74 @@ export default {
         .setDescription('Manage roles for server members')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles)
         .setDMPermission(false)
-        .addSubcommand(subcommand =>
+        .addSubcommand((subcommand) =>
             subcommand
                 .setName('give')
                 .setDescription('Give a role to a specific member')
-                .addUserOption(option =>
+                .addUserOption((option) =>
                     option
                         .setName('user')
                         .setDescription('The user to give the role to')
                         .setRequired(true)
                 )
-                .addRoleOption(option =>
-                    option
-                        .setName('role')
-                        .setDescription('The role to give')
-                        .setRequired(true)
+                .addRoleOption((option) =>
+                    option.setName('role').setDescription('The role to give').setRequired(true)
                 )
-                .addStringOption(option =>
+                .addStringOption((option) =>
                     option
                         .setName('reason')
                         .setDescription('The reason for giving the role')
                         .setRequired(false)
                 )
         )
-        .addSubcommand(subcommand =>
+        .addSubcommand((subcommand) =>
             subcommand
                 .setName('remove')
                 .setDescription('Remove a role from a specific member')
-                .addUserOption(option =>
+                .addUserOption((option) =>
                     option
                         .setName('user')
                         .setDescription('The user to remove the role from')
                         .setRequired(true)
                 )
-                .addRoleOption(option =>
-                    option
-                        .setName('role')
-                        .setDescription('The role to remove')
-                        .setRequired(true)
+                .addRoleOption((option) =>
+                    option.setName('role').setDescription('The role to remove').setRequired(true)
                 )
-                .addStringOption(option =>
+                .addStringOption((option) =>
                     option
                         .setName('reason')
                         .setDescription('The reason for removing the role')
                         .setRequired(false)
                 )
         )
-        .addSubcommand(subcommand =>
+        .addSubcommand((subcommand) =>
             subcommand
                 .setName('giveall')
                 .setDescription('Give a role to all members in the server')
-                .addRoleOption(option =>
+                .addRoleOption((option) =>
                     option
                         .setName('role')
                         .setDescription('The role to give to all members')
                         .setRequired(true)
                 )
-                .addStringOption(option =>
+                .addStringOption((option) =>
                     option
                         .setName('reason')
                         .setDescription('The reason for giving the role to everyone')
                         .setRequired(false)
                 )
         )
-        .addSubcommand(subcommand =>
+        .addSubcommand((subcommand) =>
             subcommand
                 .setName('removeall')
                 .setDescription('Remove a role from all members in the server')
-                .addRoleOption(option =>
+                .addRoleOption((option) =>
                     option
                         .setName('role')
                         .setDescription('The role to remove from all members')
                         .setRequired(true)
                 )
-                .addStringOption(option =>
+                .addStringOption((option) =>
                     option
                         .setName('reason')
                         .setDescription('The reason for removing the role from everyone')
@@ -316,7 +353,11 @@ export default {
                 )
         ),
 
-    async execute(interaction: ChatInputCommandInteraction, client: Client, dbGuild: any): Promise<void> {
+    async execute(
+        interaction: ChatInputCommandInteraction,
+        client: Client,
+        dbGuild: any
+    ): Promise<void> {
         const subcommand = interaction.options.getSubcommand();
 
         switch (subcommand) {

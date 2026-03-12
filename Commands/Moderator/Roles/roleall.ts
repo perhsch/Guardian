@@ -1,4 +1,11 @@
-import Discord, { SlashCommandBuilder, PermissionFlagsBits, ChatInputCommandInteraction, Client, GuildMember, Collection } from 'discord.js';
+import Discord, {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    GuildMember,
+    Collection,
+} from 'discord.js';
 import EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../../Functions/modLog.ts';
 
@@ -22,7 +29,11 @@ export default {
                 .setRequired(false)
         ),
 
-    async execute(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any): Promise<void> {
+    async execute(
+        interaction: ChatInputCommandInteraction,
+        _client: Client,
+        dbGuild: any
+    ): Promise<void> {
         if (!interaction.guild) return;
 
         const role = interaction.options.getRole('role', true);
@@ -31,7 +42,7 @@ export default {
         if (role.position >= interaction.guild.members.me!.roles.highest.position) {
             await interaction.reply({
                 content: '❌ I cannot give a role that is higher than or equal to my highest role.',
-                ephemeral: true
+                ephemeral: true,
             });
             return;
         }
@@ -54,22 +65,28 @@ export default {
             }
         }
 
-        const logEmbed = EmbedGenerator.basicEmbed([
-            `**Action:** Mass Role Given`,
-            `**Moderator:** ${interaction.user.tag}`,
-            `**Role:** ${role.name} (${role.id})`,
-            `**Members affected:** ${successCount}`,
-            `**Failed:** ${failCount}`,
-            `**Reason:** ${reason}`
-        ].join('\n')).setTitle('🔹 Mass Role Management');
+        const logEmbed = EmbedGenerator.basicEmbed(
+            [
+                `**Action:** Mass Role Given`,
+                `**Moderator:** ${interaction.user.tag}`,
+                `**Role:** ${role.name} (${role.id})`,
+                `**Members affected:** ${successCount}`,
+                `**Failed:** ${failCount}`,
+                `**Reason:** ${reason}`,
+            ].join('\n')
+        ).setTitle('🔹 Mass Role Management');
 
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
-        const embed = EmbedGenerator.basicEmbed([
-            `✅ Successfully gave **${role.name}** to **${successCount}** members`,
-            failCount > 0 ? `❌ Failed to give role to **${failCount}** members` : '',
-            `**Reason:** ${reason}`
-        ].filter(Boolean).join('\n')).setColor('Green');
+        const embed = EmbedGenerator.basicEmbed(
+            [
+                `✅ Successfully gave **${role.name}** to **${successCount}** members`,
+                failCount > 0 ? `❌ Failed to give role to **${failCount}** members` : '',
+                `**Reason:** ${reason}`,
+            ]
+                .filter(Boolean)
+                .join('\n')
+        ).setColor('Green');
 
         await interaction.editReply({ embeds: [embed] });
     },

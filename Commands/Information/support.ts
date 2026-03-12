@@ -10,9 +10,11 @@ export default {
 
     async execute(_interaction: ChatInputCommandInteraction, _client: Client) {
         const embed = EmbedGenerator.basicEmbed()
-            .setColor(0x5865F2)
+            .setColor(0x5865f2)
             .setTitle('Support')
-            .setDescription('[Join our support server](https://discord.gg/5nWZ8BJae4) for help and assistance!');
+            .setDescription(
+                '[Join our support server](https://discord.gg/5nWZ8BJae4) for help and assistance!'
+            );
 
         return { embeds: [embed] };
     },

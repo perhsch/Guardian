@@ -1,9 +1,9 @@
-import { 
-    SlashCommandBuilder, 
-    PermissionFlagsBits, 
-    ChatInputCommandInteraction, 
-    Client, 
-    EmbedBuilder 
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChatInputCommandInteraction,
+    Client,
+    EmbedBuilder,
 } from 'discord.js';
 import Guilds from '../../Schemas/Guilds.ts';
 
@@ -22,7 +22,7 @@ export default {
         const newStatus = !currentStatus;
 
         await Guilds.updateOne({ guild: interaction.guild.id }, { $set: { setup: newStatus } });
-        
+
         // Update the cached document as well
         if (dbGuild.document) {
             dbGuild.document.setup = newStatus;

@@ -1,4 +1,10 @@
-import { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client, GuildMember, TextChannel } from 'discord.js';
+import {
+    SlashCommandSubcommandBuilder,
+    ChatInputCommandInteraction,
+    Client,
+    GuildMember,
+    TextChannel,
+} from 'discord.js';
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import Tickets from '../../../Schemas/Tickets.ts';
 
@@ -12,25 +18,41 @@ export default {
     data: new SlashCommandSubcommandBuilder()
         .setName('add_user')
         .setDescription('Give a user permission to view a ticket.')
-        .addUserOption((option) => option.setName('user').setDescription('User to add.').setRequired(true))
-        .addChannelOption((option) => option.setName('channel').setDescription('Ticket to add the user to.')),
+        .addUserOption((option) =>
+            option.setName('user').setDescription('User to add.').setRequired(true)
+        )
+        .addChannelOption((option) =>
+            option.setName('channel').setDescription('Ticket to add the user to.')
+        ),
 
     async execute(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any) {
         if (!interaction.guild || !interaction.channel) return;
         if (!hasTicketStaff(interaction, dbGuild))
-            return { embeds: [EmbedGenerator.errorEmbed('You need the ticket staff role to use this command.')] };
+            return {
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        'You need the ticket staff role to use this command.'
+                    ),
+                ],
+            };
 
         const user = interaction.options.getUser('user', true);
         const member = await interaction.guild.members.fetch({ user: user.id }).catch(() => null);
-        const channel = (interaction.options.getChannel('channel') || interaction.channel) as TextChannel;
+        const channel = (interaction.options.getChannel('channel') ||
+            interaction.channel) as TextChannel;
         const ticket = await Tickets.findOne({ guild: interaction.guild.id, channel: channel.id });
 
         if (!ticket) return { embeds: [EmbedGenerator.errorEmbed('Ticket not found.')] };
-        if (!ticket.active) return { embeds: [EmbedGenerator.errorEmbed('That ticket is not active.')] };
+        if (!ticket.active)
+            return { embeds: [EmbedGenerator.errorEmbed('That ticket is not active.')] };
         if (!member) return { embeds: [EmbedGenerator.errorEmbed('Member not found.')] };
 
         try {
-            await channel.permissionOverwrites.edit(member.id, { ViewChannel: true, SendMessages: true, ReadMessageHistory: true });
+            await channel.permissionOverwrites.edit(member.id, {
+                ViewChannel: true,
+                SendMessages: true,
+                ReadMessageHistory: true,
+            });
             return { embeds: [EmbedGenerator.basicEmbed('Member added to ticket.')] };
         } catch {
             return { embeds: [EmbedGenerator.errorEmbed()] };

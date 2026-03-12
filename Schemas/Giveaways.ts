@@ -42,6 +42,7 @@ GiveawaySchema.virtual('permanent').get(function (this: IGiveaway) {
     return !isFinite(this.duration);
 });
 
-const Giveaways: Model<IGiveaway> = Mongoose.models.Giveaways || Mongoose.model<IGiveaway>('Giveaways', GiveawaySchema);
+const Giveaways: Model<IGiveaway> =
+    Mongoose.models.Giveaways || Mongoose.model<IGiveaway>('Giveaways', GiveawaySchema);
 
 export default Giveaways;

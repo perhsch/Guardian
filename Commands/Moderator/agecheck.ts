@@ -3,7 +3,7 @@ import {
     PermissionFlagsBits,
     ChatInputCommandInteraction,
     Client,
-    GuildMember
+    GuildMember,
 } from 'discord.js';
 import ms from 'ms';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
@@ -40,9 +40,16 @@ export default {
 
         let riskLevel = '🟢 Low';
         let riskColor = 0x00ff00;
-        if (accountAgeDays < 1) { riskLevel = '🔴 Critical'; riskColor = 0xff0000; }
-        else if (accountAgeDays < 7) { riskLevel = '🟠 High'; riskColor = 0xff9900; }
-        else if (accountAgeDays < 30) { riskLevel = '🟡 Medium'; riskColor = 0xffff00; }
+        if (accountAgeDays < 1) {
+            riskLevel = '🔴 Critical';
+            riskColor = 0xff0000;
+        } else if (accountAgeDays < 7) {
+            riskLevel = '🟠 High';
+            riskColor = 0xff9900;
+        } else if (accountAgeDays < 30) {
+            riskLevel = '🟡 Medium';
+            riskColor = 0xffff00;
+        }
 
         let joinAge = 'N/A';
         let joinPosition: string | number = 'N/A';
@@ -55,7 +62,9 @@ export default {
             joinAge = `${serverJoinDays} days (${ms(serverJoinAge)})`;
 
             const sortedMembers = Array.from(
-                interaction.guild.members.cache.sort((a, b) => (a.joinedTimestamp ?? 0) - (b.joinedTimestamp ?? 0)).values()
+                interaction.guild.members.cache
+                    .sort((a, b) => (a.joinedTimestamp ?? 0) - (b.joinedTimestamp ?? 0))
+                    .values()
             );
             joinPosition = sortedMembers.findIndex((m) => m.id === targetMember.id) + 1;
         }
@@ -63,7 +72,8 @@ export default {
         const indicators: string[] = [];
         if (targetUser.bot) indicators.push('🤖 Bot Account');
         if (!targetUser.avatarURL()) indicators.push('🖼️ No Avatar');
-        if (targetUser.username.toLowerCase().includes('bot')) indicators.push('🤖 Bot-like Username');
+        if (targetUser.username.toLowerCase().includes('bot'))
+            indicators.push('🤖 Bot-like Username');
 
         const embed = EmbedGenerator.basicEmbed()
             .setTitle(`🔍 Age Check: ${targetUser.username}`)
@@ -92,7 +102,10 @@ export default {
                 }
             )
             .setTimestamp()
-            .setFooter({ text: `Requested by ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() });
+            .setFooter({
+                text: `Requested by ${interaction.user.tag}`,
+                iconURL: interaction.user.displayAvatarURL(),
+            });
 
         if (targetMember && joinedAt) {
             embed.addFields({
@@ -106,12 +119,13 @@ export default {
                 inline: false,
             });
 
-            const roles = targetMember.roles.cache
-                .filter((role) => role.id !== interaction.guild!.id)
-                .sort((a, b) => b.position - a.position)
-                .first(10)
-                .map((role) => role.toString())
-                .join(' ') || 'None';
+            const roles =
+                targetMember.roles.cache
+                    .filter((role) => role.id !== interaction.guild!.id)
+                    .sort((a, b) => b.position - a.position)
+                    .first(10)
+                    .map((role) => role.toString())
+                    .join(' ') || 'None';
 
             if (roles !== 'None') {
                 embed.addFields({ name: '👥 Roles (Top 10)', value: roles, inline: false });
@@ -128,13 +142,26 @@ export default {
             ].filter(Boolean) as string[];
 
             if (keyPermissions.length > 0) {
-                embed.addFields({ name: '🔑 Key Permissions', value: keyPermissions.join(' • '), inline: false });
+                embed.addFields({
+                    name: '🔑 Key Permissions',
+                    value: keyPermissions.join(' • '),
+                    inline: false,
+                });
             }
         }
 
-        if (indicators.length > 0) embed.addFields({ name: '⚠️ Indicators', value: indicators.join(' • '), inline: false });
+        if (indicators.length > 0)
+            embed.addFields({
+                name: '⚠️ Indicators',
+                value: indicators.join(' • '),
+                inline: false,
+            });
         if (accountAgeDays < 7) {
-            embed.addFields({ name: '⚠️ Security Warning', value: `This account is very new (${accountAgeDays} days old). Exercise caution when interacting with this user.`, inline: false });
+            embed.addFields({
+                name: '⚠️ Security Warning',
+                value: `This account is very new (${accountAgeDays} days old). Exercise caution when interacting with this user.`,
+                inline: false,
+            });
         }
 
         await interaction.editReply({ embeds: [embed] });

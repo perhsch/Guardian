@@ -7,7 +7,10 @@ export default {
      * @param {Discord.GuildMember | Discord.PartialGuildMember} member
      * @param {Discord.Client} client
      */
-    async execute(member: Discord.GuildMember | Discord.PartialGuildMember, client: Discord.Client) {
+    async execute(
+        member: Discord.GuildMember | Discord.PartialGuildMember,
+        client: Discord.Client
+    ) {
         await removeMember(member);
     },
 };

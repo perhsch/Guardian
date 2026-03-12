@@ -82,7 +82,11 @@ function containsExcessiveCaps(content: string, threshold = 70, minLength = 10):
     return capsPercentage >= threshold;
 }
 
-function containsMentionSpam(message: Discord.Message, maxMentions = 5, checkEveryone = true): boolean {
+function containsMentionSpam(
+    message: Discord.Message,
+    maxMentions = 5,
+    checkEveryone = true
+): boolean {
     if (!message) return false;
 
     let mentionCount = 0;
@@ -130,7 +134,12 @@ function isSpamming(userId: string, guildId: string, maxMessages = 5, timeframe 
     return validMessages.length > maxMessages;
 }
 
-function isDuplicateSpam(userId: string, guildId: string, content: string, maxDuplicates = 3): boolean {
+function isDuplicateSpam(
+    userId: string,
+    guildId: string,
+    content: string,
+    maxDuplicates = 3
+): boolean {
     const key = `${userId}-${guildId}`;
     const now = Date.now();
 
@@ -159,7 +168,14 @@ function isDuplicateSpam(userId: string, guildId: string, content: string, maxDu
     return userDuplicates.get(content)!.length > maxDuplicates;
 }
 
-async function executeAutomodAction(message: Discord.Message, client: Discord.Client, dbGuild: GuildsManager, action: string, reason: string, system: string) {
+async function executeAutomodAction(
+    message: Discord.Message,
+    client: Discord.Client,
+    dbGuild: GuildsManager,
+    action: string,
+    reason: string,
+    system: string
+) {
     const member = message.member;
     if (!member) return;
 
@@ -174,7 +190,10 @@ async function executeAutomodAction(message: Discord.Message, client: Discord.Cl
         )
             .setColor(Discord.Colors.Orange)
             .setTitle('Automod: Message Deleted')
-            .setFooter({ text: `${message.guild!.name}`, iconURL: message.guild!.iconURL() || undefined })
+            .setFooter({
+                text: `${message.guild!.name}`,
+                iconURL: message.guild!.iconURL() || undefined,
+            })
             .setTimestamp();
         await member.send({ embeds: [dmEmbed] }).catch(() => null);
         const logEmbed = EmbedGenerator.basicEmbed(
@@ -197,7 +216,10 @@ async function executeAutomodAction(message: Discord.Message, client: Discord.Cl
         )
             .setColor(Discord.Colors.Orange)
             .setTitle('Automod: Warning')
-            .setFooter({ text: `${message.guild!.name}`, iconURL: message.guild!.iconURL() || undefined })
+            .setFooter({
+                text: `${message.guild!.name}`,
+                iconURL: message.guild!.iconURL() || undefined,
+            })
             .setTimestamp();
         await member.send({ embeds: [dmEmbed] }).catch(() => null);
         if (member.moderatable) {
@@ -232,7 +254,10 @@ async function executeAutomodAction(message: Discord.Message, client: Discord.Cl
         )
             .setColor(Discord.Colors.Orange)
             .setTitle('Automod: Timeout')
-            .setFooter({ text: `${message.guild!.name}`, iconURL: message.guild!.iconURL() || undefined })
+            .setFooter({
+                text: `${message.guild!.name}`,
+                iconURL: message.guild!.iconURL() || undefined,
+            })
             .setTimestamp();
         await member.send({ embeds: [dmEmbed] }).catch(() => null);
         if (member.moderatable) {

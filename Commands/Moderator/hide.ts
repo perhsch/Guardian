@@ -1,4 +1,12 @@
-import { SlashCommandBuilder, PermissionFlagsBits, ChannelType, ChatInputCommandInteraction, Client, GuildMember, TextChannel } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    ChannelType,
+    ChatInputCommandInteraction,
+    Client,
+    GuildMember,
+    TextChannel,
+} from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
 
@@ -7,8 +15,9 @@ export default {
     data: new SlashCommandBuilder()
         .setName('hide')
         .setDescription('Hide a text channel.')
-        .addChannelOption(option =>
-            option.setName('channel')
+        .addChannelOption((option) =>
+            option
+                .setName('channel')
                 .setDescription('Text channel mention to hide.')
                 .setRequired(true)
                 .addChannelTypes(ChannelType.GuildText)
@@ -17,9 +26,15 @@ export default {
     async execute(interaction: ChatInputCommandInteraction, _client: Client, dbGuild: any) {
         if (!interaction.guild || !interaction.member) return;
 
-        if (!(interaction.member as GuildMember).permissions.has(PermissionFlagsBits.ManageChannels)) {
+        if (
+            !(interaction.member as GuildMember).permissions.has(PermissionFlagsBits.ManageChannels)
+        ) {
             return interaction.reply({
-                embeds: [EmbedGenerator.basicEmbed().setDescription("You don't have `ManageChannels` permission.")],
+                embeds: [
+                    EmbedGenerator.basicEmbed().setDescription(
+                        "You don't have `ManageChannels` permission."
+                    ),
+                ],
                 ephemeral: true,
             });
         }
@@ -33,12 +48,19 @@ export default {
         });
 
         const logEmbed = EmbedGenerator.basicEmbed(
-            [`- Moderator: ${interaction.user.tag}`, `- Channel: ${channel.name} (<#${channel.id}>)`].join('\n')
+            [
+                `- Moderator: ${interaction.user.tag}`,
+                `- Channel: ${channel.name} (<#${channel.id}>)`,
+            ].join('\n')
         ).setTitle('/hide command used');
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         return interaction.reply({
-            embeds: [EmbedGenerator.basicEmbed().setDescription(`The Channel ${channel.name} Has Been Hidden Successfully`)],
+            embeds: [
+                EmbedGenerator.basicEmbed().setDescription(
+                    `The Channel ${channel.name} Has Been Hidden Successfully`
+                ),
+            ],
         });
     },
 };

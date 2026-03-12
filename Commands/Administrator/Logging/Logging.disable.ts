@@ -12,12 +12,15 @@ export default {
         if (!interaction.guild) return;
 
         if (!dbGuild.logs.enabled) {
-            return { embeds: [EmbedGenerator.errorEmbed('The logging system is not enabled!')], ephemeral: true };
+            return {
+                embeds: [EmbedGenerator.errorEmbed('The logging system is not enabled!')],
+                ephemeral: true,
+            };
         }
 
-        const logEmbed = EmbedGenerator.basicEmbed(
-            `- Moderator: ${interaction.user.tag}`
-        ).setTitle('/logging disable command used');
+        const logEmbed = EmbedGenerator.basicEmbed(`- Moderator: ${interaction.user.tag}`).setTitle(
+            '/logging disable command used'
+        );
         await sendModLog(interaction.guild, dbGuild, logEmbed);
 
         dbGuild.logs.enabled = false;
@@ -29,6 +32,8 @@ export default {
             { $set: { logs: { enabled: false, basic_logs: null, moderator: null } } }
         );
 
-        return { embeds: [EmbedGenerator.basicEmbed('🔓 | The logging system has been disabled!')] };
+        return {
+            embeds: [EmbedGenerator.basicEmbed('🔓 | The logging system has been disabled!')],
+        };
     },
 };
