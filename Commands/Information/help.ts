@@ -72,7 +72,6 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
     // Page 1: Overview
     const overviewEmbed = new EmbedBuilder()
         .setColor(0x5865f2)
-        .setThumbnail(client.user!.displayAvatarURL({ size: 256 }))
         .setAuthor({
             name: `${client.user!.username} Command Center`,
             iconURL: client.user!.displayAvatarURL(),
@@ -126,9 +125,7 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
             iconURL: user.displayAvatarURL(),
         })
         .setTimestamp()
-        .setImage(
-            'https://cdn.discordapp.com/attachments/1043870997220687972/1043870998668779540/banner.png'
-        );
+        .setImage('https://i.imgur.com/XeEI7XJ.png')
 
     embeds.push(overviewEmbed);
 
@@ -170,7 +167,6 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
 
         const categoryEmbed = new EmbedBuilder()
             .setColor(info.color)
-            .setThumbnail(client.user!.displayAvatarURL({ size: 128 }))
             .setAuthor({
                 name: `${client.user!.username} Command Center`,
                 iconURL: client.user!.displayAvatarURL(),
