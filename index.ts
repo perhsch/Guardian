@@ -39,6 +39,8 @@ import Giveaways from './Schemas/Giveaways.ts';
 import type { IGiveaway } from './Schemas/Giveaways.ts';
 import Reminders from './Schemas/Reminders.ts';
 import type { IReminder } from './Schemas/Reminders.ts';
+import Users from './Schemas/Users.ts';
+import type { IUser } from './Schemas/Users.ts';
 
 import type { GuardianClient } from './types.ts';
 
@@ -142,8 +144,7 @@ client.expiringDocumentsManager = {
             if (reminder.repeating) {
                 const ends = Moment().add(reminder.duration);
                 embed.setDescription(
-                    `${
-                        embed.data.description
+                    `${embed.data.description
                     }\n\nYou will be reminded again in <t:${ends.unix()}:R>(<t:${ends.unix()}:f>)`
                 );
             }
@@ -158,6 +159,7 @@ client.expiringDocumentsManager = {
             return await reminder.save();
         } else {
             await reminder.delete();
+            return;
         }
     }),
 };
@@ -196,6 +198,74 @@ client.on('messageCreate', async (message: Message) => {
     const contentWithoutBotMention = message.content
         .replace(new RegExp(`<@!?${client.user.id}>`, 'g'), '')
         .trim();
+
+    // Secret rocky command
+    if (contentWithoutBotMention === 'rocky') {
+        // Check if user exists in database
+        let userDoc = await Users.findOne({
+            user: message.author.id,
+            guild: message.guild?.id
+        }).catch(() => null);
+
+        // Create user document if it doesn't exist
+        if (!userDoc) {
+            userDoc = new Users({
+                user: message.author.id,
+                guild: message.guild?.id,
+            });
+        }
+
+        // Check if user already knows this secret word
+        if (userDoc.secretWords.includes('rocky')) {
+            await message.reply({ content: 'You already know it!' });
+        } else {
+            // Add the secret word to user's known secrets
+            userDoc.secretWords.push('rocky');
+            await userDoc.save();
+            await message.reply({ content: ':o you won! Your now special :3' });
+
+            // Log to webhook
+            const webhookPayload = {
+                embeds: [{
+                    title: '🔐 Secret Word Discovered!',
+                    description: `**${message.author.username}** (${message.author.id}) discovered a secret word!`,
+                    color: 0x00ff00,
+                    fields: [
+                        {
+                            name: '👤 User',
+                            value: `${message.author.username} (${message.author.id})`,
+                            inline: true
+                        },
+                        {
+                            name: '🏠 Guild',
+                            value: `${message.guild?.name} (${message.guild?.id})`,
+                            inline: true
+                        },
+                        {
+                            name: '📊 Total Secrets Known',
+                            value: `${userDoc.secretWords.length}`,
+                            inline: true
+                        }
+                    ],
+                    timestamp: new Date().toISOString(),
+                    footer: {
+                        text: 'Guardian Secret Word Tracker'
+                    }
+                }]
+            };
+
+            // Send webhook notification
+            fetch('https://canary.discord.com/api/webhooks/1481683998114713620/99-hDJowDk5-VBOdGLxjYTnkHT83WISV5Ppb2rG4-PGwNi-Q5xCCkWwj2lJb45ENp01i', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(webhookPayload)
+            }).catch(() => null);
+        }
+        return;
+    }
+
     if (contentWithoutBotMention.length > 0) return;
 
     const embed = new EmbedBuilder()
@@ -232,8 +302,8 @@ client.on('messageCreate', async (message: Message) => {
             .setStyle(ButtonStyle.Link)
             .setURL(
                 'https://discord.com/oauth2/authorize?client_id=' +
-                    client.user.id +
-                    '&permissions=68479744&scope=bot%20applications.commands'
+                client.user.id +
+                '&permissions=68479744&scope=bot%20applications.commands'
             ),
         new ButtonBuilder()
             .setLabel('Support')
@@ -340,7 +410,7 @@ if (process.env['MONGODB_URL']) {
             console.log('Client is connected to the database.');
 
             await loadEvents(client);
-            client.login(process.env['DISCORD_TOKEN']).then(() => {});
+            client.login(process.env['DISCORD_TOKEN']).then(() => { });
         })
         .catch((error) => {
             console.error('Failed to connect to MongoDB:', error);

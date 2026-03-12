@@ -5,6 +5,7 @@ export interface IUser extends Mongoose.Document {
     guild: string;
     captcha: string | null;
     language: string;
+    secretWords: string[];
 }
 
 const UserSchema = new Mongoose.Schema({
@@ -12,6 +13,7 @@ const UserSchema = new Mongoose.Schema({
     guild: { type: String, required: true, index: true, immutable: true },
     captcha: { type: String, default: null },
     language: { type: String, default: 'en' },
+    secretWords: { type: [String], default: [] },
 });
 
 export default Mongoose.model<IUser>('Users', UserSchema);
