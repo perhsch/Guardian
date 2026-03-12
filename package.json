@@ -5,8 +5,10 @@
     "type": "module",
     "license": "Apache",
     "scripts": {
-        "start": "bun tsx index.ts",
-        "dev": "bun tsx --watch index.ts",
+        "start": "bun tsx shard.ts",
+        "dev": "bun tsx --watch shard.ts",
+        "start-no-shard": "bun tsx index.ts",
+        "dev-no-shard": "bun tsx --watch index.ts",
         "docker:build": "docker build -t guardian-bot .",
         "docker:run": "docker run -p 3000:3000 --env-file .env guardian-bot",
         "docker:compose": "docker-compose up -d",
@@ -40,7 +42,8 @@
         "prettier": "^3.8.1",
         "statcord.js": "^3.4.3",
         "urban": "^0.3.4",
-        "weather-js": "^2.0.0"
+        "weather-js": "^2.0.0",
+        "winston": "^3.19.0"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.4.6",

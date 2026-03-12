@@ -12,4 +12,8 @@ export interface GuardianClient extends Client {
         giveaways: ExpiringDocumentManager<IGiveaway>;
         reminders: ExpiringDocumentManager<IReminder>;
     };
+    shardInfo?: {
+        id: number;
+        count: number;
+    };
 }

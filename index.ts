@@ -190,6 +190,17 @@ app.use('/', router);
 
 export { client, server };
 
+client.on('ready', async () => {
+    console.log(`[SHARD ${client.shard?.ids[0] || 0}] Client is ready!`);
+    console.log(`[SHARD ${client.shard?.ids[0] || 0}] Logged in as ${client.user?.tag}`);
+    console.log(`[SHARD ${client.shard?.ids[0] || 0}] Guilds: ${client.guilds.cache.size}`);
+
+    client.shardInfo = {
+        id: client.shard?.ids[0] || 0,
+        count: client.shard?.count || 1
+    };
+});
+
 client.on('messageCreate', async (message: Message) => {
     if (!client.user) return;
     if (!message.mentions.has(client.user)) return;
@@ -407,7 +418,7 @@ Mongoose.set('strictQuery', false);
 if (process.env['MONGODB_URL']) {
     Mongoose.connect(process.env['MONGODB_URL'])
         .then(async () => {
-            console.log('Client is connected to the database.');
+            console.log(`[SHARD ${client.shard?.ids[0] || 0}] Client is connected to the database.`);
 
             await loadEvents(client);
             client.login(process.env['DISCORD_TOKEN']).then(() => { });
