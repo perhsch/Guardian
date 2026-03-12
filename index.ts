@@ -294,9 +294,7 @@ client.on('messageCreate', async (message: Message) => {
             }
         )
         .setThumbnail(client.user.displayAvatarURL({ forceStatic: false }))
-        .setImage(
-            'https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png'
-        )
+        .setImage('https://i.imgur.com/XeEI7XJ.png')
         .setFooter({
             text: `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGuardian • Advanced protection system`,
             iconURL: client.user.displayAvatarURL(),
