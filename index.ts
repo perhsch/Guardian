@@ -30,7 +30,7 @@ import * as EmbedGenerator from './Functions/embedGenerator.ts';
 import { loadEvents } from './Handlers/eventHandler.ts';
 import { pickUnique } from './Functions/pickUnique.ts';
 import createRouter from './server.ts';
-import { processErrorHandler } from './Handlers/errorHandler.ts';
+import { processErrorHandler, initializeErrorHandler } from './Handlers/errorHandler.ts';
 import { buildHelpEmbeds } from './Commands/Information/help.ts';
 
 import Infractions from './Schemas/Infractions.ts';
@@ -42,7 +42,7 @@ import type { IReminder } from './Schemas/Reminders.ts';
 import Users from './Schemas/Users.ts';
 import type { IUser } from './Schemas/Users.ts';
 
-import type { GuardianClient } from './types.ts';
+import type { GuardianClient } from './types';
 
 const client = new Client({
     intents: [
@@ -56,6 +56,7 @@ const client = new Client({
 }) as GuardianClient;
 
 client.setMaxListeners(20);
+initializeErrorHandler(client);
 processErrorHandler();
 
 client.commands = new Collection();
@@ -235,13 +236,16 @@ client.on('messageCreate', async (message: Message) => {
             await userDoc.save();
             await message.reply({ content: ':o you won! Your now special :3' });
 
-            // Log to webhook
-            const webhookPayload = {
-                embeds: [{
-                    title: '🔐 Secret Word Discovered!',
-                    description: `**${message.author.username}** (${message.author.id}) discovered a secret word!`,
-                    color: 0x00ff00,
-                    fields: [
+            // Log to channel
+            const secretChannelId = '1481683980767199373';
+            const secretChannel = await client.channels.fetch(secretChannelId).catch(() => null);
+
+            if (secretChannel && secretChannel.isTextBased() && 'send' in secretChannel) {
+                const embed = new EmbedBuilder()
+                    .setTitle('🔐 Secret Word Discovered!')
+                    .setDescription(`**${message.author.username}** (${message.author.id}) discovered a secret word!`)
+                    .setColor(0x00ff00)
+                    .addFields(
                         {
                             name: '👤 User',
                             value: `${message.author.username} (${message.author.id})`,
@@ -257,22 +261,14 @@ client.on('messageCreate', async (message: Message) => {
                             value: `${userDoc.secretWords.length}`,
                             inline: true
                         }
-                    ],
-                    timestamp: new Date().toISOString(),
-                    footer: {
+                    )
+                    .setTimestamp()
+                    .setFooter({
                         text: 'Guardian Secret Word Tracker'
-                    }
-                }]
-            };
+                    });
 
-            // Send webhook notification
-            fetch('https://canary.discord.com/api/webhooks/1481683998114713620/99-hDJowDk5-VBOdGLxjYTnkHT83WISV5Ppb2rG4-PGwNi-Q5xCCkWwj2lJb45ENp01i', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(webhookPayload)
-            }).catch(() => null);
+                await secretChannel.send({ embeds: [embed] }).catch(() => null);
+            }
         }
         return;
     }

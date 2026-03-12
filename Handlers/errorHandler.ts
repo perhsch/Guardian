@@ -1,10 +1,21 @@
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, Client } from 'discord.js';
 
-const ERROR_WEBHOOK_URL =
-    'https://canary.discord.com/api/webhooks/1481136328627458130/nHwx_90d33US20nb6wMtleY-ZBx3BvnxuwsRQ9tcXYcsTUITxMoJHx7HNXPO55s7ELeb';
+const ERROR_CHANNEL_ID = '1471348003297300662';
 
-async function sendErrorToWebhook(error: Error, errorType: string): Promise<void> {
+let client: Client;
+
+export function initializeErrorHandler(botClient: Client) {
+    client = botClient;
+}
+
+async function sendErrorToChannel(error: Error, errorType: string): Promise<void> {
     try {
+        if (!client) return;
+
+        const errorChannel = await client.channels.fetch(ERROR_CHANNEL_ID).catch(() => null);
+
+        if (!errorChannel || !errorChannel.isTextBased() || !('send' in errorChannel)) return;
+
         const embed = new EmbedBuilder()
             .setTitle('🚨 Bot Error Occurred')
             .setColor(0xff0000)
@@ -37,37 +48,20 @@ async function sendErrorToWebhook(error: Error, errorType: string): Promise<void
             });
         }
 
-        const payload = {
-            embeds: [embed.toJSON()],
-            username: 'Guardian Error Logger',
-            avatar_url:
-                'https://cdn.discordapp.com/attachments/1048758700984270918/1048758701648654396/banner.png',
-        };
-
-        const response = await fetch(ERROR_WEBHOOK_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            console.error('Failed to send error to webhook:', response.statusText);
-        }
-    } catch (webhookError) {
-        console.error('Failed to send error to webhook:', webhookError);
+        await errorChannel.send({ embeds: [embed] }).catch(() => null);
+    } catch (channelError) {
+        console.error('Failed to send error to channel:', channelError);
     }
 }
 
 export async function processErrorHandler() {
     process.on('unhandledRejection', async (err) => {
         console.error(err);
-        await sendErrorToWebhook(err as Error, 'Unhandled Rejection');
+        await sendErrorToChannel(err as Error, 'Unhandled Rejection');
     });
 
     process.on('uncaughtException', async (err) => {
         console.error(err);
-        await sendErrorToWebhook(err as Error, 'Uncaught Exception');
+        await sendErrorToChannel(err as Error, 'Uncaught Exception');
     });
 }
