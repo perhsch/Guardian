@@ -33,11 +33,6 @@ const CATEGORY_INFO: Record<string, CategoryInfo> = {
         description: 'Server backup & restore',
         color: 0x57f287,
     },
-    developer: {
-        emoji: '🛠️',
-        description: 'Bot development tools',
-        color: 0xfee75c,
-    },
     information: {
         emoji: emojis.information || 'ℹ️',
         description: 'Bot, server & user info',
@@ -67,6 +62,7 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
     for (const [name, cmd] of commands) {
         if (cmd.enabled === false || cmd.developer) continue;
         const category = (cmd.category || 'utility').toLowerCase();
+        if (category === 'developer') continue; // Explicitly exclude developer category
         if (!commandsByCategory.has(category)) {
             commandsByCategory.set(category, []);
         }
