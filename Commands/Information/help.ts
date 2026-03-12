@@ -184,7 +184,8 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
                 text: `Page ${embeds.length + 1}/${commandsByCategory.size + 1} • Requested by ${user.username} • Guardian Bot`,
                 iconURL: user.displayAvatarURL(),
             })
-            .setTimestamp();
+            .setTimestamp()
+            .setImage('https://i.imgur.com/XeEI7XJ.png');
 
         embeds.push(categoryEmbed);
     }
