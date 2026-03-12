@@ -15,6 +15,7 @@
         "check": "prettier --check ."
     },
     "dependencies": {
+        "@2toad/profanity": "^3.2.0",
         "@iamtraction/google-translate": "^2.0.1",
         "@sapphire/result": "^2.8.0",
         "@sapphire/timestamp": "^1.0.5",
@@ -35,6 +36,7 @@
         "moment": "^2.29.4",
         "mongoose": "^6.8.1",
         "node-fetch": "^3.3.1",
+        "statcord.js": "^3.4.3",
         "urban": "^0.3.4",
         "weather-js": "^2.0.0"
     },
