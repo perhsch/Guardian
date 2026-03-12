@@ -18,27 +18,33 @@ class TranslationService {
     private processing = false;
     private readonly ttl = 1000 * 60 * 60 * 24;
     private readonly maxSize = 10000;
-    private readonly maxQueueSize = 100;
-    private readonly batchSize = 20;
-    private readonly queueTimeout = 2000;
+    private readonly maxQueueSize = 200;
+    private readonly batchSize = 50;
+    private readonly queueTimeout = 1000;
+    private readonly maxConcurrent = 10;
+    private activeRequests = 0;
 
     private generateKey(text: string, targetLang: string): string {
         return `${targetLang}:${text}`;
     }
 
     private async processQueue(): Promise<void> {
-        if (this.processing || this.queue.length === 0) return;
+        if (this.processing || this.queue.length === 0 || this.activeRequests >= this.maxConcurrent) return;
         this.processing = true;
 
-        while (this.queue.length > 0) {
-            const batch = this.queue.splice(0, this.batchSize);
+        while (this.queue.length > 0 && this.activeRequests < this.maxConcurrent) {
+            const batch = this.queue.splice(0, Math.min(this.batchSize, this.maxConcurrent - this.activeRequests));
+            this.activeRequests += batch.length;
+
             const promises = batch.map(async (item) => {
                 try {
-                    const cached = this.cache.get(this.generateKey(item.text, item.targetLang));
+                    const key = this.generateKey(item.text, item.targetLang);
+                    const cached = this.cache.get(key);
                     if (cached && Date.now() - cached.timestamp < this.ttl) {
                         return cached.text;
                     }
 
+                    // Dynamic import with caching
                     const translate = (await import('@iamtraction/google-translate')).default;
                     const result = await translate(item.text, { from: 'en', to: item.targetLang });
 
@@ -46,6 +52,8 @@ class TranslationService {
                     return result.text;
                 } catch (error) {
                     throw error;
+                } finally {
+                    this.activeRequests--;
                 }
             });
 
@@ -60,10 +68,10 @@ class TranslationService {
                     item.reject(result.reason);
                 }
             });
+        }
 
-            if (this.queue.length > 0) {
-                setImmediate(() => this.processQueue());
-            }
+        if (this.queue.length > 0) {
+            setImmediate(() => this.processQueue());
         }
 
         this.processing = false;
@@ -86,8 +94,9 @@ class TranslationService {
     }
 
     translate(text: string, targetLang: string): Promise<string> {
-        if (!text || !targetLang || targetLang.toLowerCase() === 'en') {
-            return Promise.resolve(text);
+        // Fast path for empty or English content
+        if (!text || !targetLang || targetLang.toLowerCase() === 'en' || text.trim().length === 0) {
+            return Promise.resolve(text || '');
         }
 
         const key = this.generateKey(text, targetLang);
@@ -97,13 +106,18 @@ class TranslationService {
             return Promise.resolve(cached.text);
         }
 
+        // Check for identical pending requests
         if (this.pendingRequests.has(key)) {
             return this.pendingRequests.get(key)!;
         }
 
         const promise = new Promise<string>((resolve, reject) => {
+            // Drop oldest items if queue is full
             if (this.queue.length >= this.maxQueueSize) {
-                this.queue.shift();
+                const dropped = this.queue.shift();
+                if (dropped) {
+                    dropped.reject(new Error('Queue overflow'));
+                }
             }
 
             const queueItem: QueueItem = {
@@ -116,6 +130,7 @@ class TranslationService {
 
             this.queue.push(queueItem);
 
+            // Reduced timeout for faster failure
             setTimeout(() => {
                 const index = this.queue.indexOf(queueItem);
                 if (index > -1) {
@@ -131,7 +146,8 @@ class TranslationService {
             this.pendingRequests.delete(key);
         });
 
-        this.processQueue();
+        // Start processing immediately
+        setImmediate(() => this.processQueue());
 
         return promise;
     }

@@ -179,7 +179,7 @@ export default {
 
         const needsTranslation = userLang && userLang.toLowerCase() !== 'en';
         if (needsTranslation && interaction.deferReply) {
-            await interaction.deferReply({ ephemeral: true }).catch(() => {});
+            await interaction.deferReply({ ephemeral: true }).catch(() => { });
         }
 
         const { originalReply, originalEditReply } = wrapInteractionForTranslation(
