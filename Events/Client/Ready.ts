@@ -112,7 +112,13 @@ export default {
             (acc: number, guild: Guild) => acc + guild.memberCount,
             0
         );
+
+        // Get shard information
+        const shardId = client.shard?.ids[0] || 0;
+        const shardCount = client.shard?.count || 1;
+
         const statuses = [
+            { name: `Shard ${shardId + 1}/${shardCount} | Guardian Bot`, type: ActivityType.Watching },
             { name: `Serving ${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
             { name: `${totalMembers} members!`, type: ActivityType.Watching },
             { name: `Guardian Bot • Securing Servers`, type: ActivityType.Playing },
