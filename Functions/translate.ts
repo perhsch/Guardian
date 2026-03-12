@@ -1,5 +1,4 @@
-// @ts-ignore
-import translate from '@iamtraction/google-translate';
+import { translationService } from './translationService.ts';
 import { EmbedBuilder } from 'discord.js';
 
 interface MaskResult {
@@ -43,8 +42,8 @@ export async function translateText(text: string | null | undefined, targetLang:
     }
     try {
         const { masked, commands } = maskSlashCommands(text);
-        const result = await translate(masked, { from: 'en', to: targetLang });
-        return unmaskSlashCommands(result.text, commands);
+        const result = await translationService.translate(masked, targetLang);
+        return unmaskSlashCommands(result, commands);
     } catch {
         return text;
     }
@@ -68,41 +67,46 @@ export async function translateResponse(response: any, targetLang: string | null
         }
 
         if (translated.embeds.length > 0) {
-            for (const embed of translated.embeds) {
-                if (!(embed instanceof EmbedBuilder)) continue;
+            const embedPromises = translated.embeds.map(async (embed: any) => {
+                if (!(embed instanceof EmbedBuilder)) return embed;
                 const data: any = embed.data || {};
-                
-                if (data.description) {
-                    embed.setDescription(await translateText(data.description, targetLang));
-                }
-                if (data.title) {
-                    embed.setTitle(await translateText(data.title, targetLang));
-                }
-                if (data.author?.name) {
+
+                const translations = await Promise.all([
+                    data.description ? translateText(data.description, targetLang) : Promise.resolve(null),
+                    data.title ? translateText(data.title, targetLang) : Promise.resolve(null),
+                    data.author?.name ? translateText(data.author.name, targetLang) : Promise.resolve(null),
+                    data.footer?.text ? translateText(data.footer.text, targetLang) : Promise.resolve(null)
+                ]);
+
+                if (translations[0]) embed.setDescription(translations[0]);
+                if (translations[1]) embed.setTitle(translations[1]);
+                if (translations[2]) {
                     embed.setAuthor({
-                        name: await translateText(data.author.name, targetLang),
+                        name: translations[2],
                         iconURL: data.author.iconURL,
                         url: data.author.url,
                     });
                 }
-                if (data.fields?.length) {
-                    const translatedFields = [];
-                    for (const field of data.fields) {
-                        translatedFields.push({
-                            name: await translateText(field.name, targetLang),
-                            value: await translateText(field.value, targetLang),
-                            inline: field.inline,
-                        });
-                    }
-                    embed.setFields(translatedFields);
-                }
-                if (data.footer?.text) {
+                if (translations[3]) {
                     embed.setFooter({
-                        text: await translateText(data.footer.text, targetLang),
+                        text: translations[3],
                         iconURL: data.footer.iconURL,
                     });
                 }
-            }
+
+                if (data.fields?.length) {
+                    const fieldPromises = data.fields.map(async (field: any) => ({
+                        name: await translateText(field.name, targetLang),
+                        value: await translateText(field.value, targetLang),
+                        inline: field.inline,
+                    }));
+                    embed.setFields(await Promise.all(fieldPromises));
+                }
+
+                return embed;
+            });
+
+            translated.embeds = await Promise.all(embedPromises);
         }
 
         return translated;
