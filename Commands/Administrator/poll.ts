@@ -225,6 +225,17 @@ export default {
 
         const reactionAddListener = async (reaction: MessageReaction, user: User) => {
             if (reaction.message.id !== pollMessage.id || user.bot) return;
+
+            for (const [, existingReaction] of pollMessage.reactions.cache) {
+                if (existingReaction.emoji.name === reaction.emoji.name) continue;
+                const emojiIndex = numberEmojis.indexOf(existingReaction.emoji.name!);
+                if (emojiIndex === -1) continue;
+                const users = await existingReaction.users.fetch();
+                if (users.has(user.id)) {
+                    await existingReaction.users.remove(user.id);
+                }
+            }
+
             await updateVotes();
         };
 
