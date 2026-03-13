@@ -213,11 +213,7 @@ export default {
                         votes[i] = 0;
                     }
                 }
-
-                const totalVotes = Object.values(votes).reduce((a, b) => a + b, 0);
-                if (totalVotes > 0) {
-                    await pollMessage.edit({ embeds: [buildPollEmbed(votes)] });
-                }
+                await pollMessage.edit({ embeds: [buildPollEmbed(votes)] });
             } catch (error) {
                 console.error('Error updating poll:', error);
             }
