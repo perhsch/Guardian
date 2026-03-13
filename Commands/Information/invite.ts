@@ -12,7 +12,7 @@ export default {
         return {
             embeds: [
                 EmbedGenerator.basicEmbed(
-                    `[Click me for the invite to the bot!](https://discord.com/oauth2/authorize?client_id=1469385720270426358&scope=bot)`
+                    `[Click me for the invite to the bot!](https://discord.com/oauth2/authorize?client_id=${_client.user?.id}&permissions=8&integration_type=0&scope=bot)`
                 ),
             ],
         };
