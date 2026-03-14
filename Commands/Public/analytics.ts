@@ -1,10 +1,20 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, Guild, ChannelType } from 'discord.js';
+import {
+    SlashCommandBuilder,
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    Guild,
+    ChannelType,
+} from 'discord.js';
 
-function generateBarGraph(data: { label: string; value: number; color?: string }[], maxValue: number, title: string): string {
+function generateBarGraph(
+    data: { label: string; value: number; color?: string }[],
+    maxValue: number,
+    title: string
+): string {
     const barLength = 30;
     let graph = `**${title}**\n\`\`\`\n`;
 
-    const maxLabelLength = Math.max(...data.map(d => d.label.length));
+    const maxLabelLength = Math.max(...data.map((d) => d.label.length));
 
     data.forEach((item, index) => {
         const barSize = Math.round((item.value / maxValue) * barLength);
@@ -70,7 +80,7 @@ function generateActivityGraph(guild: Guild): string {
         const threshold = (maxActivity / 3) * h;
         for (let i = 0; i < 24; i++) {
             const value = activity[i];
-            pattern += (value !== undefined && value >= threshold) ? '█' : ' ';
+            pattern += value !== undefined && value >= threshold ? '█' : ' ';
         }
         if (h > 0) pattern += '\n';
     }
@@ -79,16 +89,31 @@ function generateActivityGraph(guild: Guild): string {
 }
 
 function generateGrowthChart(guild: Guild): string {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
     const currentMonth = new Date().getMonth();
 
     // Generate simplified growth data
-    const memberGrowth = months.map((_, index) => {
-        const monthOffset = (currentMonth - index + 12) % 12;
-        const monthsAgo = 11 - monthOffset;
-        const baseGrowth = guild.memberCount * Math.pow(0.85, monthsAgo / 12);
-        return Math.max(10, Math.floor(baseGrowth + (Math.random() - 0.5) * baseGrowth * 0.1));
-    }).reverse();
+    const memberGrowth = months
+        .map((_, index) => {
+            const monthOffset = (currentMonth - index + 12) % 12;
+            const monthsAgo = 11 - monthOffset;
+            const baseGrowth = guild.memberCount * Math.pow(0.85, monthsAgo / 12);
+            return Math.max(10, Math.floor(baseGrowth + (Math.random() - 0.5) * baseGrowth * 0.1));
+        })
+        .reverse();
 
     const firstValue = memberGrowth[0] || 0;
     const lastValue = memberGrowth[memberGrowth.length - 1] || 0;
@@ -109,11 +134,14 @@ function generateGrowthChart(guild: Guild): string {
     return `📈 **Growth:** ${bars} | Total:+${totalGrowth} (${growthRate}%)`;
 }
 
-function generatePieChart(data: { label: string; value: number; color: string }[], title: string): string {
+function generatePieChart(
+    data: { label: string; value: number; color: string }[],
+    title: string
+): string {
     const total = data.reduce((sum, item) => sum + item.value, 0);
 
     let bars = '';
-    data.forEach(item => {
+    data.forEach((item) => {
         const percentage = ((item.value / total) * 100).toFixed(1);
         const barLength = Math.max(1, Math.floor(parseFloat(percentage) / 10));
         bars += `${item.color}${item.label}:${'█'.repeat(barLength)}${percentage}% `;
@@ -125,8 +153,8 @@ function generatePieChart(data: { label: string; value: number; color: string }[
 function calculateEngagementScore(guild: Guild): { score: number; grade: string; color: number } {
     // Calculate engagement based on various factors
     const memberCount = guild.memberCount;
-    const textChannels = guild.channels.cache.filter(c => c.isTextBased()).size;
-    const voiceChannels = guild.channels.cache.filter(c => c.isVoiceBased()).size;
+    const textChannels = guild.channels.cache.filter((c) => c.isTextBased()).size;
+    const voiceChannels = guild.channels.cache.filter((c) => c.isVoiceBased()).size;
     const roles = guild.roles.cache.size;
     const emojis = guild.emojis.cache.size;
     const boosts = guild.premiumSubscriptionCount || 0;
@@ -138,7 +166,7 @@ function calculateEngagementScore(guild: Guild): { score: number; grade: string;
     score += Math.min(voiceChannels / 5, 10); // Max 10 points for voice channels
     score += Math.min(roles / 20, 10); // Max 10 points for roles
     score += Math.min(emojis / 50, 5); // Max 5 points for emojis
-    score += Math.min(boosts / 14 * 10, 10); // Max 10 points for boosts
+    score += Math.min((boosts / 14) * 10, 10); // Max 10 points for boosts
 
     const roundedScore = Math.round(score);
 
@@ -181,21 +209,27 @@ export default {
 
         // Calculate analytics data
         const totalMembers = guild.memberCount;
-        const onlineMembers = guild.members.cache.filter(m => m.presence?.status === 'online').size;
-        const idleMembers = guild.members.cache.filter(m => m.presence?.status === 'idle').size;
-        const dndMembers = guild.members.cache.filter(m => m.presence?.status === 'dnd').size;
+        const onlineMembers = guild.members.cache.filter(
+            (m) => m.presence?.status === 'online'
+        ).size;
+        const idleMembers = guild.members.cache.filter((m) => m.presence?.status === 'idle').size;
+        const dndMembers = guild.members.cache.filter((m) => m.presence?.status === 'dnd').size;
         const offlineMembers = totalMembers - onlineMembers - idleMembers - dndMembers;
 
-        const textChannels = guild.channels.cache.filter(c => c.isTextBased()).size;
-        const voiceChannels = guild.channels.cache.filter(c => c.isVoiceBased()).size;
-        const categories = guild.channels.cache.filter(c => c.type === ChannelType.GuildCategory).size;
+        const textChannels = guild.channels.cache.filter((c) => c.isTextBased()).size;
+        const voiceChannels = guild.channels.cache.filter((c) => c.isVoiceBased()).size;
+        const categories = guild.channels.cache.filter(
+            (c) => c.type === ChannelType.GuildCategory
+        ).size;
 
         const totalRoles = guild.roles.cache.size;
-        const adminRoles = guild.roles.cache.filter(r => r.permissions.has('Administrator')).size;
-        const moderatorRoles = guild.roles.cache.filter(r => r.permissions.has('KickMembers') || r.permissions.has('BanMembers')).size;
+        const adminRoles = guild.roles.cache.filter((r) => r.permissions.has('Administrator')).size;
+        const moderatorRoles = guild.roles.cache.filter(
+            (r) => r.permissions.has('KickMembers') || r.permissions.has('BanMembers')
+        ).size;
 
         const totalEmojis = guild.emojis.cache.size;
-        const animatedEmojis = guild.emojis.cache.filter(e => e.animated).size;
+        const animatedEmojis = guild.emojis.cache.filter((e) => e.animated).size;
         const staticEmojis = totalEmojis - animatedEmojis;
 
         const boosts = guild.premiumSubscriptionCount || 0;
@@ -205,71 +239,88 @@ export default {
         const engagement = calculateEngagementScore(guild);
 
         // Create visual graphs
-        const memberStatusGraph = generateBarGraph([
-            { label: '🟢 Online', value: onlineMembers, color: 'green' },
-            { label: '🟡 Idle', value: idleMembers, color: 'yellow' },
-            { label: '🔴 DND', value: dndMembers, color: 'red' },
-            { label: '⚫ Offline', value: offlineMembers, color: 'gray' }
-        ], totalMembers, '👥 Member Status Distribution');
+        const memberStatusGraph = generateBarGraph(
+            [
+                { label: '🟢 Online', value: onlineMembers, color: 'green' },
+                { label: '🟡 Idle', value: idleMembers, color: 'yellow' },
+                { label: '🔴 DND', value: dndMembers, color: 'red' },
+                { label: '⚫ Offline', value: offlineMembers, color: 'gray' },
+            ],
+            totalMembers,
+            '👥 Member Status Distribution'
+        );
 
-        const channelGraph = generateBarGraph([
-            { label: '💬 Text', value: textChannels },
-            { label: '🔊 Voice', value: voiceChannels },
-            { label: '📁 Categories', value: categories }
-        ], Math.max(textChannels, voiceChannels, categories), '📺 Channel Breakdown');
+        const channelGraph = generateBarGraph(
+            [
+                { label: '💬 Text', value: textChannels },
+                { label: '🔊 Voice', value: voiceChannels },
+                { label: '📁 Categories', value: categories },
+            ],
+            Math.max(textChannels, voiceChannels, categories),
+            '📺 Channel Breakdown'
+        );
 
-        const emojiGraph = generateBarGraph([
-            { label: '🎬 Animated', value: animatedEmojis },
-            { label: '📸 Static', value: staticEmojis }
-        ], totalEmojis, '😀 Emoji Collection');
+        const emojiGraph = generateBarGraph(
+            [
+                { label: '🎬 Animated', value: animatedEmojis },
+                { label: '📸 Static', value: staticEmojis },
+            ],
+            totalEmojis,
+            '😀 Emoji Collection'
+        );
 
         const activityGraph = generateActivityGraph(guild);
         const growthChart = generateGrowthChart(guild);
 
         // Create role distribution pie chart
         const regularMembers = totalMembers - adminRoles - moderatorRoles;
-        const rolePieChart = generatePieChart([
-            { label: '👑 Admins', value: adminRoles, color: '🔴' },
-            { label: '🛡️ Moderators', value: moderatorRoles, color: '🟡' },
-            { label: '👤 Regular Members', value: regularMembers, color: '🟢' }
-        ], '🎭 Role Distribution');
+        const rolePieChart = generatePieChart(
+            [
+                { label: '👑 Admins', value: adminRoles, color: '🔴' },
+                { label: '🛡️ Moderators', value: moderatorRoles, color: '🟡' },
+                { label: '👤 Regular Members', value: regularMembers, color: '🟢' },
+            ],
+            '🎭 Role Distribution'
+        );
 
         // Create main analytics embed
         const analyticsEmbed = new EmbedBuilder()
             .setTitle(`📊 ${guild.name} Server Analytics`)
-            .setDescription(`**Server ID:** \`${guild.id}\`\n**Engagement Score:** ${engagement.grade} (${engagement.score}/100)\n**Server Age:** ${serverAge} days`)
+            .setDescription(
+                `**Server ID:** \`${guild.id}\`\n**Engagement Score:** ${engagement.grade} (${engagement.score}/100)\n**Server Age:** ${serverAge} days`
+            )
             .setThumbnail(guild.iconURL({ size: 256 }))
             .setColor(engagement.color)
             .addFields(
                 {
                     name: '👥 Member Status Distribution',
                     value: memberStatusGraph,
-                    inline: false
+                    inline: false,
                 },
                 {
                     name: '📺 Channel Breakdown',
                     value: channelGraph,
-                    inline: false
+                    inline: false,
                 },
                 {
                     name: '😀 Emoji Collection',
                     value: emojiGraph,
-                    inline: false
+                    inline: false,
                 },
                 {
                     name: '📊 Key Metrics',
                     value: `👥 **Total Members:** ${totalMembers.toLocaleString()}\n🎭 **Total Roles:** ${totalRoles}\n👑 **Admin Roles:** ${adminRoles}\n🛡️ **Mod Roles:** ${moderatorRoles}\n⭐ **Boosts:** ${boosts}\n😀 **Emojis:** ${totalEmojis}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '⚡ Activity Stats',
                     value: `📝 **Text Channels:** ${textChannels}\n🔊 **Voice Channels:** ${voiceChannels}\n📁 **Categories:** ${categories}\n🎬 **Animated Emojis:** ${animatedEmojis}\n📸 **Static Emojis:** ${staticEmojis}`,
-                    inline: true
+                    inline: true,
                 }
             )
             .setFooter({
                 text: `Requested by ${interaction.user.tag} • Analytics Dashboard`,
-                iconURL: interaction.user.displayAvatarURL({ size: 64 })
+                iconURL: interaction.user.displayAvatarURL({ size: 64 }),
             })
             .setTimestamp();
 
@@ -281,22 +332,22 @@ export default {
                 {
                     name: activityGraph,
                     value: '\u200b',
-                    inline: false
+                    inline: false,
                 },
                 {
                     name: growthChart,
                     value: '\u200b',
-                    inline: false
+                    inline: false,
                 },
                 {
                     name: rolePieChart,
                     value: '\u200b',
-                    inline: false
+                    inline: false,
                 }
             )
             .setFooter({
                 text: '📊 Real-time analytics • Graphs show estimated patterns and trends',
-                iconURL: guild.iconURL({ size: 64 }) || undefined
+                iconURL: guild.iconURL({ size: 64 }) || undefined,
             });
 
         return interaction.followUp({ embeds: [analyticsEmbed, graphsEmbed] });

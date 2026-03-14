@@ -3,6 +3,10 @@ import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { GuildsManager } from '../../Classes/GuildsManager.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
 import Guilds from '../../Schemas/Guilds.ts';
+// @ts-ignore
+import emojisConfig from '../../Config/emojis.json' assert { type: 'json' };
+
+const emojis = emojisConfig.emojis;
 
 const TextInputStyle = Discord.TextInputStyle;
 
@@ -368,7 +372,7 @@ export default {
                 await sendModLog(interaction.guild, dbGuild, logEmbed);
 
                 const replyLines = [
-                    '🔒 | Logging channels updated!',
+                    `${emojis.logging?.basiclogs || '🔒'} | Logging channels updated!`,
                     '',
                     `• Basic: <#${logChannel.id}>`,
                     modLogValid ? `• Mod Log: <#${modLogValid}>` : null,
@@ -509,5 +513,6 @@ export default {
                 });
             }
         }
+        return;
     },
 };

@@ -8,6 +8,10 @@ import {
 } from 'discord.js';
 import * as EmbedGenerator from '../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../Functions/modLog.ts';
+// @ts-ignore
+import emojisConfig from '../../Config/emojis.json' assert { type: 'json' };
+
+const emojis = emojisConfig.emojis;
 
 export default {
     enabled: true,
@@ -69,7 +73,7 @@ export default {
 
         const announcementEmbed = EmbedGenerator.basicEmbed()
             .setColor(0xf1c40f)
-            .setTitle('📢 Server Announcement')
+            .setTitle(`${emojis.logging?.announcementlogs || '📢'} Server Announcement`)
             .setDescription(message)
             .setAuthor({
                 name: interaction.user.displayName,
@@ -94,7 +98,11 @@ export default {
                 ).setTitle('/announce command used');
                 await sendModLog(interaction.guild!, dbGuild, logEmbed);
                 return interaction.reply({
-                    embeds: [EmbedGenerator.basicEmbed(':mega: | Announced message successfully!')],
+                    embeds: [
+                        EmbedGenerator.basicEmbed(
+                            `${emojis.logging?.announcementlogs || '📢'} | Announced message successfully!`
+                        ),
+                    ],
                     ephemeral: true,
                 });
             })

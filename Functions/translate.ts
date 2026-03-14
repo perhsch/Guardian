@@ -90,10 +90,16 @@ export async function translateResponse(
 
                 // Batch translate all embed properties
                 const [descTrans, titleTrans, authorTrans, footerTrans] = await Promise.all([
-                    data.description ? translateText(data.description, targetLang) : Promise.resolve(null),
+                    data.description
+                        ? translateText(data.description, targetLang)
+                        : Promise.resolve(null),
                     data.title ? translateText(data.title, targetLang) : Promise.resolve(null),
-                    data.author?.name ? translateText(data.author.name, targetLang) : Promise.resolve(null),
-                    data.footer?.text ? translateText(data.footer.text, targetLang) : Promise.resolve(null),
+                    data.author?.name
+                        ? translateText(data.author.name, targetLang)
+                        : Promise.resolve(null),
+                    data.footer?.text
+                        ? translateText(data.footer.text, targetLang)
+                        : Promise.resolve(null),
                 ]);
 
                 // Apply translations
@@ -118,7 +124,7 @@ export async function translateResponse(
                     const fieldPromises = data.fields.map(async (field: any) => {
                         const [nameTrans, valueTrans] = await Promise.all([
                             translateText(field.name, targetLang),
-                            translateText(field.value, targetLang)
+                            translateText(field.value, targetLang),
                         ]);
                         return {
                             name: nameTrans,

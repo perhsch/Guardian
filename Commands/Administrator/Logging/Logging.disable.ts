@@ -2,6 +2,10 @@ import { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, Client } fr
 import * as EmbedGenerator from '../../../Functions/embedGenerator.ts';
 import { sendModLog } from '../../../Functions/modLog.ts';
 import Guilds from '../../../Schemas/Guilds.ts';
+// @ts-ignore
+import emojisConfig from '../../../Config/emojis.json' assert { type: 'json' };
+
+const emojis = emojisConfig.emojis;
 
 export default {
     data: new SlashCommandSubcommandBuilder()
@@ -33,7 +37,11 @@ export default {
         );
 
         return {
-            embeds: [EmbedGenerator.basicEmbed('🔓 | The logging system has been disabled!')],
+            embeds: [
+                EmbedGenerator.basicEmbed(
+                    `${emojis.logging?.basiclogs || '🔓'} | The logging system has been disabled!`
+                ),
+            ],
         };
     },
 };

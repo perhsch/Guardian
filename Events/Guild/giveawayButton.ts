@@ -1,7 +1,11 @@
-import Discord from 'discord.js';
+import * as Discord from 'discord.js';
 import Moment from 'moment';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
 import Giveaways from '../../Schemas/Giveaways.ts';
+// @ts-ignore
+import emojisConfig from '../../Config/emojis.json' assert { type: 'json' };
+
+const emojis = emojisConfig.emojis;
 
 export default {
     name: 'interactionCreate',
@@ -14,7 +18,11 @@ export default {
         let giveaway = await Giveaways.findOne({ giveaway: interaction.message.id });
         if (!giveaway) {
             return interaction.reply({
-                embeds: [EmbedGenerator.errorEmbed('Giveaway not found.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        `${emojis.logging?.giveawaylogs || '🎉'} | Giveaway not found.`
+                    ),
+                ],
                 ephemeral: true,
             });
         }
@@ -22,7 +30,11 @@ export default {
         if (!giveaway.active) {
             await (interaction.message as Discord.Message).edit({ components: [] });
             return interaction.reply({
-                embeds: [EmbedGenerator.errorEmbed('This giveaway is not active.')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        `${emojis.logging?.giveawaylogs || '🎉'} | This giveaway is not active.`
+                    ),
+                ],
                 ephemeral: true,
             });
         }
@@ -37,7 +49,9 @@ export default {
 
             if (!giveaway) return;
 
-            const embedData = interaction.message.embeds[0].data;
+            const embedData = interaction.message.embeds[0]?.data;
+            if (!embedData) return;
+
             const embed = new Discord.EmbedBuilder(embedData);
             embed.setDescription(
                 [
@@ -54,14 +68,23 @@ export default {
 
             await interaction.update({ embeds: [embed] });
             await interaction.followUp({
-                embeds: [EmbedGenerator.basicEmbed('You have entered the giveaway.')],
+                embeds: [
+                    EmbedGenerator.basicEmbed(
+                        `${emojis.logging?.giveawaylogs || '🎉'} | You have entered the giveaway.`
+                    ),
+                ],
                 ephemeral: true,
             });
         } else {
             return interaction.reply({
-                embeds: [EmbedGenerator.errorEmbed('You have already entered the giveaway!')],
+                embeds: [
+                    EmbedGenerator.errorEmbed(
+                        `${emojis.logging?.giveawaylogs || '🎉'} | You have already entered the giveaway!`
+                    ),
+                ],
                 ephemeral: true,
             });
         }
+        return;
     },
 };

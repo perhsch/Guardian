@@ -125,7 +125,7 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
             iconURL: user.displayAvatarURL(),
         })
         .setTimestamp()
-        .setImage('https://i.imgur.com/XeEI7XJ.png')
+        .setImage('https://i.imgur.com/XeEI7XJ.png');
 
     embeds.push(overviewEmbed);
 
@@ -366,7 +366,7 @@ export default {
                         ),
                     ],
                 });
-            } catch { }
+            } catch {}
         });
     },
 };

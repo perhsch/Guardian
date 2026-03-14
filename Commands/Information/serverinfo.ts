@@ -1,4 +1,10 @@
-import { PermissionFlagsBits, SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ChannelType } from 'discord.js';
+import {
+    PermissionFlagsBits,
+    SlashCommandBuilder,
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    ChannelType,
+} from 'discord.js';
 
 export default {
     enabled: true,
@@ -31,32 +37,56 @@ export default {
         }
 
         const totalChannels = guild.channels.cache.size;
-        const textChannels = guild.channels.cache.filter(c => c.type === ChannelType.GuildText).size;
-        const voiceChannels = guild.channels.cache.filter(c => c.type === ChannelType.GuildVoice).size;
-        const categories = guild.channels.cache.filter(c => c.type === ChannelType.GuildCategory).size;
+        const textChannels = guild.channels.cache.filter(
+            (c) => c.type === ChannelType.GuildText
+        ).size;
+        const voiceChannels = guild.channels.cache.filter(
+            (c) => c.type === ChannelType.GuildVoice
+        ).size;
+        const categories = guild.channels.cache.filter(
+            (c) => c.type === ChannelType.GuildCategory
+        ).size;
 
         const totalRoles = guild.roles.cache.size;
-        const adminRoles = guild.roles.cache.filter(r => r.permissions.has(PermissionFlagsBits.Administrator)).size;
-        const moderatorRoles = guild.roles.cache.filter(r => r.permissions.has(PermissionFlagsBits.KickMembers) || r.permissions.has(PermissionFlagsBits.BanMembers)).size;
+        const adminRoles = guild.roles.cache.filter((r) =>
+            r.permissions.has(PermissionFlagsBits.Administrator)
+        ).size;
+        const moderatorRoles = guild.roles.cache.filter(
+            (r) =>
+                r.permissions.has(PermissionFlagsBits.KickMembers) ||
+                r.permissions.has(PermissionFlagsBits.BanMembers)
+        ).size;
 
         const emojis = guild.emojis.cache.size;
-        const animatedEmojis = guild.emojis.cache.filter(e => e.animated).size;
+        const animatedEmojis = guild.emojis.cache.filter((e) => e.animated).size;
         const staticEmojis = emojis - animatedEmojis;
 
         const memberCount = guild.memberCount;
-        const onlineMembers = guild.members.cache.filter(m => m.presence?.status === 'online').size;
-        const idleMembers = guild.members.cache.filter(m => m.presence?.status === 'idle').size;
-        const dndMembers = guild.members.cache.filter(m => m.presence?.status === 'dnd').size;
+        const onlineMembers = guild.members.cache.filter(
+            (m) => m.presence?.status === 'online'
+        ).size;
+        const idleMembers = guild.members.cache.filter((m) => m.presence?.status === 'idle').size;
+        const dndMembers = guild.members.cache.filter((m) => m.presence?.status === 'dnd').size;
 
         const createdAt = guild.createdAt;
         const ageInDays = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
 
         const features = guild.features;
-        const featureList = features.length > 0 ? features.map(f => `• ${f.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`).join('\n') : '• None';
+        const featureList =
+            features.length > 0
+                ? features
+                      .map(
+                          (f) =>
+                              `• ${f.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}`
+                      )
+                      .join('\n')
+                : '• None';
 
         const serverInfoEmbed = new EmbedBuilder()
             .setTitle(`📊 ${guild.name} Server Information`)
-            .setDescription(`**Server ID:** \`${guild.id}\`\n**Created:** ${createdAt.toDateString()} (${ageInDays} days ago)`)
+            .setDescription(
+                `**Server ID:** \`${guild.id}\`\n**Created:** ${createdAt.toDateString()} (${ageInDays} days ago)`
+            )
             .setThumbnail(serverIcon)
             .setColor(boostColor)
             .setImage(banner)
@@ -64,42 +94,42 @@ export default {
                 {
                     name: '👥 **Member Statistics**',
                     value: `👥 **Total Members:** ${memberCount.toLocaleString()}\n🟢 **Online:** ${onlineMembers.toLocaleString()}\n🟡 **Idle:** ${idleMembers.toLocaleString()}\n🔴 **Do Not Disturb:** ${dndMembers.toLocaleString()}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '🚀 **Boost Information**',
                     value: `⭐ **Boost Level:** ${boostTier}\n💎 **Total Boosts:** ${boostCount}\n🎨 **Boost Bar Color:** ${boostColor.toString(16)}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '👑 **Ownership**',
                     value: `👑 **Server Owner:** ${fetchedOwner.user.tag}\n🆔 **Owner ID:** ${fetchedOwner.user.id}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '💬 **Channel Overview**',
                     value: `📝 **Text Channels:** ${textChannels}\n🔊 **Voice Channels:** ${voiceChannels}\n📁 **Categories:** ${categories}\n📊 **Total Channels:** ${totalChannels}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '🎭 **Role Statistics**',
                     value: `🎭 **Total Roles:** ${totalRoles}\n👑 **Admin Roles:** ${adminRoles}\n🛡️ **Moderator Roles:** ${moderatorRoles}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '😀 **Emoji Collection**',
                     value: `😀 **Total Emojis:** ${emojis}\n🎬 **Animated:** ${animatedEmojis}\n📸 **Static:** ${staticEmojis}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '⚙️ **Server Features**',
                     value: featureList,
-                    inline: false
+                    inline: false,
                 }
             )
             .setFooter({
                 text: `Requested by ${interaction.user.tag} • Server Information`,
-                iconURL: interaction.user.displayAvatarURL({ size: 64 })
+                iconURL: interaction.user.displayAvatarURL({ size: 64 }),
             })
             .setTimestamp();
 

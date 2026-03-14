@@ -58,10 +58,13 @@ export async function processErrorHandler() {
     process.on('unhandledRejection', async (err) => {
         // Filter out Discord permission errors from console logging
         const errorMessage = err instanceof Error ? err.message : String(err);
-        if (!errorMessage.includes('Missing Access') &&
+        if (
+            !errorMessage.includes('Missing Access') &&
             !errorMessage.includes('Missing Permissions') &&
             !errorMessage.includes('50013') && // Discord permission error code
-            !errorMessage.includes('50001')) { // Discord missing access error code
+            !errorMessage.includes('50001')
+        ) {
+            // Discord missing access error code
             console.error(err);
         }
         await sendErrorToChannel(err as Error, 'Unhandled Rejection');
@@ -70,10 +73,13 @@ export async function processErrorHandler() {
     process.on('uncaughtException', async (err) => {
         // Filter out Discord permission errors from console logging
         const errorMessage = err instanceof Error ? err.message : String(err);
-        if (!errorMessage.includes('Missing Access') &&
+        if (
+            !errorMessage.includes('Missing Access') &&
             !errorMessage.includes('Missing Permissions') &&
             !errorMessage.includes('50013') && // Discord permission error code
-            !errorMessage.includes('50001')) { // Discord missing access error code
+            !errorMessage.includes('50001')
+        ) {
+            // Discord missing access error code
             console.error(err);
         }
         await sendErrorToChannel(err as Error, 'Uncaught Exception');

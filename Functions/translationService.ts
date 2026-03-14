@@ -29,11 +29,15 @@ class TranslationService {
     }
 
     private async processQueue(): Promise<void> {
-        if (this.processing || this.queue.length === 0 || this.activeRequests >= this.maxConcurrent) return;
+        if (this.processing || this.queue.length === 0 || this.activeRequests >= this.maxConcurrent)
+            return;
         this.processing = true;
 
         while (this.queue.length > 0 && this.activeRequests < this.maxConcurrent) {
-            const batch = this.queue.splice(0, Math.min(this.batchSize, this.maxConcurrent - this.activeRequests));
+            const batch = this.queue.splice(
+                0,
+                Math.min(this.batchSize, this.maxConcurrent - this.activeRequests)
+            );
             this.activeRequests += batch.length;
 
             const promises = batch.map(async (item) => {

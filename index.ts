@@ -145,7 +145,8 @@ client.expiringDocumentsManager = {
             if (reminder.repeating) {
                 const ends = Moment().add(reminder.duration);
                 embed.setDescription(
-                    `${embed.data.description
+                    `${
+                        embed.data.description
                     }\n\nYou will be reminded again in <t:${ends.unix()}:R>(<t:${ends.unix()}:f>)`
                 );
             }
@@ -198,7 +199,7 @@ client.on('ready', async () => {
 
     client.shardInfo = {
         id: client.shard?.ids[0] || 0,
-        count: client.shard?.count || 1
+        count: client.shard?.count || 1,
     };
 });
 
@@ -216,7 +217,7 @@ client.on('messageCreate', async (message: Message) => {
         // Check if user exists in database
         let userDoc = await Users.findOne({
             user: message.author.id,
-            guild: message.guild?.id
+            guild: message.guild?.id,
         }).catch(() => null);
 
         // Create user document if it doesn't exist
@@ -243,28 +244,30 @@ client.on('messageCreate', async (message: Message) => {
             if (secretChannel && secretChannel.isTextBased() && 'send' in secretChannel) {
                 const embed = new EmbedBuilder()
                     .setTitle('🔐 Secret Word Discovered!')
-                    .setDescription(`**${message.author.username}** (${message.author.id}) discovered a secret word!`)
+                    .setDescription(
+                        `**${message.author.username}** (${message.author.id}) discovered a secret word!`
+                    )
                     .setColor(0x00ff00)
                     .addFields(
                         {
                             name: '👤 User',
                             value: `${message.author.username} (${message.author.id})`,
-                            inline: true
+                            inline: true,
                         },
                         {
                             name: '🏠 Guild',
                             value: `${message.guild?.name} (${message.guild?.id})`,
-                            inline: true
+                            inline: true,
                         },
                         {
                             name: '📊 Total Secrets Known',
                             value: `${userDoc.secretWords.length}`,
-                            inline: true
+                            inline: true,
                         }
                     )
                     .setTimestamp()
                     .setFooter({
-                        text: 'Guardian Secret Word Tracker'
+                        text: 'Guardian Secret Word Tracker',
                     });
 
                 await secretChannel.send({ embeds: [embed] }).catch(() => null);
@@ -307,8 +310,8 @@ client.on('messageCreate', async (message: Message) => {
             .setStyle(ButtonStyle.Link)
             .setURL(
                 'https://discord.com/oauth2/authorize?client_id=' +
-                client.user.id +
-                '&permissions=68479744&scope=bot%20applications.commands'
+                    client.user.id +
+                    '&permissions=68479744&scope=bot%20applications.commands'
             ),
         new ButtonBuilder()
             .setLabel('Support')
@@ -412,10 +415,12 @@ Mongoose.set('strictQuery', false);
 if (process.env['MONGODB_URL']) {
     Mongoose.connect(process.env['MONGODB_URL'])
         .then(async () => {
-            console.log(`[SHARD ${client.shard?.ids[0] || 0}] Client is connected to the database.`);
+            console.log(
+                `[SHARD ${client.shard?.ids[0] || 0}] Client is connected to the database.`
+            );
 
             await loadEvents(client);
-            client.login(process.env['DISCORD_TOKEN']).then(() => { });
+            client.login(process.env['DISCORD_TOKEN']).then(() => {});
         })
         .catch((error) => {
             console.error('Failed to connect to MongoDB:', error);

@@ -31,27 +31,27 @@ export default {
                 {
                     name: '🕐 Uptime Duration',
                     value: `**${days}** days, **${hours}** hours, **${minutes}** minutes, **${seconds}** seconds\n\`${new Timestamp('L').display(uptime)}\``,
-                    inline: false
+                    inline: false,
                 },
                 {
                     name: '💾 Memory Usage',
                     value: `**Used:** ${memoryMB} MB\n**Total:** ${memoryTotal} MB\n**Percentage:** ${Math.round((memoryMB / memoryTotal) * 100)}%`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '🔧 System Info',
                     value: `**Node.js:** ${nodeVersion}\n**Discord.js:** v${discordJsVersion}\n**Process ID:** ${process.pid}`,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '📊 Performance Stats',
                     value: `**API Latency:** ${client.ws.ping}ms\n**Ready Since:** ${client.readyAt?.toLocaleDateString()}\n**Guilds:** ${client.guilds.cache.size}`,
-                    inline: true
+                    inline: true,
                 }
             )
             .setFooter({
                 text: `${client.user!.tag} • System Monitoring`,
-                iconURL: client.user!.displayAvatarURL()
+                iconURL: client.user!.displayAvatarURL(),
             })
             .setTimestamp()
             .setColor('#00ff88');

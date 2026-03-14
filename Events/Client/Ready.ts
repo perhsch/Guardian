@@ -118,7 +118,10 @@ export default {
         const shardCount = client.shard?.count || 1;
 
         const statuses = [
-            { name: `Shard ${shardId + 1}/${shardCount} | Guardian Bot`, type: ActivityType.Watching },
+            {
+                name: `Shard ${shardId + 1}/${shardCount} | Guardian Bot`,
+                type: ActivityType.Watching,
+            },
             { name: `Serving ${client.guilds.cache.size} servers!`, type: ActivityType.Watching },
             { name: `${totalMembers} members!`, type: ActivityType.Watching },
             { name: `Guardian Bot • Securing Servers`, type: ActivityType.Playing },

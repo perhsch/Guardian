@@ -40,10 +40,13 @@ manager.on('shardCreate', (shard) => {
     });
 });
 
-manager.spawn().then(() => {
-    console.log(chalk.green('✅ All shards spawned successfully!'));
-}).catch(error => {
-    console.error(chalk.red('❌ Failed to spawn shards:'), error);
-});
+manager
+    .spawn()
+    .then(() => {
+        console.log(chalk.green('✅ All shards spawned successfully!'));
+    })
+    .catch((error) => {
+        console.error(chalk.red('❌ Failed to spawn shards:'), error);
+    });
 
 export { manager };

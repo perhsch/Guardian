@@ -5,13 +5,13 @@ export default {
     data: new SlashCommandBuilder()
         .setName('ping')
         .setDMPermission(false)
-        .setDescription('Check the bot\'s latency and response time'),
+        .setDescription("Check the bot's latency and response time"),
 
     async execute(interaction: ChatInputCommandInteraction, client: Client) {
         const sent = await interaction.reply({
             content: '🏓 Pinging...',
             fetchReply: true,
-            ephemeral: true
+            ephemeral: true,
         });
 
         const websocketLatency = client.ws.ping;
@@ -24,24 +24,29 @@ export default {
                 {
                     name: '⚡ WebSocket Latency',
                     value: `\`${websocketLatency}ms\``,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '🔄 Round-trip Latency',
                     value: `\`${roundTripLatency}ms\``,
-                    inline: true
+                    inline: true,
                 },
                 {
                     name: '📡 API Response Time',
-                    value: websocketLatency < 100 ? '🟢 Excellent' :
-                        websocketLatency < 200 ? '🟡 Good' :
-                            websocketLatency < 500 ? '🟠 Fair' : '🔴 Poor',
-                    inline: false
+                    value:
+                        websocketLatency < 100
+                            ? '🟢 Excellent'
+                            : websocketLatency < 200
+                              ? '🟡 Good'
+                              : websocketLatency < 500
+                                ? '🟠 Fair'
+                                : '🔴 Poor',
+                    inline: false,
                 }
             )
             .setTimestamp()
             .setFooter({
-                text: `Shard ${client.shard?.ids[0] || 0} | Guardian Bot`
+                text: `Shard ${client.shard?.ids[0] || 0} | Guardian Bot`,
             });
 
         await interaction.editReply({ embeds: [embed] });
