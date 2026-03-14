@@ -1,24 +1,42 @@
 {
     "emojis": {
-        "github": "<:github:1471350834632593520>",
-        "blurple_discord_at": "<:peekwumpus:1471350868237488232>",
-        "blurple_bot": "<:blurplebot:1471351367397412986>",
-        "blurple_invite": "<:inviteppl:1471350934608154888>",
-        "blurple_employee": "<:blurplestaff:1471350991570862231>",
-        "blurple_members": "<:blurplemembers:1471350990392397867>",
-        "blurple_chat": "<:blurplechat:1471350992888004711>",
-        "nodejs": "<:nodejs:1471350804224020663>",
-        "discord_js": "<:discordjs:1471350726835044468>",
-        "blurple_lock": "<:mongodb:1471350770602479863>",
-        "blurple_link": "<:blurplelink:1471352149299433482>",
-
-        "statistics": "<:stats:1475074330605129738>",
-        "useful-links": "<:linksymbol:1475074402289848401>",
-        "administrator": "<:adminsheild:1475074425106726912>",
-        "backup": "<:guidefolder:1475074946391867423>",
-        "information": "<:information:1475075239263076402>",
-        "moderator": "<:gavel:1475075462513426547>",
-        "public": "<:announce:1475075659490529433>",
-        "utility": "<:merptools:1475075879288967258>"
+        "technology": {
+            "github": "<:github:1471350834632593520>",
+            "nodejs": "<:nodejs:1471350804224020663>",
+            "discord_js": "<:discordjs:1471350726835044468>",
+            "typescript": "<:typescript:1482416484876554412>"
+        },
+        "discord": {
+            "blurple_discord_at": "<:peekwumpus:1471350868237488232>",
+            "blurple_bot": "<:blurplebot:1471351367397412986>",
+            "blurple_invite": "<:inviteppl:1471350934608154888>",
+            "blurple_employee": "<:blurplestaff:1471350991570862231>",
+            "blurple_members": "<:blurplemembers:1471350990392397867>",
+            "blurple_chat": "<:blurplechat:1471350992888004711>",
+            "blurple_lock": "<:mongodb:1471350770602479863>",
+            "blurple_link": "<:blurplelink:1471352149299433482>"
+        },
+        "information": {
+            "statistics": "<:stats:1475074330605129738>",
+            "useful_links": "<:linksymbol:1475074402289848401>",
+            "information": "<:information:1475075239263076402>"
+        },
+        "administration": {
+            "administrator": "<:adminsheild:1475074425106726912>",
+            "moderator": "<:gavel:1475075462513426547>",
+            "backup": "<:guidefolder:1475074946391867423>"
+        },
+        "utility": {
+            "public": "<:announce:1475075659490529433>",
+            "utility": "<:merptools:1475075879288967258>"
+        },
+        "logging": {
+            "basiclogs": "<:logs:1482419580147204418>",
+            "modlogs": "<:modlog:1482420102585520369>",
+            "suggestlogs": "<:suggestlogs:1482420314276106371>",
+            "announcementlogs": "<:announcelogs:1482420487379353641>",
+            "giveawaylogs": "<:giveaway:1482420642757214322>",
+            "globallogs": "<:globallogs:1482420812714872882>"
+        }
     }
 }
