@@ -102,6 +102,32 @@ export default {
     async execute(interaction: ChatInputCommandInteraction, client: Client, dbGuild: any) {
         if (!interaction.guild) return;
 
+        // Check if setup is already completed
+        if (dbGuild?.setup) {
+            const embed = EmbedGenerator.basicEmbed()
+                .setTitle('🛡️ Guardian Setup')
+                .setColor('Yellow')
+                .setDescription(
+                    [
+                        '```diff',
+                        '! Setup has already been completed for this server !',
+                        '```',
+                        '',
+                        '✅ **Guardian is already configured and ready to use!**',
+                        '',
+                        'If you need to make changes, use the specific configuration commands:',
+                        '• `/logging setup` - Configure logging channels',
+                        '• `/suggestion setup` - Configure suggestion system',
+                        '• `/ticketadmin setup` - Configure ticket system',
+                        '• `/autorole setup` - Configure auto roles',
+                        '',
+                        '> *Use `/help` to see all available configuration commands.*'
+                    ].join('\n')
+                );
+            
+            return interaction.reply({ embeds: [embed], ephemeral: true });
+        }
+
         await interaction.reply({
             embeds: [generateEmbed(0, [], dbGuild)],
             components: getSetupComponents(dbGuild),
@@ -140,22 +166,35 @@ export default {
             return;
         }
 
-        const rolesAboveBot = interaction.guild.roles.cache.filter(
-            (role) => role.position > botRole.position && !role.managed && role.editable
+        // Get roles that the bot actually needs to manage
+        const rolesToManage: string[] = [];
+        if (dbGuild?.tickets?.role) rolesToManage.push(dbGuild.tickets.role);
+        if (dbGuild?.autorole?.role) rolesToManage.push(dbGuild.autorole.role);
+        if (dbGuild?.verification?.role) rolesToManage.push(dbGuild.verification.role);
+        
+        // Filter to only roles that exist and are above the bot
+        const problematicRoles = interaction.guild.roles.cache.filter(
+            (role) => 
+                role.position > botRole.position && 
+                !role.managed && 
+                role.editable &&
+                rolesToManage.includes(role.id)
         );
-        if (rolesAboveBot.size > 0) {
+        
+        if (problematicRoles.size > 0) {
+            const roleNames = problematicRoles.map(r => r.name).join('`, `');
             const embed = generateEmbed(1, [0], dbGuild);
             embed
                 .setColor('Yellow')
                 .setDescription(
                     [
-                        `\`\`\`fix\n! The bot role is not the highest role in the server !\n\`\`\``,
+                        `\`\`\`fix\n! Bot role is below roles it needs to manage !\n\`\`\``,
                         '',
-                        `⚠️ Some role-based actions might fail if higher roles exist above the bot.`,
+                        `⚠️ The bot cannot manage these roles: \`${roleNames}\``,
                         '',
                         '**How to fix:**',
                         "• Go to your server's roles settings",
-                        "• Drag the Guardian bot's role **above** the roles it needs to manage",
+                        "• Drag the Guardian bot's role **above** the roles listed above",
                         '• Run `/setup` again if you have issues',
                     ].join('\n')
                 );

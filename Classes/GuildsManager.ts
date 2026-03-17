@@ -439,7 +439,7 @@ export class GuildsManager {
         this.document =
             cache.get(this.id) ||
             (await Guilds.findOne({ guild: this.id })) ||
-            (await Guilds.create({ guild: this.id }));
+            (await Guilds.create({ guild: this.id, guildName: 'Unknown Guild' }));
         cache.set(this.id, this.document!);
         return this;
     }

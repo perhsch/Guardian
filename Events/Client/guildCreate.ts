@@ -5,6 +5,7 @@ import {
 } from 'discord.js';
 import moment from 'moment';
 import EmbedGenerator from '../../Functions/embedGenerator.ts';
+import GuildsModel from '../../Schemas/Guilds.ts';
 
 const LOG_CHANNEL_ID = '1471348003297300662';
 
@@ -12,6 +13,19 @@ export default {
     name: 'guildCreate',
     async execute(guild: Guild, client: Client<true>) {
         try {
+            // Update guild name in database
+            await GuildsModel.updateOne(
+                { guild: guild.id },
+                { 
+                    $set: { 
+                        guildName: guild.name 
+                    } 
+                },
+                { upsert: true }
+            ).catch((error) => {
+                console.error(`Failed to update guild name for ${guild.id}:`, error);
+            });
+
             const logChannel = await client.channels.fetch(LOG_CHANNEL_ID).catch(() => null);
             if (!logChannel || !logChannel.isTextBased() || !('send' in logChannel)) {
                 console.error('Could not find or access the log channel');

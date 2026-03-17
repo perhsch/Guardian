@@ -2,6 +2,7 @@ import Mongoose from 'mongoose';
 
 export interface IGuild extends Mongoose.Document {
     guild: string;
+    guildName: string;
     setup: boolean;
     members: string[];
     verification: {
@@ -94,6 +95,7 @@ export interface IGuild extends Mongoose.Document {
 
 const GuildSchema = new Mongoose.Schema({
     guild: { type: String, required: true, index: true, immutable: true },
+    guildName: { type: String, required: true, default: 'Unknown Guild' },
     setup: { type: Boolean, default: false },
     members: { type: [String], index: true, default: [] },
     verification: {
