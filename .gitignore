@@ -6,6 +6,7 @@ data/server/privkey.pem
 .vscode
 ./Commands/Administrator/Giveaway
 bun.lock 
+.env.example
 .env
 
 # Docker
