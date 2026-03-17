@@ -280,85 +280,11 @@ bun run start-no-shard
 
 
 
-### What Happens on Start
-
-
-
-1. ✅ Connects to MongoDB database
-
-2. ✅ Loads all event handlers
-
-3. ✅ Registers slash commands with Discord
-
-4. ✅ Initializes expiring document managers (infractions, giveaways, reminders)
-
-5. ✅ Sets up error handling and logging
-
-6. ✅ Initializes sharding (if enabled)
-
-7. ✅ Logs in to Discord
-
-
-
-You should see:
-
-```
-
-🚀 Starting Guardian Bot with Sharding...
-
-[SHARD 0] Launching shard...
-
-[SHARD 0] Client is connected to the database.
-
-[SHARD 0] Client is ready!
-
-[SHARD 0] Logged in as Guardian#1234
-
-[SHARD 0] Guilds: 5
-
-✅ All shards spawned successfully!
-
-```
-
-
-
 ---
 
 
 
 ## ⚙️ Configuration
-
-
-
-### Bot Permissions
-
-
-
-Ensure your bot has the following permissions:
-
-- **Manage Server** (for configuration and setup)
-
-- **Manage Roles** (for role management commands)
-
-- **Manage Channels** (for channel management)
-
-- **Kick Members** (for moderation commands)
-
-- **Ban Members** (for moderation commands)
-
-- **Manage Messages** (for message moderation and logging)
-
-- **Send Messages** (for announcements and responses)
-
-- **Embed Links** (for rich embeds)
-
-- **Attach Files** (for logging and utilities)
-
-- **Read Message History** (for moderation context)
-
-- **Add Reactions** (for interaction responses)
-
-
 
 ### MongoDB Setup
 
@@ -370,9 +296,7 @@ Ensure your bot has the following permissions:
 
    # Install MongoDB on your system
 
-   # Start MongoDB service
-
-   mongod
+   bun install mongoose
 
    ```
 
@@ -477,88 +401,6 @@ Guardian includes comprehensive logging:
 - **Activity Logs**: Secret word discoveries and important events
 
 - **Performance Logs**: Bot statistics and health monitoring
-
-
-
----
-
-
-
-## 🐛 Troubleshooting
-
-
-
-### Bot Won't Start
-
-
-
-1. **Check Bun version:**
-
-   ```bash
-
-   bun --version
-
-   ```
-
-   Should be latest version.
-
-
-
-2. **Verify MongoDB connection:**
-
-   - Ensure MongoDB is running
-
-   - Check connection string in `.env`
-
-   - Test connection: `mongosh "your_connection_string"`
-
-
-
-3. **Check Discord token:**
-
-   - Verify token is correct in `.env`
-
-   - Ensure bot is enabled in Developer Portal
-
-   - Check bot has proper intents enabled
-
-
-
-### Database Connection Issues
-
-
-
-- Verify MongoDB is running (if local)
-
-- Check connection string format
-
-- Ensure network access (if using Atlas)
-
-- Check firewall settings
-
-
-
-### Commands Not Appearing
-
-
-
-- Wait a few minutes for Discord to sync (can take up to 1 hour)
-
-- Re-invite bot with proper permissions
-
-- Check bot is online in your server
-
-
-
-### Sharding Issues
-
-
-
-- Check console for shard-specific error messages
-
-- Verify bot has sufficient permissions in all servers
-
-- Monitor shard status in bot's activity status
 
 
 
