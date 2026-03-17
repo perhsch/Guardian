@@ -30,7 +30,6 @@ async function handleListRoles(
         return;
     }
 
-    // Create paginated embeds if there are many roles
     const pageSize = 20;
     const pages = Math.ceil(roles.size / pageSize);
     const currentPage = 0;
@@ -48,7 +47,6 @@ async function handleListRoles(
             const hoisted = role.hoist ? '📌' : '';
             const color = role.hexColor === '#000000' ? '⚫ Default' : `🎨 ${role.hexColor}`;
             
-            // Create role status indicators
             const indicators = [];
             if (mentionable === '✅') indicators.push('🔔');
             if (managed) indicators.push('🤖');
@@ -60,7 +58,6 @@ async function handleListRoles(
                    `> ━━▣ \`${role.id}\` ┃ ${mentionable} Mentionable ${managed} ${hoisted}`;
         }).join('\n\n');
 
-        // Calculate statistics
         const totalMembers = interaction.guild!.memberCount;
         const avgMembersPerRole = Math.round(Array.from(roles.values()).reduce((sum, role) => sum + role.members.size, 0) / roles.size);
         const managedRoles = Array.from(roles.values()).filter(role => role.managed).length;
@@ -70,7 +67,7 @@ async function handleListRoles(
             .setTitle(`🎭 ${interaction.guild!.name} Role Directory`)
             .addFields(
                 {
-                    name: '� Server Analytics',
+                    name: '📈 Server Analytics',
                     value: `>>> **Total Roles:** \`${roles.size}\`\n` +
                           `**👥 Server Members:** \`${totalMembers}\`\n` +
                           `**📊 Avg Members/Role:** \`${avgMembersPerRole}\`\n` +
@@ -102,13 +99,11 @@ async function handleListRoles(
 
     const embed = createEmbed(currentPage);
 
-    // If only one page is needed, send without pagination
     if (pages === 1) {
         await interaction.editReply({ embeds: [embed] });
         return;
     }
 
-    // Add pagination buttons for multiple pages
     const row = new ActionRowBuilder<ButtonBuilder>()
         .addComponents(
             new ButtonBuilder()
@@ -138,9 +133,8 @@ async function handleListRoles(
         components: [row] 
     });
 
-    // Create collector for pagination
     const collector = message.createMessageComponentCollector({
-        time: 60000 // 60 seconds
+        time: 60000
     });
 
     let currentPageNum = currentPage;
