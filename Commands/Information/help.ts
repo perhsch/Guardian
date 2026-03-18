@@ -24,32 +24,32 @@ interface CategoryInfo {
 
 const CATEGORY_INFO: Record<string, CategoryInfo> = {
     administrator: {
-        emoji: emojis.administrator || '⚙️',
+        emoji: emojis.administration?.administrator || '⚙️',
         description: 'Server configuration & management',
         color: 0xed4245,
     },
     backup: {
-        emoji: emojis.backup || '💾',
+        emoji: emojis.administration?.backup || '💾',
         description: 'Server backup & restore',
         color: 0x57f287,
     },
     information: {
-        emoji: emojis.information || 'ℹ️',
+        emoji: emojis.information?.information || 'ℹ️',
         description: 'Bot, server & user info',
         color: 0x5865f2,
     },
     moderator: {
-        emoji: emojis.moderator || '🛡️',
+        emoji: emojis.administration?.moderator || '🛡️',
         description: 'Moderation & safety tools',
         color: 0xeb459e,
     },
     public: {
-        emoji: emojis.public || '🌐',
+        emoji: emojis.utility?.public || '🌐',
         description: 'User-facing features',
         color: 0x57f287,
     },
     utility: {
-        emoji: emojis.utility || '🔧',
+        emoji: emojis.utility?.utility || '🔧',
         description: 'Helpful utilities',
         color: 0x5865f2,
     },
@@ -76,17 +76,17 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
             name: `${client.user!.username} Command Center`,
             iconURL: client.user!.displayAvatarURL(),
         })
-        .setTitle(`${emojis.blurple_bot || '🤖'} **Guardian Bot Help Menu**`)
-        .setDescription(`>>> **Welcome to Guardian!** ${emojis.blurple_bot || '🤖'}`)
+        .setTitle(`${emojis.discord?.blurple_bot || '🤖'} **Guardian Bot Help Menu**`)
+        .setDescription(`>>> **Welcome to Guardian!** ${emojis.discord?.blurple_bot || '🤖'}`)
         .addFields(
             {
-                name: `${emojis.statistics || '📊'} **Bot Statistics**`,
+                name: `${emojis.information?.statistics || '📊'} **Bot Statistics**`,
                 value: `**🔢 Total Commands:** \`${commands.size}\`\n**📁 Categories:** \`${commandsByCategory.size}\`\n**🌐 Servers:** \`${client.guilds.cache.size}\`\n**👥 Users:** \`${client.users.cache.size}\``,
                 inline: true,
             },
             {
-                name: `${emojis['useful-links'] || '🔗'} **Quick Links**`,
-                value: `**${emojis.blurple_invite || '🔗'}** [Support Server](${process.env['SUPPORT_SERVER'] || 'https://discord.gg/support'})\n**${emojis.blurple_bot || '🤖'}** [Bot Invite](${process.env['BOT_INVITE'] || 'https://discord.com/oauth2/authorize?client_id=' + client.user!.id})\n**${emojis.github || '📚'}** [Documentation](${process.env['DOCUMENTATION'] || 'https://github.com/Guardian-Discord-Bot/Guardian/wiki'})`,
+                name: `${emojis.information?.['useful_links'] || '🔗'} **Quick Links**`,
+                value: `**${emojis.discord?.blurple_invite || '🔗'}** [Support Server](${process.env['SUPPORT_SERVER'] || 'https://discord.gg/support'})\n**${emojis.discord?.blurple_bot || '🤖'}** [Bot Invite](${process.env['BOT_INVITE'] || 'https://discord.com/oauth2/authorize?client_id=' + client.user!.id})\n**${emojis.technology?.github || '📚'}** [Documentation](${process.env['DOCUMENTATION'] || 'https://github.com/Guardian-Discord-Bot/Guardian/wiki'})`,
                 inline: true,
             }
         )
@@ -176,7 +176,7 @@ export function buildHelpEmbeds(commands: Collection<string, any>, client: Clien
                 `>>> **${info.description}**\n\n${lines.join('\n\n')}\n\n---\n**💡 Tips:** • Click command names to copy • Use Tab for autocomplete • Hover over options for help`
             )
             .addFields({
-                name: `${emojis['useful-links'] || '🔗'} **Quick Actions**`,
+                name: `${emojis.information?.['useful_links'] || '🔗'} **Quick Actions**`,
                 value: `• \`/help\` - Return to main menu\n• \`/support\` - Get additional help\n• \`/language\` - Change language settings`,
                 inline: false,
             })
