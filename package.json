@@ -53,6 +53,7 @@
         "@types/express": "^5.0.6",
         "@types/glob": "^8.1.0",
         "@types/mathjs": "^9.4.1",
+        "@types/ms": "^2.1.0",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3"
     }

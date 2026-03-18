@@ -12,3 +12,8 @@ declare module 'discord.js' {
         };
     }
 }
+
+declare module 'ms' {
+    function ms(str: string): number | undefined;
+    export = ms;
+}
