@@ -16,4 +16,12 @@ export interface GuardianClient extends Client {
         id: number;
         count: number;
     };
+    shardManager?: {
+        broadcastToAll: (event: string, ...args: any[]) => Promise<any[]>;
+        sendToShard: (shardId: number, event: string, ...args: any[]) => Promise<boolean>;
+        getGlobalStats: () => Promise<any>;
+        findUserGuilds: (userId: string) => Promise<string[]>;
+        restartShard: (shardId: number) => Promise<boolean>;
+        getShardHealth: () => any;
+    };
 }

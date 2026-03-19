@@ -201,6 +201,22 @@ client.on('ready', async () => {
         id: client.shard?.ids[0] || 0,
         count: client.shard?.count || 1,
     };
+
+    if (client.shard) {
+        try {
+            const { manager } = await import('./shard.ts');
+            client.shardManager = {
+                broadcastToAll: manager.broadcastToAll.bind(manager),
+                sendToShard: manager.sendToShard.bind(manager),
+                getGlobalStats: manager.getGlobalStats.bind(manager),
+                findUserGuilds: manager.findUserGuilds.bind(manager),
+                restartShard: manager.restartShard.bind(manager),
+                getShardHealth: manager.getShardHealth.bind(manager),
+            };
+        } catch (error) {
+            console.error('Failed to initialize shard manager:', error);
+        }
+    }
 });
 
 client.on('messageCreate', async (message: Message) => {
