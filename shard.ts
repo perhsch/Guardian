@@ -390,39 +390,41 @@ const manager = new EnhancedShardingManager('./index.ts', {
     execArgv: ['--import', 'tsx'],
 });
 
-console.log(chalk.blue('🚀 Starting Guardian Bot with Enhanced Sharding...'));
+if (process.argv[1] && process.argv[1].endsWith('shard.ts')) {
+    console.log(chalk.blue('🚀 Starting Guardian Bot with Enhanced Sharding...'));
 
-process.on('SIGINT', () => {
-    console.log(chalk.yellow('\n🛑 Received SIGINT, shutting down gracefully...'));
-    manager.destroy();
-    process.exit(0);
-});
+    process.on('SIGINT', () => {
+        console.log(chalk.yellow('\n🛑 Received SIGINT, shutting down gracefully...'));
+        manager.destroy();
+        process.exit(0);
+    });
 
-process.on('SIGTERM', () => {
-    console.log(chalk.yellow('\n🛑 Received SIGTERM, shutting down gracefully...'));
-    manager.destroy();
-    process.exit(0);
-});
+    process.on('SIGTERM', () => {
+        console.log(chalk.yellow('\n🛑 Received SIGTERM, shutting down gracefully...'));
+        manager.destroy();
+        process.exit(0);
+    });
 
-process.on('unhandledRejection', (error) => {
-    console.error(chalk.red('💥 Unhandled Promise Rejection:'), error);
-});
+    process.on('unhandledRejection', (error) => {
+        console.error(chalk.red('💥 Unhandled Promise Rejection:'), error);
+    });
 
-process.on('uncaughtException', (error) => {
-    console.error(chalk.red('💥 Uncaught Exception:'), error);
-    manager.destroy();
-    process.exit(1);
-});
-
-manager
-    .spawn()
-    .then(() => {
-        console.log(chalk.green('✅ All shards spawned successfully!'));
-        console.log(chalk.blue(`📊 Cluster started with ${manager.totalShards === 'auto' ? 'auto' : manager.totalShards} shards`));
-    })
-    .catch((error) => {
-        console.error(chalk.red('❌ Failed to spawn shards:'), error);
+    process.on('uncaughtException', (error) => {
+        console.error(chalk.red('💥 Uncaught Exception:'), error);
+        manager.destroy();
         process.exit(1);
     });
+
+    manager
+        .spawn()
+        .then(() => {
+            console.log(chalk.green('✅ All shards spawned successfully!'));
+            console.log(chalk.blue(`📊 Cluster started with ${manager.totalShards === 'auto' ? 'auto' : manager.totalShards} shards`));
+        })
+        .catch((error) => {
+            console.error(chalk.red('❌ Failed to spawn shards:'), error);
+            process.exit(1);
+        });
+}
 
 export { manager };

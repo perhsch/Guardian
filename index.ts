@@ -28,6 +28,7 @@ const __dirname = dirname(__filename);
 import ExpiringDocumentManager from './Classes/ExpiringDocumentManager.ts';
 import * as EmbedGenerator from './Functions/embedGenerator.ts';
 import { loadEvents } from './Handlers/eventHandler.ts';
+import { loadCommands } from './Handlers/commandHandler.ts';
 import { pickUnique } from './Functions/pickUnique.ts';
 import createRouter from './server.ts';
 import { processErrorHandler, initializeErrorHandler } from './Handlers/errorHandler.ts';
@@ -40,7 +41,6 @@ import type { IGiveaway } from './Schemas/Giveaways.ts';
 import Reminders from './Schemas/Reminders.ts';
 import type { IReminder } from './Schemas/Reminders.ts';
 import Users from './Schemas/Users.ts';
-import type { IUser } from './Schemas/Users.ts';
 
 import type { GuardianClient } from './types';
 
@@ -192,7 +192,7 @@ app.use('/', router);
 
 export { client, server };
 
-client.on('ready', async () => {
+client.on('clientReady', async () => {
     console.log(`[SHARD ${client.shard?.ids[0] || 0}] Client is ready!`);
     console.log(`[SHARD ${client.shard?.ids[0] || 0}] Logged in as ${client.user?.tag}`);
     console.log(`[SHARD ${client.shard?.ids[0] || 0}] Guilds: ${client.guilds.cache.size}`);
@@ -436,6 +436,7 @@ if (process.env['MONGODB_URL']) {
             );
 
             await loadEvents(client);
+            await loadCommands(client);
             client.login(process.env['DISCORD_TOKEN']).then(() => {});
         })
         .catch((error) => {
