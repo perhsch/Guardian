@@ -23,6 +23,16 @@ export default {
         .setDescription('Lists all servers the bot is in.'),
 
     async execute(interaction: ChatInputCommandInteraction, client: Client) {
+        // Check if user is a developer
+        const developerIds = ['1447738202600505407']; // Add your developer IDs here
+        if (!developerIds.includes(interaction.user.id)) {
+            await interaction.reply({
+                embeds: [EmbedGenerator.errorEmbed('❌ This command is restricted to developers only.')],
+                ephemeral: true
+            });
+            return;
+        }
+
         if (!interaction.channel) return;
 
         const guilds = client.guilds.cache
