@@ -193,30 +193,33 @@ app.use('/', router);
 export { client, server };
 
 client.on('clientReady', async () => {
-    console.log(`[SHARD ${client.shard?.ids[0] || 0}] Client is ready!`);
-    console.log(`[SHARD ${client.shard?.ids[0] || 0}] Logged in as ${client.user?.tag}`);
-    console.log(`[SHARD ${client.shard?.ids[0] || 0}] Guilds: ${client.guilds.cache.size}`);
+    // console.log(`[SHARD ${client.shard?.ids[0] || 0}] Client is ready!`);
+    // console.log(`[SHARD ${client.shard?.ids[0] || 0}] Logged in as ${client.user?.tag}`);
+    // console.log(`[SHARD ${client.shard?.ids[0] || 0}] Guilds: ${client.guilds.cache.size}`);
+    console.log(`Client is ready!`);
+    console.log(`Logged in as ${client.user?.tag}`);
+    console.log(`Guilds: ${client.guilds.cache.size}`);
 
-    client.shardInfo = {
-        id: client.shard?.ids[0] || 0,
-        count: client.shard?.count || 1,
-    };
+    // client.shardInfo = {
+    //     id: client.shard?.ids[0] || 0,
+    //     count: client.shard?.count || 1,
+    // };
 
-    if (client.shard) {
-        try {
-            const { manager } = await import('./shard.ts');
-            client.shardManager = {
-                broadcastToAll: manager.broadcastToAll.bind(manager),
-                sendToShard: manager.sendToShard.bind(manager),
-                getGlobalStats: manager.getGlobalStats.bind(manager),
-                findUserGuilds: manager.findUserGuilds.bind(manager),
-                restartShard: manager.restartShard.bind(manager),
-                getShardHealth: manager.getShardHealth.bind(manager),
-            };
-        } catch (error) {
-            console.error('Failed to initialize shard manager:', error);
-        }
-    }
+    // if (client.shard) {
+    //     try {
+    //         const { manager } = await import('./shard.ts');
+    //         client.shardManager = {
+    //             broadcastToAll: manager.broadcastToAll.bind(manager),
+    //             sendToShard: manager.sendToShard.bind(manager),
+    //             getGlobalStats: manager.getGlobalStats.bind(manager),
+    //             findUserGuilds: manager.findUserGuilds.bind(manager),
+    //             restartShard: manager.restartShard.bind(manager),
+    //             getShardHealth: manager.getShardHealth.bind(manager),
+    //         };
+    //     } catch (error) {
+    //         console.error('Failed to initialize shard manager:', error);
+    //     }
+    // }
 });
 
 client.on('messageCreate', async (message: Message) => {
@@ -431,9 +434,10 @@ Mongoose.set('strictQuery', false);
 if (process.env['MONGODB_URL']) {
     Mongoose.connect(process.env['MONGODB_URL'])
         .then(async () => {
-            console.log(
-                `[SHARD ${client.shard?.ids[0] || 0}] Client is connected to the database.`
-            );
+            // console.log(
+            //     `[SHARD ${client.shard?.ids[0] || 0}] Client is connected to the database.`
+            // );
+            console.log('Client is connected to the database.');
 
             await loadEvents(client);
             await loadCommands(client);

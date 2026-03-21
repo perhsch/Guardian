@@ -22,8 +22,17 @@ export default {
     ) {
         const input = interaction.options.getString('language', true).trim();
 
+        if (!dbUser) {
+            return {
+                embeds: [
+                    EmbedGenerator.errorEmbed('User data not available. Please try again.'),
+                ],
+            };
+        }
+
         if (['en', 'english', 'reset'].includes(input.toLowerCase())) {
             dbUser.language = 'en';
+            await dbUser.save().catch(() => null);
             return {
                 embeds: [
                     EmbedGenerator.basicEmbed(
@@ -34,6 +43,7 @@ export default {
         }
 
         dbUser.language = input;
+        await dbUser.save().catch(() => null);
         return {
             embeds: [
                 EmbedGenerator.basicEmbed(

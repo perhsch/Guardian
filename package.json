@@ -5,7 +5,7 @@
     "type": "module",
     "license": "Apache",
     "scripts": {
-        "start": "bun tsx shard.ts",
+        "start": "bun tsx index.ts",
         "dev": "bun tsx --watch shard.ts",
         "start-no-shard": "bun tsx index.ts",
         "dev-no-shard": "bun tsx --watch index.ts",
